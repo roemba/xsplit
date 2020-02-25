@@ -1,23 +1,42 @@
-import express from "express";
 import dotenv from "dotenv";
-import path from "path";
+import path, {join} from "path";
+// Import reflect-metadata npm package necessary for class-transformer and routing-controller to function
+import "reflect-metadata";
+import { createExpressServer } from "routing-controllers";
+import { AppController } from "./controllers/AppController";
+import winston from "winston";
+import { Container } from "typedi";
+import { setupTypeORM } from "./typeORMLoader";
+import { useContainer } from "typeorm";
+
+// Set up the typeorm and typedi connection
+useContainer(Container);
+
+// Create a basic logger
+const logger = winston.createLogger({
+    transports: [
+        new winston.transports.Console()
+      ]
+});
 
 // Initialise the environment
 dotenv.config();
-const app = express();
+
+// creates express app, registers all controller routes and returns you express app instance
+const app = createExpressServer({
+    controllers: [AppController] // we specify controllers we want to use
+});
 const port = process.env.PORT || 8080; // get port from env, otherwise take default
 
 // Configure Express to use EJS
 app.set( "views", path.join( __dirname, "views" ) );
 app.set( "view engine", "ejs" );
 
-// define a route handler for the default home page
-app.get( "/", ( req, res ) => {
-    res.send( "Hello world! " + process.env.TEST);
-} );
-
-// start the Express server
-app.listen( port, () => {
-    // tslint:disable-next-line:no-console
-    console.log( `server started at http://localhost:${ port }` );
-} );
+// run express application on port 3000
+setupTypeORM().then(() => {
+    app.listen(port, () => {
+        logger.info("App started, listening on port " + port);
+    });
+}).catch((e) => {
+    logger.error(e);
+});
