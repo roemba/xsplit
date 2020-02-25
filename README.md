@@ -23,7 +23,7 @@ Jest is a javascript testing framework that also works with typescript. Tests ar
 
 ## To run
 1. Clone repo
-2. Install and run PostgreSQL
+2. Install and run PostgreSQL. Create a database and remember the name of the database, the user and the password for the .env file.
 3. Install nodejs and npm
 4. Rename .env.example to .env and change the typeORM values to your installation of postgres
 5. Run "npm install"

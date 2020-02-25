@@ -34,7 +34,7 @@ Container.get(RippleLibService).init().then(() => {
     logger.info("Connected to ripple");
 }).catch((e) => {
     logger.error("Connecting to ripple failed");
-    process.exit(1);
+    process.exit(0);
 });
 
 // Configure Express to use EJS
@@ -47,5 +47,6 @@ setupTypeORM().then(() => {
         logger.info("App started, listening on port " + port);
     });
 }).catch((e) => {
-    logger.error(e);
+    logger.error("Database connection failed, exiting application...");
+    process.exit(0);
 });
