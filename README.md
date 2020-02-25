@@ -8,3 +8,5 @@ When building project, input correct parameters in .env.example and rename it to
 
 Typedi is a way to create Singleton-like classes. These are called services and are contained in a container.
 Works well with TypeORM since you can call Container.get(RepositoryClass) to get the singleton instance of that repository.
+
+EJS is a templating engine that works well with express.
