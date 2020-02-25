@@ -2,6 +2,7 @@ import {Controller, Param, Body, Get, Post, Put, Delete, Render} from "routing-c
 import { Container } from "typedi";
 import { UserService } from "../services/UserService";
 import winston, { Logger } from "winston";
+import { RippleLibService } from "../services/RippleLibService";
 
 @Controller("/api")
 export class AppController {
@@ -16,7 +17,7 @@ export class AppController {
 
     @Get("")
     getAll() {
-       return "This action returns diagnostic data";
+       return Container.get(RippleLibService).getServerInfo();
     }
 
     @Get("/users")

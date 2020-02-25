@@ -8,6 +8,7 @@ import winston from "winston";
 import { Container } from "typedi";
 import { setupTypeORM } from "./typeORMLoader";
 import { useContainer } from "typeorm";
+import { RippleLibService } from "./services/RippleLibService";
 
 // Set up the typeorm and typedi connection
 useContainer(Container);
@@ -27,6 +28,14 @@ const app = createExpressServer({
     controllers: [AppController] // we specify controllers we want to use
 });
 const port = process.env.PORT || 8080; // get port from env, otherwise take default
+
+// Initialise the ripple-lib service
+Container.get(RippleLibService).init().then(() => {
+    logger.info("Connected to ripple");
+}).catch((e) => {
+    logger.error("Connecting to ripple failed");
+    process.exit(1);
+});
 
 // Configure Express to use EJS
 app.set( "views", path.join( __dirname, "views" ) );
