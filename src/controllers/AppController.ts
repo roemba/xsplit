@@ -1,10 +1,10 @@
-import {Controller, Param, Body, Get, Post, Put, Delete, Render} from "routing-controllers";
+import {JsonController, Param, Body, Get, Post, Put, Delete, Render, Res, Req} from "routing-controllers";
 import { Container } from "typedi";
 import { UserService } from "../services/UserService";
 import winston, { Logger } from "winston";
 import { RippleLibService } from "../services/RippleLibService";
 
-@Controller("/api")
+@JsonController()
 export class AppController {
    log: Logger;
    constructor() {
@@ -32,7 +32,7 @@ export class AppController {
     }
 
     @Get("/users/:id")
-    getOne(@Param("id") id: number) {
+    getOne(@Param("id") id: String) {
        return "This action returns user #" + id;
     }
 
