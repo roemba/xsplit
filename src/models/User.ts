@@ -1,10 +1,11 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Exclude } from 'class-transformer';
+import { BeforeInsert, Column, Entity, OneToMany, PrimaryColumn, Table } from 'typeorm';
 
-@Entity()
+@Entity({name: "users"})
 export class User {
     @PrimaryColumn()
     public username: string;
 
-    @Column({name: "public_key"})
+    @Column({name: "publickey"})
     public publickey: string;
 }
