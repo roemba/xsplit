@@ -24,7 +24,7 @@ export class RippleLibService {
     }
 
     public getServerInfo(): Promise<GetServerInfoResponse> {
-        this.log.info('Find all users');
+        this.log.info('Get ripple server info');
         return this.rippleAPI.getServerInfo();
     }
 }

@@ -10,20 +10,20 @@ import { setupTypeORM } from "./typeORMLoader";
 import { useContainer } from "typeorm";
 import { RippleLibService } from "./services/RippleLibService";
 
-// Set up the typeorm and typedi connection
+// Set up the typeorm and typedi integration
 useContainer(Container);
 
-// Create a basic logger
+// Create a basic logger that logs to console
 const logger = winston.createLogger({
     transports: [
         new winston.transports.Console()
       ]
 });
 
-// Initialise the environment
+// Initialise the dotenv environment
 dotenv.config();
 
-// creates express app, registers all controller routes and returns you express app instance
+// creates express app, registers all controller routes and returns express app instance
 const app = createExpressServer({
     controllers: [AppController] // we specify controllers we want to use
 });
@@ -41,7 +41,7 @@ Container.get(RippleLibService).init().then(() => {
 app.set( "views", path.join( __dirname, "views" ) );
 app.set( "view engine", "ejs" );
 
-// run express application on port 3000
+// run express application when database has connected succesfully
 setupTypeORM().then(() => {
     app.listen(port, () => {
         logger.info("App started, listening on port " + port);
