@@ -20,14 +20,19 @@ export class UserService {
         });
     }
 
-    public find(): Promise<User[]> {
+    public findAll(): Promise<User[]> {
         this.log.info('Find all users');
         return this.userRepository.find();
     }
 
+    public getPublicKey(username: string): Promise<string> {
+        this.log.info("username " + username);
+        return this.userRepository.getPublicKey(username);
+    }
+
     public findOne(username: string): Promise<User | undefined> {
         this.log.info('Find one user');
-        return this.userRepository.findOne({ username });
+        return this.userRepository.findOne({username});
     }
 
     public async create(user: User): Promise<User> {

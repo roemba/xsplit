@@ -3,7 +3,7 @@ import { Container } from "typedi";
 import { UserService } from "../services/UserService";
 import winston, { Logger } from "winston";
 import { RippleLibService } from "../services/RippleLibService";
-import { User } from "../models/User";
+import { User } from '../models/User';
 import { GetServerInfoResponse } from "ripple-lib/dist/npm/common/serverinfo";
 
 @Controller("/api")
