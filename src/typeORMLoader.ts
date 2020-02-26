@@ -1,11 +1,11 @@
 import { getConnectionOptions, createConnection } from "typeorm";
 import { User } from "./models/User";
 
-export async function setupTypeORM() {
+export async function setupTypeORM(): Promise<void> {
     const loadedConnectionOptions = await getConnectionOptions();
 
     const connectionOptions = Object.assign(loadedConnectionOptions, {
-        type: process.env.TYPEORM_CONNECTION as any, // See createConnection options for valid types
+        type: process.env.TYPEORM_CONNECTION, // See createConnection options for valid types
         host: process.env.TYPEORM_HOST,
         port: process.env.TYPEORM_PORT,
         username: process.env.TYPEORM_USERNAME,
@@ -17,5 +17,5 @@ export async function setupTypeORM() {
         migrations: [],
     });
 
-    const connection = await createConnection(connectionOptions);
+    await createConnection(connectionOptions);
 }

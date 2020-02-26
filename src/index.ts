@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import path, {join} from "path";
+import path from "path";
 // Import reflect-metadata npm package necessary for class-transformer and routing-controller to function
 import "reflect-metadata";
 import { createExpressServer } from "routing-controllers";
@@ -32,7 +32,7 @@ const port = process.env.PORT || 8080; // get port from env, otherwise take defa
 // Initialise the ripple-lib service
 Container.get(RippleLibService).init().then(() => {
     logger.info("Connected to ripple");
-}).catch((e) => {
+}).catch(() => {
     logger.error("Connecting to ripple failed");
     process.exit(0);
 });
@@ -46,7 +46,7 @@ setupTypeORM().then(() => {
     app.listen(port, () => {
         logger.info("App started, listening on port " + port);
     });
-}).catch((e) => {
+}).catch(() => {
     logger.error("Database connection failed, exiting application...");
     process.exit(0);
 });
