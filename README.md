@@ -1,5 +1,8 @@
 # XSplit: bill-splitting using the XRP-ledger
 
+The set-up of this express app is based on an express typescript boilerplate from w3tecch.
+The boilerplate can be found here: https://github.com/w3tecch/express-typescript-boilerplate
+
 ## Used packages
 TypeORM manages all database interactions. Entities can be added in the models folder but need to be added in the typeORMLoader as well.
 The database table structure is automatically updated to the models in the code.
