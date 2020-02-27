@@ -26,10 +26,10 @@ export class AppController {
    return Container.get(UserService).find();
    }
 
-   @Get("/ejs/:id")
+   @Get("/web/:page")
    @Render("index.ejs")
-   getEJSView(@Param("id") id: number): unknown {
-      return {id};
+   getEJSView(@Param("page") page: string): unknown {
+      return {page};
    }
 
    @Get("/users/:id")

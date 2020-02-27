@@ -9,6 +9,7 @@ import { Container } from "typedi";
 import { setupTypeORM } from "./typeORMLoader";
 import { useContainer } from "typeorm";
 import { RippleLibService } from "./services/RippleLibService";
+import express from 'express';
 
 // Set up the typeorm and typedi integration
 useContainer(Container);
@@ -40,6 +41,7 @@ Container.get(RippleLibService).init().then(() => {
 // Configure Express to use EJS
 app.set( "views", path.join( __dirname, "views" ) );
 app.set( "view engine", "ejs" );
+app.use("/assets", express.static(path.join(__dirname, "assets")));
 
 // run express application when database has connected succesfully
 setupTypeORM().then(() => {
