@@ -1,13 +1,14 @@
 import { Service } from 'typedi';
-import * as rippleLib from "ripple-lib";
+import { RippleAPI } from "ripple-lib";
 
 import winston, { Logger } from 'winston';
+import { GetServerInfoResponse } from 'ripple-lib/dist/npm/common/serverinfo';
 
 @Service()
 export class RippleLibService {
 
     log: Logger;
-    rippleAPI: any;
+    rippleAPI: RippleAPI;
 
     constructor() {
         this.log = winston.createLogger({
@@ -17,13 +18,13 @@ export class RippleLibService {
         });
     }
 
-    public async init() {
-        this.rippleAPI = new rippleLib.RippleAPI({server: process.env.RIPPLE_SERVER});
+    public async init(): Promise<void> {
+        this.rippleAPI = new RippleAPI({server: process.env.RIPPLE_SERVER});
         return this.rippleAPI.connect();
     }
 
-    public getServerInfo(): Promise<any> {
-        this.log.info('Find all users');
+    public getServerInfo(): Promise<GetServerInfoResponse> {
+        this.log.info('Get ripple server info');
         return this.rippleAPI.getServerInfo();
     }
 }
