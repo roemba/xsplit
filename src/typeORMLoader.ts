@@ -1,5 +1,4 @@
 import { getConnectionOptions, createConnection } from "typeorm";
-import { User } from "./models/User";
 
 export async function setupTypeORM(): Promise<void> {
     const loadedConnectionOptions = await getConnectionOptions();
@@ -13,7 +12,7 @@ export async function setupTypeORM(): Promise<void> {
         database: process.env.TYPEORM_DATABASE,
         synchronize: process.env.TYPEORM_SYNCHRONIZE,
         logging: process.env.TYPEORM_LOGGING,
-        entities: [User],
+        entities: [__dirname + "/models/*.js"],
         migrations: [],
     });
 
