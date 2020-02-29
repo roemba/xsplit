@@ -27,12 +27,6 @@ export class AppController {
       return Container.get(UserService).findAll();
    }
 
-    @Get("/ejs/:id")
-    @Render("index.ejs")
-    getEJSView(@Param("id") id: number) {
-       return {id};
-    }
-
     @Get("/login")
     userLogin(@Body() id: any) {
       this.log.info("id " + id.username);
@@ -52,13 +46,12 @@ export class AppController {
     }
 
     @Put("/users/:id")
-    put(@Param("id") id: string, @Body() thing:any) {
+    put(@Param("id") id: string, @Body() thing: any) {
        return "Updating the user " + id;
     }
 
     @Delete("/users/:id")
     remove(@Param("id") id: string) {
       return Container.get(UserService).delete(id);
-    }
-
+    } 
 }
