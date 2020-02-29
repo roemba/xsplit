@@ -8,7 +8,7 @@ import { Container } from "typedi";
 import { setupTypeORM } from "./typeORMLoader";
 import { useContainer } from "typeorm";
 import { RippleLibService } from "./services/RippleLibService";
-import express from 'express';
+import * as express from 'express';
 import { authorizationChecker } from "./auth/AuthorizationChecker";
 import { currentUserChecker } from "./auth/CurrentUserChecker";
 
@@ -48,12 +48,21 @@ setupTypeORM().then(() => {
     // Configure Express to use EJS
     app.set( "views", path.join( __dirname, "views" ) );
     app.set( "view engine", "ejs" );
+
     app.use("/assets", express.static(path.join(__dirname, "assets")));
-    
+
     app.listen(port, () => {
         logger.info("App started, listening on port " + port);
+    });
+
+    app.get("/", (req: express.Request, res: express.Response) => {
+        res.render("index", {page: "home"});
     });
 }).catch(() => {
     logger.error("Database connection failed, exiting application...");
     process.exit(0);
 });
+
+function createRegister() {
+    alert("fun");
+}

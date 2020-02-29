@@ -7,7 +7,6 @@ import winston, { Logger } from 'winston';
 
 @Service()
 export class UserService {
-
     log: Logger;
 
     constructor(
@@ -22,12 +21,26 @@ export class UserService {
 
     public findAll(): Promise<User[]> {
         this.log.info('Find all users');
+        
         return this.userRepository.find();
     }
 
-    public getPublicKey(username: string): Promise<string> {
+    public async getPublicKey(username: string): Promise<any> {
+        const errors = Array<string>();
         this.log.info("username " + username);
-        return this.userRepository.getPublicKey(username);
+        username = username.trim();
+        if(username.length === 0) {
+            errors.push("Necessary field username is empty");
+        } else {
+            const tempUser = await this.userRepository.findOne({username});
+            if(tempUser.username.localeCompare("undefined")) {
+                errors.push("User with this username not found");
+            } else {
+                return this.userRepository.getPublicKey(username);
+            }
+        }
+
+        return errors;
     }
 
     public findOne(username: string): Promise<User | undefined> {
@@ -35,10 +48,31 @@ export class UserService {
         return this.userRepository.findOne({username});
     }
 
-    public async create(user: User): Promise<User> {
-        this.log.info('Create a new user => ', user.toString());
-        const newUser = await this.userRepository.save(user);
-        return newUser;
+    public async create(user: User): Promise<any> {
+        const errors = Array<string>();
+        let username = user.username
+
+        if(!this.isEmail(user.email.trim())) {
+            errors.push("Email address is not of the proper format");
+        }
+        username = username.trim();
+        if(username.length === 0) {
+            errors.push("Necessary field username is empty");
+        } else {
+            const tempUser = await this.userRepository.findOne({username});
+            if(tempUser.username.localeCompare("undefined")) {
+                errors.push("There already exists a user with this username, please try another one")
+            } else {
+                const newUser = await this.userRepository.save(user);
+                return newUser;
+            }
+        }
+        return errors;
+    }
+
+    //Based on regular expression in this thread: https://tylermcginnis.com/validate-email-address-javascript/
+    private isEmail(email: string) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
     }
 
     public update(username: string, user: User): Promise<User> {

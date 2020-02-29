@@ -8,4 +8,10 @@ export class User {
 
     @Column({name: "publickey"})
     public publickey: string;
+
+    @Column({name: "email"})
+    public email: string
+
+    @Column({name: "fullName"})
+    public fullName: string
 }
