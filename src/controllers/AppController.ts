@@ -6,7 +6,7 @@ import { RippleLibService } from "../services/RippleLibService";
 import { User } from "../models/User";
 import { GetServerInfoResponse } from "ripple-lib/dist/npm/common/serverinfo";
 
-@Controller("/api")
+@Controller("")
 export class AppController {
    log: Logger;
    constructor() {
@@ -16,7 +16,7 @@ export class AppController {
             ]
       });
   }
-   @Get("")
+   @Get("/api")
    getAll(): Promise<GetServerInfoResponse> {
       return Container.get(RippleLibService).getServerInfo();
    }
@@ -29,6 +29,7 @@ export class AppController {
    @Get("/web/:page")
    @Render("index.ejs")
    getEJSView(@Param("page") page: string): unknown {
+      this.log.info("Go to page " + page)
       return {page};
    }
 
