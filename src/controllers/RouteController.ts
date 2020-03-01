@@ -1,4 +1,4 @@
-import {Controller, Param, Body, Get, Post, Put, Delete, Render} from "routing-controllers";
+import {Controller, Param, Get, Render} from "routing-controllers";
 
 @Controller() 
 export class RouteController {

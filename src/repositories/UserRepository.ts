@@ -1,6 +1,6 @@
 import { EntityRepository, Repository } from 'typeorm';
 import {getRepository} from "typeorm";
-import winston, { Logger } from 'winston';
+import winston from 'winston';
 
 import { User } from '../models/User';
 

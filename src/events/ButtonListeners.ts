@@ -1,4 +1,4 @@
-function registerUser() {
+function registerUser(): void {
     const fullName = (document.getElementById("fullName") as HTMLInputElement).value;
     const email = (document.getElementById("email") as HTMLInputElement).value;
     const username = (document.getElementById("username") as HTMLInputElement).value;
