@@ -8,7 +8,7 @@ function registerUser(): void {
         email: email,
         username: username,
         publicKey: publicKey
-    }
+    };
 
     const data = JSON.stringify(user);
     alert(data);

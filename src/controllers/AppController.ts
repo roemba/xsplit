@@ -46,7 +46,7 @@ export class AppController {
     }
 
     @Put("/users/:id")
-    put(@Param("id") id: string, @Body() user: User): string {
+    put(@Param("id") id: string): string {
        return "Updating the user " + id;
     }
 
