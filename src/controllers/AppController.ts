@@ -1,10 +1,10 @@
-import {JsonController, Param, Body, Get, Post, Put, Delete} from "routing-controllers";
-import { Container } from "typedi";
-import { UserService } from "../services/UserService";
-import winston, { Logger } from "winston";
-import { RippleLibService } from "../services/RippleLibService";
-import { User } from '../models/User';
-import { GetServerInfoResponse } from "ripple-lib/dist/npm/common/serverinfo";
+import {Body, Delete, Get, JsonController, Param, Post, Put} from "routing-controllers";
+import {Container} from "typedi";
+import {UserService} from "../services/UserService";
+import winston, {Logger} from "winston";
+import {RippleLibService} from "../services/RippleLibService";
+import {User} from '../models/User';
+import {GetServerInfoResponse} from "ripple-lib/dist/npm/common/serverinfo";
 
 @JsonController("/api")
 export class AppController {
@@ -26,12 +26,6 @@ export class AppController {
    getAllUsers(): Promise<User[]> {
       return Container.get(UserService).findAll();
    }
-
-    @Get("/login")
-    userLogin(@Body() id: string): Promise<string | Array<string>> {
-      this.log.info("id " + id);
-      return Container.get(UserService).getPublicKey(id);
-    }
 
     @Get("/users/:id")
     getOne(@Param("id") id: string): Promise<User | undefined> {
