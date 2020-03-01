@@ -3,6 +3,7 @@ import {getRepository} from "typeorm";
 import winston from 'winston';
 
 import { User } from '../models/User';
+import {BadRequestError} from "routing-controllers";
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User>  {
@@ -18,6 +19,11 @@ export class UserRepository extends Repository<User>  {
             .select("user.publickey")
             .where("user.username = :id", { id: username })
             .getOne();
+
+        if (user == null) {
+            throw new BadRequestError("Cannot find User with username!")
+        }
+
         return user.publickey;
     }
 }

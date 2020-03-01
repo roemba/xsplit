@@ -4,6 +4,7 @@ import { OrmRepository } from 'typeorm-typedi-extensions';
 import { User } from '../models/User';
 import { UserRepository } from '../repositories/UserRepository';
 import winston, { Logger } from 'winston';
+import {BadRequestError} from "routing-controllers";
 
 @Service()
 export class UserService {
@@ -25,22 +26,13 @@ export class UserService {
         return this.userRepository.find();
     }
 
-    public async getPublicKey(username: string): Promise<string | Array<string>> {
-        const errors = Array<string>();
-        this.log.info("username " + username);
+    public async getPublicKey(username: string): Promise<string> {
         username = username.trim();
         if(username.length === 0) {
-            errors.push("Necessary field username is empty");
-        } else {
-            const tempUser = await this.userRepository.findOne({username});
-            if(tempUser.username.localeCompare("undefined")) {
-                errors.push("User with this username not found");
-            } else {
-                return this.userRepository.getPublicKey(username);
-            }
+            throw new BadRequestError("Empty username!")
         }
 
-        return errors;
+        return this.userRepository.getPublicKey(username);
     }
 
     public findOne(username: string): Promise<User | undefined> {
