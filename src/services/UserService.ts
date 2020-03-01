@@ -56,9 +56,15 @@ export class UserService {
             errors.push("Email address is not of the proper format");
         }
         username = username.trim();
+        if(user.publickey.trim().length === 0) {
+            errors.push("Necessary field public key is empty");
+        }
+        
         if(username.length === 0) {
             errors.push("Necessary field username is empty");
-        } else {
+        }
+
+        if(errors.length === 0) {
             const tempUser = await this.userRepository.findOne({username});
             if(tempUser.username.localeCompare("undefined")) {
                 errors.push("There already exists a user with this username, please try another one")
