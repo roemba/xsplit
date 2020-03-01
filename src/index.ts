@@ -41,7 +41,8 @@ setupTypeORM().then(() => {
         middlewares: [__dirname + "/middlewares/*.js"],
         defaultErrorHandler: false,
         authorizationChecker: authorizationChecker(),
-        currentUserChecker: currentUserChecker()
+        currentUserChecker: currentUserChecker(),
+        
     });
     const port = process.env.PORT || 8080; // get port from env, otherwise take default
     
@@ -50,6 +51,7 @@ setupTypeORM().then(() => {
     app.set( "view engine", "ejs" );
 
     app.use("/assets", express.static(path.join(__dirname, "assets")));
+    app.use("/events", express.static(path.join(__dirname, "events")));
 
     app.listen(port, () => {
         logger.info("App started, listening on port " + port);
@@ -62,7 +64,3 @@ setupTypeORM().then(() => {
     logger.error("Database connection failed, exiting application...");
     process.exit(0);
 });
-
-function createRegister() {
-    alert("fun");
-}
