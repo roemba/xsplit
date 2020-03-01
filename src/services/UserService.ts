@@ -25,7 +25,7 @@ export class UserService {
         return this.userRepository.find();
     }
 
-    public async getPublicKey(username: string): Promise<any> {
+    public async getPublicKey(username: string): Promise<string | Array<string>> {
         const errors = Array<string>();
         this.log.info("username " + username);
         username = username.trim();
@@ -48,7 +48,7 @@ export class UserService {
         return this.userRepository.findOne({username});
     }
 
-    public async create(user: User): Promise<any> {
+    public async create(user: User): Promise<User | Array<string>> {
         const errors = Array<string>();
         let username = user.username
 
@@ -77,7 +77,7 @@ export class UserService {
     }
 
     //Based on regular expression in this thread: https://tylermcginnis.com/validate-email-address-javascript/
-    private isEmail(email: string) {
+    private isEmail(email: string): boolean {
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
     }
 
