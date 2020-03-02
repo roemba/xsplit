@@ -10,13 +10,17 @@ import {BadRequestError} from "routing-controllers";
 export class UserService {
     log: Logger;
 
-    constructor(
-        @OrmRepository() private userRepository: UserRepository
-    ) {
+    constructor(@OrmRepository() private userRepository: UserRepository) {
         this.log = winston.createLogger({
             transports: [
-                new winston.transports.Console()
-              ]
+                new winston.transports.Console({
+                    level: 'debug',
+                    format: winston.format.combine(
+                        winston.format.colorize(),
+                        winston.format.simple()
+                    )
+                })
+            ]
         });
     }
 
@@ -40,37 +44,14 @@ export class UserService {
         return this.userRepository.findOne({username});
     }
 
-    public async create(user: User): Promise<User | Array<string>> {
-        const errors = Array<string>();
-        let username = user.username
-
-        if(!this.isEmail(user.email.trim())) {
-            errors.push("Email address is not of the proper format");
+    public async create(user: User): Promise<User> {
+        const tempUser = await this.userRepository.findOne(user.username);
+        if(tempUser == null) {
+            const newUser = await this.userRepository.save(user);
+            return newUser;
+        } else {
+            throw new BadRequestError("There already exists a user with this username, please try another one");
         }
-        username = username.trim();
-        if(user.publickey.trim().length === 0) {
-            errors.push("Necessary field public key is empty");
-        }
-        
-        if(username.length === 0) {
-            errors.push("Necessary field username is empty");
-        }
-
-        if(errors.length === 0) {
-            const tempUser = await this.userRepository.findOne({username});
-            if(tempUser.username.localeCompare("undefined")) {
-                errors.push("There already exists a user with this username, please try another one")
-            } else {
-                const newUser = await this.userRepository.save(user);
-                return newUser;
-            }
-        }
-        return errors;
-    }
-
-    //Based on regular expression in this thread: https://tylermcginnis.com/validate-email-address-javascript/
-    private isEmail(email: string): boolean {
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
     }
 
     public update(username: string, user: User): Promise<User> {
