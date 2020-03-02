@@ -1,7 +1,5 @@
 import winston, {Logger} from "winston";
-import {Controller, Post, Req, UseBefore} from "routing-controllers";
-import {urlencoded} from "body-parser";
-import {Request} from "express";
+import {Controller, Get, QueryParam} from "routing-controllers";
 import {Container} from "typedi";
 import {UserService} from "../services/UserService";
 
@@ -23,11 +21,9 @@ export class LoginController {
         });
     }
 
-    @Post("/")
-    @UseBefore(urlencoded())
-    userLogin(@Req() request: Request): Promise<string | Array<string>> {
-        const username = request.body.userName;
-        this.log.info("username " + username);
-        return Container.get(UserService).getPublicKey(username);
+    @Get("/")
+    userLogin(@QueryParam("username") userName: string): Promise<string | Array<string>> {
+        this.log.info("username " + userName);
+        return Container.get(UserService).getPublicKey(userName);
     }
 }
