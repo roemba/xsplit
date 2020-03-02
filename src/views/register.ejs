@@ -6,27 +6,19 @@
 		Please fill out the form to create an account.
 		<br /><br />
 		
-		<form>
-			<div class="form-group" >
-  				<input id="fullName" type="text" class="form-control form-control-lg" placeholder="Full Name*" />
-				</div>
-				<div class="form-group">
-  				<input type="text" class="form-control form-control-lg" id="email" placeholder="Email*" />
+		<form action="/api/users" method="post">
+			<div class="form-group">
+				<input id="username" name="username" type="text" class="form-control form-control-lg" placeholder="Username*" required/>
 			</div>
 			<div class="form-group">
-  				<input type="text" class="form-control form-control-lg" id="username" placeholder="Username*" />
-				</div>
-				<div class="form-group">
-					<input type="text" class="form-control form-control-lg" id="publicKey" placeholder="Public key*" />
-				  </div>
-				<!--
-				<div class="form-group">
-  				<input type="password" class="form-control form-control-lg" id="password" placeholder="Password*" />
-				</div>
-				<div class="form-group">
-  				<input type="password" class="form-control form-control-lg" id="privateKey" placeholder="Private Key*" />
-				</div>
-				-->
+				<input id="publickey" name="publickey" type="text" class="form-control form-control-lg" placeholder="Public key*" required/>
+			</div>
+			<div class="form-group" >
+  				<input id="fullName" name="fullName" type="text" class="form-control form-control-lg" placeholder="Full Name*" />
+			</div>
+			<div class="form-group">
+  				<input id="email" name="email" type="email" class="form-control form-control-lg" placeholder="Email*" />
+			</div>
 			<div class="form-group">
   				<button id="register" type="submit" class="btn btn-secondary btn-lg col-12">Register</button>
 			</div>
