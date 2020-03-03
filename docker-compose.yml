@@ -10,6 +10,3 @@ services:
             POSTGRES_PASSWORD: "admin"
             POSTGRES_USER: "root"
             POSTGRES_DB: "test"
-        
-        volumes:
-            - ./init.sql:/docker-entrypoint-initdb.d/init.sql
