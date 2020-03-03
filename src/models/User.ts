@@ -9,8 +9,11 @@ export class User {
     public publickey: string;
 
     @Column({name: "email"})
-    public email: string
+    public email: string;
 
     @Column({name: "fullName"})
-    public fullName: string
+    public fullName: string;
+
+    @Column({name: "challenge"})
+    public challenge: string;
 }
