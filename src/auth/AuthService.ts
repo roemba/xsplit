@@ -6,6 +6,7 @@ import winston, {Logger} from "winston";
 import {ecdsaVerify} from 'secp256k1';
 import {CryptoUtils} from "../util/CryptoUtils";
 import {UserService} from "../services/UserService";
+import {ChallengeRepository} from "../repositories/ChallengeRepository";
 
 @Service()
 export class AuthService {
@@ -38,22 +39,24 @@ export class AuthService {
     public async validateUser(request: Request, username: string, signatureStr: string): Promise<User> {
         const user = await Container.get(UserService).findOne(username);
 
-        if (user == null || user.challenge == null) {
+        if (user == null) {
             return undefined;
         }
-
-        const challenge = CryptoUtils.hexToUint8Array(user.challenge);
 
         const signature = CryptoUtils.hexToUint8Array(signatureStr);
         const pubKey = CryptoUtils.hexToUint8Array(user.publickey);
 
-        try {
-            if (ecdsaVerify(signature, challenge, pubKey)) {
-                return user;
+        const challenges = await Container.get(ChallengeRepository).getChallenges(user);
+        for (const challengeObj of challenges) {
+            const challenge = CryptoUtils.hexToUint8Array(challengeObj.challenge);
+
+            try {
+                if (ecdsaVerify(signature, challenge, pubKey)) {
+                    return user;
+                }
+            } catch (e) {
+                // Do nothing, move on to try the next challenge
             }
-        } catch (e) {
-            this.log.warning(e);
-            return undefined;
         }
 
         return undefined

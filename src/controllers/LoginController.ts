@@ -1,10 +1,10 @@
 import winston, {Logger} from "winston";
-import {Authorized, Controller, Get, QueryParam} from "routing-controllers";
+import {Authorized, BadRequestError, Controller, Get, QueryParam} from "routing-controllers";
 import {Container} from "typedi";
 import {UserService} from "../services/UserService";
 import {OrmRepository} from "typeorm-typedi-extensions";
 import {UserRepository} from "../repositories/UserRepository";
-import {randomBytes} from "crypto";
+import {ChallengeRepository} from "../repositories/ChallengeRepository";
 
 @Controller("/api/login")
 export class LoginController {
@@ -33,11 +33,11 @@ export class LoginController {
     @Get("/challenge")
     async getChallenge(@QueryParam("username") userName: string): Promise<string> {
         const user = await Container.get(UserService).findOne(userName);
+        if (user == null) {
+            throw new BadRequestError("Cannot find User!");
+        }
 
-        user.challenge = randomBytes(32).toString("hex");
-        await Container.get(UserService).update(userName, user);
-
-        return user.challenge;
+        return await Container.get(ChallengeRepository).createChallenge(user);
     }
 
     @Get("/validate")

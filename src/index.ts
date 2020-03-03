@@ -11,6 +11,7 @@ import { RippleLibService } from "./services/RippleLibService";
 import * as express from 'express';
 import { authorizationChecker } from "./auth/AuthorizationChecker";
 import { currentUserChecker } from "./auth/CurrentUserChecker";
+import {ChallengeRepository} from "./repositories/ChallengeRepository";
 
 // Set up the typeorm and typedi integration
 useContainer(Container);
@@ -66,7 +67,10 @@ setupTypeORM().then(() => {
     app.get("/", (req: express.Request, res: express.Response) => {
         res.render("index", {page: "home"});
     });
-}).catch(() => {
+
+    setInterval(Container.get(ChallengeRepository).cleanChallenges, 60*1000)
+}).catch((e) => {
+    console.error(e);
     logger.error("Database connection failed, exiting application...");
     process.exit(0);
 });
