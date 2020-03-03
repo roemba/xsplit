@@ -6,7 +6,7 @@
   "scripts": {
     "clean": "rimraf dist/*",
     "copy-assets": "ts-node tools/copyAssets",
-    "lint": "tslint -c tslint.json -p tsconfig.json --fix",
+    "lint": "eslint --fix . --ext .js,.ts",
     "tsc": "tsc",
     "build": "npm-run-all clean lint tsc copy-assets",
     "dev:start": "npm-run-all build start",
@@ -51,6 +51,9 @@
     "@types/node": "^13.7.4",
     "@types/shelljs": "^0.8.6",
     "@types/winston": "^2.4.4",
+    "@typescript-eslint/eslint-plugin": "^2.21.0",
+    "@typescript-eslint/parser": "^2.21.0",
+    "eslint": "^6.8.0",
     "fs-extra": "^8.1.0",
     "jest": "^25.1.0",
     "nodemon": "^2.0.2",
@@ -58,7 +61,6 @@
     "rimraf": "^3.0.2",
     "shelljs": "^0.8.3",
     "ts-node": "^8.6.2",
-    "tslint": "^6.0.0",
     "typescript": "^3.8.2"
   }
 }

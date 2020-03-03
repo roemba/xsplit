@@ -1,4 +1,4 @@
-import {Controller, Param, Body, Get, Post, Put, Delete, Render} from "routing-controllers";
+import {Controller, Param, Body, Get, Post, Put, Delete, Render, CurrentUser, Authorized} from "routing-controllers";
 import { Container } from "typedi";
 import { UserService } from "../services/UserService";
 import winston, { Logger } from "winston";
@@ -23,7 +23,7 @@ export class AppController {
 
    @Get("/users")
    getAllUsers(): Promise<User[]> {
-   return Container.get(UserService).find();
+      return Container.get(UserService).find();
    }
 
    @Get("/web/:page")
@@ -36,6 +36,12 @@ export class AppController {
    @Get("/users/:id")
    getOne(@Param("id") id: number): string {
       return "This action returns user #" + id;
+   }
+
+   @Authorized()
+   @Get("/me")
+   getMe(@CurrentUser({ required: true }) me: User): User {
+      return me;
    }
 
    @Post("/users")
