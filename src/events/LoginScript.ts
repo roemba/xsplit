@@ -1,5 +1,10 @@
 import {privateKeyVerify, ecdsaSign} from 'secp256k1';
 import { Buffer } from "buffer";
+import { SHA256, enc} from "crypto-js";
+
+function hexToUnit8Array(hex: string): Uint8Array {
+    return new Uint8Array(hex.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
+}
 
 async function doLoginAction(event: Event): Promise<void> {
     event.preventDefault();
@@ -9,7 +14,7 @@ async function doLoginAction(event: Event): Promise<void> {
     let privateKey = null;
     //  Assume the user provides the private key in hex with no colons
     try {
-        privateKey = new Uint8Array(privateKeyStr.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
+        privateKey = hexToUnit8Array(privateKeyStr);
         privateKeyVerify(privateKey)
     } catch (e) {
         console.error(e);
@@ -20,24 +25,25 @@ async function doLoginAction(event: Event): Promise<void> {
     console.log("Form submitted!");
     console.log("Username: " + userName);
 
-    const resp = await fetch("/api/login?username=" + userName);
-    if (resp.status !== 200) {
-        console.warn("Got " + resp.status + " instead of 200");
-        if (resp.status === 400) {
-            $("#invalidFields").removeClass("d-none");
-        }
-        return;
-    }
+    // const resp = await fetch("/api/login?username=" + userName);
+    // if (resp.status !== 200) {
+    //     console.warn("Got " + resp.status + " instead of 200");
+    //     if (resp.status === 400) {
+    //         $("#invalidFields").removeClass("d-none");
+    //     }
+    //     return;
+    // }
+    //
+    //
+    // const publicKey = await resp.text();
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const publicKey = await resp.text();
-    console.log("Fetched public key!");
-    // If we want to sign data, we need to add a 256 bit hash function as this library only accepts 32 byte messages
-    const sampleText = "Hello! I want to be signed!+++++"; // <-- exactly 32 bytes, just to test
-    const enc = new TextEncoder();
-    const encodedText = enc.encode(sampleText);
+    // console.log("Fetched public key!");
+    const sampleText = "Hello! I want to be signed!";
 
-    const result = ecdsaSign(encodedText, privateKey);
+    const hexStringHash = SHA256(sampleText).toString(enc.Hex);
+    const unit8Hash = hexToUnit8Array(hexStringHash);
+
+    const result = ecdsaSign(unit8Hash, privateKey);
 	const hexSig = Buffer.from(result.signature).toString("hex");
     console.log(hexSig);
 }
