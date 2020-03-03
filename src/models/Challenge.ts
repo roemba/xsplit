@@ -4,7 +4,8 @@ import {User} from "./User";
 
 @Entity({name: "challenge"})
 export class Challenge {
-	@ManyToOne(() => User, user => user.username, {primary: true})
+	@ManyToOne(() => User, user => user.username, {primary: true,
+		onDelete: "NO ACTION"})
 	public user: User;
 
 	@PrimaryColumn()

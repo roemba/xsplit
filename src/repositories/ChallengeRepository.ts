@@ -4,7 +4,6 @@ import winston from 'winston';
 import {User} from '../models/User';
 import {Challenge} from "../models/Challenge";
 import {randomBytes} from "crypto";
-import exp from "constants";
 
 @EntityRepository(Challenge)
 export class ChallengeRepository extends Repository<Challenge>  {
@@ -43,7 +42,9 @@ export class ChallengeRepository extends Repository<Challenge>  {
             }
         });
         console.log(`Deleting ${challenges.length} stale challenges...`);
-        repo.remove(challenges);
+        for (const challenge of challenges) {
+            repo.delete(challenge);
+        }
     }
 
 }

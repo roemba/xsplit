@@ -1,5 +1,4 @@
-import {Column, Entity, OneToMany, PrimaryColumn} from 'typeorm';
-import {Challenge} from "./Challenge";
+import {Column, Entity, PrimaryColumn} from 'typeorm';
 
 @Entity({name: "users"})
 export class User {
@@ -14,7 +13,4 @@ export class User {
 
     @Column({name: "fullName"})
     public fullName: string;
-
-    @OneToMany(() => Challenge, challenges => challenges.user)
-    public challenges: Challenge[]
 }
