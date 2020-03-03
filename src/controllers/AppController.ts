@@ -1,10 +1,11 @@
-import {Get, JsonController} from "routing-controllers";
-import {Container} from "typedi";
-import winston, {Logger} from "winston";
-import {RippleLibService} from "../services/RippleLibService";
-import {GetServerInfoResponse} from "ripple-lib/dist/npm/common/serverinfo";
+import {Controller, Param, Get, Render, Authorized, CurrentUser} from "routing-controllers";
+import { Container } from "typedi";
+import winston, { Logger } from "winston";
+import { RippleLibService } from "../services/RippleLibService";
+import { User } from '../models/User';
+import { GetServerInfoResponse } from "ripple-lib/dist/npm/common/serverinfo";
 
-@JsonController("/api")
+@Controller("/api")
 export class AppController {
    log: Logger;
    constructor() {
@@ -15,8 +16,22 @@ export class AppController {
       });
   }
 
-  @Get("")
-  getAll(): Promise<GetServerInfoResponse> {
-     return Container.get(RippleLibService).getServerInfo();
-  }
+   @Get("")
+   getAll(): Promise<GetServerInfoResponse> {
+      return Container.get(RippleLibService).getServerInfo();
+   }
+
+   @Get("/web/:page")
+   @Render("index.ejs")
+   getEJSView(@Param("page") page: string): unknown {
+      this.log.info("Go to page " + page)
+      return {page};
+   }
+
+   @Authorized()
+   @Get("/me")
+   getMe(@CurrentUser({ required: true }) me: User): User {
+      return me;
+   }
+
 }
