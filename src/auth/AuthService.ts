@@ -1,21 +1,16 @@
 import * as express from 'express';
-import { Service } from 'typedi';
-import { OrmRepository } from 'typeorm-typedi-extensions';
+import {Container, Service} from 'typedi';
 
-import { User } from '../models/User';
-import { UserRepository } from '../repositories/UserRepository';
-import winston, { Logger } from "winston";
-
+import {User} from '../models/User';
+import winston, {Logger} from "winston";
 import {ecdsaVerify} from 'secp256k1';
-import { SHA256, enc} from "crypto-js";
-import { CryptoUtils} from "../util/CryptoUtils";
+import {CryptoUtils} from "../util/CryptoUtils";
+import {UserService} from "../services/UserService";
 
 @Service()
 export class AuthService {
     log: Logger;
-    constructor(
-        @OrmRepository() private userRepository: UserRepository
-    ) { 
+    constructor() {
         this.log = winston.createLogger({
             transports: [
                 new winston.transports.Console()
@@ -41,20 +36,19 @@ export class AuthService {
     }
 
     public async validateUser(request: Request, username: string, signatureStr: string): Promise<User> {
-        const user = await this.userRepository.findOne({
-            where: {
-                username,
-            },
-        });
+        const user = await Container.get(UserService).findOne(username);
 
-        const messageStr = await request.text();
-        const messageHash = CryptoUtils.hexToUint8Array(SHA256(messageStr).toString(enc.Hex));
+        if (user == null || user.challenge == null) {
+            return undefined;
+        }
+
+        const challenge = CryptoUtils.hexToUint8Array(user.challenge);
 
         const signature = CryptoUtils.hexToUint8Array(signatureStr);
         const pubKey = CryptoUtils.hexToUint8Array(user.publickey);
 
         try {
-            if (ecdsaVerify(signature, messageHash, pubKey)) {
+            if (ecdsaVerify(signature, challenge, pubKey)) {
                 return user;
             }
         } catch (e) {

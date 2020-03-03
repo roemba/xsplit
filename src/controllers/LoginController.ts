@@ -1,5 +1,5 @@
 import winston, {Logger} from "winston";
-import {Authorized, Controller, Get, Post, QueryParam} from "routing-controllers";
+import {Authorized, Controller, Get, QueryParam} from "routing-controllers";
 import {Container} from "typedi";
 import {UserService} from "../services/UserService";
 import {OrmRepository} from "typeorm-typedi-extensions";
@@ -32,19 +32,15 @@ export class LoginController {
 
     @Get("/challenge")
     async getChallenge(@QueryParam("username") userName: string): Promise<string> {
-        const user = await this.userRepository.findOne({
-            where: {
-                userName,
-            },
-        });
+        const user = await Container.get(UserService).findOne(userName);
 
         user.challenge = randomBytes(32).toString("hex");
-        await this.userRepository.save(user);
+        await Container.get(UserService).update(userName, user);
 
         return user.challenge;
     }
 
-    @Post("/validate")
+    @Get("/validate")
     @Authorized()
     testSignature(): string {
         return "ok!";

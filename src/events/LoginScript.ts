@@ -18,13 +18,13 @@ async function doLoginAction(event: Event): Promise<void> {
     }
 
     console.log("Form submitted!");
-    console.log("Username: " + userName);
 
-    const resp = await fetch("/api/login/challenge?username=" + userName);
+    let resp = await fetch("/api/login/challenge?username=" + userName);
     if (resp.status !== 200) {
-        console.warn("Got " + resp.status + " instead of 200");
         if (resp.status === 400) {
             $("#invalidFields").removeClass("d-none");
+        } else {
+            console.warn("Got " + resp.status + " instead of 200");
         }
         return;
     }
@@ -33,7 +33,23 @@ async function doLoginAction(event: Event): Promise<void> {
 
     const result = ecdsaSign(challenge, privateKey);
 	const hexSig = CryptoUtils.uint8ArrayToHex(result.signature);
-    console.log(hexSig);
+
+    const bearerStr = "Bearer " + window.btoa(userName + ":" + hexSig);
+    resp = await fetch("/api/login/validate", {
+        headers: {
+            'Authorization': bearerStr
+        }
+    });
+    if (resp.status !== 200) {
+        if (resp.status == 401) {
+            $("#invalidFields").removeClass("d-none");
+        }
+        console.warn("Got " + resp.status + " instead of 200");
+    }
+    console.log("Login success!");
+    sessionStorage.setItem("privateKey", privateKeyStr);
+    sessionStorage.setItem("bearer", bearerStr);
+    document.location.href="/"
 }
 
 function onLoginPageLoad(): void {

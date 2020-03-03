@@ -14,6 +14,6 @@ export class User {
     @Column({name: "fullName"})
     public fullName: string;
 
-    @Column({name: "challenge"})
+    @Column({name: "challenge", nullable: true})
     public challenge: string;
 }
