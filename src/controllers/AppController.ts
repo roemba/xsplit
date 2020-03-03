@@ -15,6 +15,7 @@ export class AppController {
             ]
       });
   }
+
    @Get("")
    getAll(): Promise<GetServerInfoResponse> {
       return Container.get(RippleLibService).getServerInfo();
