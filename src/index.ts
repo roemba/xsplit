@@ -53,7 +53,8 @@ setupTypeORM().then(() => {
     app.listen(port, () => {
         logger.info("App started, listening on port " + port);
     });
-}).catch(() => {
+}).catch((e) => {
     logger.error("Database connection failed, exiting application...");
+    logger.error(e);
     process.exit(0);
 });

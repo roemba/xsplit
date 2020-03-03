@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, BeforeInsert, } from 'typeorm';
 import { User } from './User';
 import { Bill } from './Bill';
 
@@ -7,13 +7,13 @@ export class TransactionRequest {
     @PrimaryGeneratedColumn('uuid')
     public id: string;
 
-    @Column("timestamp")
-    public date_created: Date;
+    @Column({ type: "bigint"})
+    public dateCreated: number;
 
     @Column({ type: "bigint"})
-    public total_xrp: number;
+    public totalXrp: number;
 
-    @ManyToOne(() => Bill, bill => bill.transaction_requests)
+    @ManyToOne(() => Bill, bill => bill.transactionRequests)
     public bill: Bill;
 
     @ManyToOne(() => User, user => user.transaction_requests, {
@@ -26,4 +26,9 @@ export class TransactionRequest {
 
     @Column()
     public transaction_hash: string;
+
+    @BeforeInsert()
+    public setDateCreated(): void {
+        this.dateCreated = Date.now();
+    }
 }

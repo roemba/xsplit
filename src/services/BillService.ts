@@ -29,6 +29,13 @@ export class BillService {
         return this.billRepository.find({where: {bill: {creditor:{ username: user.username }}}})
     }
 
+    public async deleteUserBills(user: User): Promise<void> {
+        this.log.info('Delete a bill');
+        const bills = await this.findUserBills(user);
+        await this.billRepository.remove(bills);
+        return;
+    }
+
     public findOne(id: string): Promise<Bill | undefined> {
         this.log.info('Find one user');
         return this.billRepository.findOne({ id });
