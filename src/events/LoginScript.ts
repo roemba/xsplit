@@ -45,8 +45,10 @@ async function doLoginAction(event: Event): Promise<void> {
             $("#invalidFields").removeClass("d-none");
         }
         console.warn("Got " + resp.status + " instead of 200");
+        return
     }
     console.log("Login success!");
+
     sessionStorage.setItem("privateKey", privateKeyStr);
     sessionStorage.setItem("bearer", bearerStr);
     document.location.href="/"
