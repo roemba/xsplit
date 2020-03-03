@@ -24,7 +24,9 @@ export class TransactionRequest {
     @Column({default: false})
     public paid: boolean;
 
-    @Column()
+    @Column({
+        nullable: true
+    })
     public transaction_hash: string;
 
     @BeforeInsert()
