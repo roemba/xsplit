@@ -1,6 +1,5 @@
-import {Controller, Param, Body, Get, Post, Put, Delete, Render, Res, Req, Authorized, CurrentUser} from "routing-controllers";
+import {Controller, Param, Get, Render, Authorized, CurrentUser} from "routing-controllers";
 import { Container } from "typedi";
-import { UserService } from "../services/UserService";
 import winston, { Logger } from "winston";
 import { RippleLibService } from "../services/RippleLibService";
 import { User } from '../models/User';
@@ -16,7 +15,7 @@ export class AppController {
             ]
       });
   }
-   @Get("/api")
+   @Get("")
    getAll(): Promise<GetServerInfoResponse> {
       return Container.get(RippleLibService).getServerInfo();
    }
