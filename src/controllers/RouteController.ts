@@ -1,14 +1,13 @@
 import {Controller, Param, Get, Render} from "routing-controllers";
 
-@Controller("/web") 
+@Controller() 
 export class RouteController {
 
     @Get("/")
     @Render("index.ejs")    
     getEJSHome(): unknown {
         return {page: "home"};
-   }
-
+    }
 
     @Get("/:page")
     @Render("index.ejs")    

@@ -6,7 +6,7 @@
 		Please fill out the form to create an account.
 		<br /><br />
 		
-		<form action="/api/users" method="post">
+		<form id="registerForm">
 			<div class="form-group">
 				<input id="username" name="username" type="text" class="form-control form-control-lg" placeholder="Username*" required/>
 			</div>
@@ -23,7 +23,11 @@
   				<button id="register" type="submit" class="btn btn-secondary btn-lg col-12">Register</button>
 			</div>
 
+			<p id="badRegister" class="d-none text-danger">Registration failed.</p>
+			<p id="goodRegister" class="d-none text-danger">Registered succesfully, click <a href="./login">here</a> to log in.</p>
+
 			<a href="./login" class='text-light'>Already registered?</a>
 		</form>
+		<script src="/events/RegisterScriptBundled.js"></script>
 	</div>
 </div>
