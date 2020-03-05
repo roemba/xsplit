@@ -3,8 +3,7 @@ import {Container, Service} from 'typedi';
 
 import {User} from '../models/User';
 import winston, {Logger} from "winston";
-import {ecdsaVerify} from 'secp256k1';
-import {CryptoUtils} from "../util/CryptoUtils";
+import {verify} from 'ripple-keypairs';
 import {UserService} from "../services/UserService";
 import {ChallengeRepository} from "../repositories/ChallengeRepository";
 
@@ -36,22 +35,17 @@ export class AuthService {
         return undefined;
     }
 
-    public async validateUser(request: Request, username: string, signatureStr: string): Promise<User> {
+    public async validateUser(request: Request, username: string, signature: string): Promise<User> {
         const user = await Container.get(UserService).findOne(username);
 
         if (user == null) {
             return undefined;
         }
 
-        const signature = CryptoUtils.hexToUint8Array(signatureStr);
-        const pubKey = CryptoUtils.hexToUint8Array(user.publickey);
-
         const challenges = await Container.get(ChallengeRepository).getChallenges(user);
         for (const challengeObj of challenges) {
-            const challenge = CryptoUtils.hexToUint8Array(challengeObj.challenge);
-
             try {
-                if (ecdsaVerify(signature, challenge, pubKey)) {
+                if (verify(challengeObj.challenge, signature, user.publickey)) {
                     return user;
                 }
             } catch (e) {

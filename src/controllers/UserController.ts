@@ -4,7 +4,7 @@ import { UserService } from "../services/UserService";
 import { Container } from "typedi";
 import { User } from '../models/User';
 import {Request} from "express";
-import {urlencoded} from "body-parser";
+import {json} from "body-parser";
 
 @Controller("/api/users")
 export class UserController {
@@ -34,7 +34,7 @@ export class UserController {
     }
 
     @Post("")
-    @UseBefore(urlencoded())
+    @UseBefore(json())
     post(@Req() request: Request): Promise<User> {
       const user = new User();
       user.username = request.body.username;
