@@ -2,13 +2,19 @@ import { Column, Entity, PrimaryColumn, OneToMany, ManyToMany } from 'typeorm';
 import { Bill } from './Bill';
 import { TransactionRequest } from './TransactionRequest';
 
-@Entity()
+@Entity({name: "users"})
 export class User {
     @PrimaryColumn()
     public username: string;
 
-    @Column({name: "public_key"})
+    @Column({name: "publickey"})
     public publickey: string;
+
+    @Column({name: "email"})
+    public email: string;
+
+    @Column({name: "fullName"})
+    public fullName: string;
 
     @OneToMany(() => Bill, bill => bill.creditor)
     public owned_bills: Bill[];
