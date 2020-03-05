@@ -31,15 +31,15 @@ export class AppController {
 
     @Authorized()
     @Post("/")
-    addBill(@CurrentUser() user: User, @Body() body: any): Promise<Bill> {
+    addBill(@CurrentUser() user: User, @Body() body: Bill): Promise<Bill> {
         const bill = new Bill();
         bill.creditor = user;
         bill.description = body.description;
         bill.totalXrp = body.totalXrp;
         bill.participants = [];
-        body.participants.forEach((username: string) => {
+        body.participants.forEach((user: User) => {
             const part = new User();
-            part.username = username;
+            part.username = user.username;
             bill.participants.push(part);
         });
         return Container.get(BillService).create(bill);
