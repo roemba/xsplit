@@ -1,16 +1,13 @@
-import {privateKeyVerify, ecdsaSign} from 'secp256k1';
-import {CryptoUtils} from "../util/CryptoUtils"
+import {sign, deriveKeypair} from 'ripple-keypairs';
 
 async function doLoginAction(event: Event): Promise<void> {
     event.preventDefault();
     const userName = $("#userName").val();
-    const privateKeyStr = $("#privateKey").val().toString().trim();
+    const secretStr = $("#secret").val().toString().trim();
 
-    let privateKey = null;
-    //  Assume the user provides the private key in hex with no colons
+    let derivationResult = null;
     try {
-        privateKey = CryptoUtils.hexToUint8Array(privateKeyStr);
-        privateKeyVerify(privateKey)
+        derivationResult = deriveKeypair(secretStr)
     } catch (e) {
         console.error(e);
         $("#parseError").removeClass("d-none");
@@ -29,12 +26,11 @@ async function doLoginAction(event: Event): Promise<void> {
         return;
     }
 
-    const challenge = CryptoUtils.hexToUint8Array(await resp.text());
+    const challenge = await resp.text();
 
-    const result = ecdsaSign(challenge, privateKey);
-	const hexSig = CryptoUtils.uint8ArrayToHex(result.signature);
+    const result = sign(challenge, derivationResult.privateKey);
 
-    const bearerStr = "Bearer " + window.btoa(userName + ":" + hexSig);
+    const bearerStr = "Bearer " + window.btoa(userName + ":" + result);
     resp = await fetch("/api/login/validate", {
         headers: {
             'Authorization': bearerStr
@@ -49,7 +45,7 @@ async function doLoginAction(event: Event): Promise<void> {
     }
     console.log("Login success!");
 
-    sessionStorage.setItem("privateKey", privateKeyStr);
+    sessionStorage.setItem("secret", secretStr);
     sessionStorage.setItem("bearer", bearerStr);
     document.location.href="/"
 }
