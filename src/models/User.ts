@@ -17,11 +17,11 @@ export class User {
     public fullName: string;
 
     @OneToMany(() => Bill, bill => bill.creditor)
-    public owned_bills: Bill[];
+    public ownedBills: Bill[];
 
     @ManyToMany(() => Bill)
-    public participating_in: Bill[];
+    public participatingIn: Bill[];
 
     @OneToMany(() => TransactionRequest, tr => tr.debtor)
-    public transaction_requests: TransactionRequest[];
+    public transactionRequests: TransactionRequest[];
 }

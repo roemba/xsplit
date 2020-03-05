@@ -20,7 +20,7 @@ export class TransactionRequest {
     @ManyToOne(() => Bill, bill => bill.transactionRequests)
     public bill: Bill;
 
-    @ManyToOne(() => User, user => user.transaction_requests, {
+    @ManyToOne(() => User, user => user.transactionRequests, {
         eager: true
     })
     public debtor: User;

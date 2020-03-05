@@ -17,7 +17,7 @@ export class Bill {
     @Column({ type: "bigint"})
     public totalXrp: number;
 
-    @ManyToOne(() => User, user => user.owned_bills, {
+    @ManyToOne(() => User, user => user.ownedBills, {
         eager: true
     })
     public creditor: User;
