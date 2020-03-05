@@ -6,7 +6,7 @@ import Container from "typedi";
 import { BillService } from "../services/BillService";
 
 @JsonController("/api/bills")
-export class AppController {
+export class BillController {
     log: Logger;
     constructor() {
         this.log = winston.createLogger({

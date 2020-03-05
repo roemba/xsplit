@@ -30,6 +30,14 @@ export class TransactionRequestService {
         return this.transactionRepository.find({where: { debtor: { username: user.username }}})
     }
 
+    public async isPaymentUnique(hash: string): Promise<boolean> {
+        if (hash === undefined) {
+            return false;
+        }
+        const res = await this.transactionRepository.find({where: { transactionHash: hash}})
+        return res.length === 0;
+    }
+
     public findOne(id: string): Promise<TransactionRequest | undefined> {
         this.log.info('Find one transaction request');
         return this.transactionRepository.findOne({ id });
