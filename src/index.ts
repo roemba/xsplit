@@ -44,7 +44,7 @@ Container.get(RippleLibService).init().then(() => {
 setupTypeORM().then(() => {
     // creates express app, registers all controller routes and returns express app instance
     const app = createExpressServer({
-        controllers: [__dirname + "/controllers/*.js"], // we specify controllers we want to use, .js because it points to compiles files
+        controllers: [__dirname + "/controllers/*.js"], // we specify controllers we want to use, .js because it points to compiled files
         middlewares: [__dirname + "/middlewares/*.js"],
         defaultErrorHandler: false,
         authorizationChecker: authorizationChecker(),

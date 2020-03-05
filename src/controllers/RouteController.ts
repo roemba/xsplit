@@ -1,6 +1,6 @@
 import {Controller, Param, Get, Render} from "routing-controllers";
 
-@Controller() 
+@Controller("/web") 
 export class RouteController {
 
     @Get("/")
