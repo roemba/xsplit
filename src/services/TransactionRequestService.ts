@@ -5,6 +5,7 @@ import { TransactionRequestRepository } from '../repositories/TransactionRequest
 import { OrmRepository } from 'typeorm-typedi-extensions';
 import { TransactionRequest } from '../models/TransactionRequest';
 import { User } from '../models/User';
+import { FindOneOptions } from 'typeorm';
 
 @Service()
 export class TransactionRequestService {
@@ -38,9 +39,9 @@ export class TransactionRequestService {
         return res.length === 0;
     }
 
-    public findOne(id: string): Promise<TransactionRequest | undefined> {
+    public findOne(id: string, options?: FindOneOptions): Promise<TransactionRequest | undefined> {
         this.log.info('Find one transaction request');
-        return this.transactionRepository.findOne({ id });
+        return this.transactionRepository.findOne({ id }, options);
     }
 
     public async create(transaction: TransactionRequest): Promise<TransactionRequest> {
