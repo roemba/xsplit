@@ -18,7 +18,7 @@ export class ErrorHandlerMiddleware implements ExpressErrorMiddlewareInterface {
         res.status(error.httpCode || 500);
         res.json({
             name: error.name,
-            message: "Something went wrong"
+            message: error.message
         });
         this.log.error(error.message);
     }
