@@ -3,7 +3,6 @@ import path from "path";
 // Import reflect-metadata npm package necessary for class-transformer and routing-controller to function
 import "reflect-metadata";
 import { createExpressServer } from "routing-controllers";
-import winston from "winston";
 import { Container } from "typedi";
 import { setupTypeORM } from "./typeORMLoader";
 import { useContainer } from "typeorm";
@@ -12,31 +11,19 @@ import * as express from 'express';
 import { authorizationChecker } from "./auth/AuthorizationChecker";
 import { currentUserChecker } from "./auth/CurrentUserChecker";
 import {ChallengeRepository} from "./repositories/ChallengeRepository";
+import { LoggerService } from "./services/LoggerService";
 
 // Set up the typeorm and typedi integration
 useContainer(Container);
-
-// Create a basic logger that logs to console
-const logger = winston.createLogger({
-    transports: [
-        new winston.transports.Console({
-            level: 'debug',
-            format: winston.format.combine(
-                winston.format.colorize(),
-                winston.format.simple()
-            )
-        })
-      ]
-});
 
 // Initialise the dotenv environment
 dotenv.config();
 
 // Initialise the ripple-lib service
 Container.get(RippleLibService).init().then(() => {
-    logger.info("Connected to ripple");
+    Container.get(LoggerService).info("Connected to ripple");
 }).catch(() => {
-    logger.error("Connecting to ripple failed");
+    Container.get(LoggerService).error("Connecting to ripple failed");
     process.exit(0);
 });
 
@@ -61,11 +48,11 @@ setupTypeORM().then(() => {
     app.use("/events", express.static(path.join(__dirname, "events")));
 
     app.listen(port, () => {
-        logger.info("App started, listening on port " + port);
+        Container.get(LoggerService).info("App started, listening on port " + port);
     }); 
 }).catch((e) => {
-    setInterval(Container.get(ChallengeRepository).cleanChallenges, 60*1000)
-    logger.error("Database connection failed, exiting application...");
-    logger.error(e);
+    setInterval(Container.get(ChallengeRepository).cleanChallenges, 60*1000);
+    Container.get(LoggerService).error("Database connection failed, exiting application...");
+    Container.get(LoggerService).error(e);
     process.exit(0);
 });
