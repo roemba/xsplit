@@ -1,26 +1,18 @@
 import Container, { Service } from 'typedi';
 import { OrmRepository } from 'typeorm-typedi-extensions';
-import winston, { Logger } from 'winston';
 import { BillRepository } from '../repositories/BillRepository';
 import { Bill } from '../models/Bill';
 import { User } from '../models/User';
 import { TransactionRequestService } from './TransactionRequestService';
 import { TransactionRequest } from '../models/TransactionRequest';
+import { LoggerService } from "../services/LoggerService";
 
 @Service()
 export class BillService {
 
-    log: Logger;
+    log = Container.get(LoggerService);
 
-    constructor(
-        @OrmRepository() private billRepository: BillRepository
-    ) {
-        this.log = winston.createLogger({
-            transports: [
-                new winston.transports.Console()
-              ]
-        });
-    }
+    constructor(@OrmRepository() private billRepository: BillRepository) {}
 
     public find(): Promise<Bill[]> {
         this.log.info('Find all users');

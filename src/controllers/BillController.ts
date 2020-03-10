@@ -1,20 +1,14 @@
+import Container from "typedi";
 import {JsonController, Get, CurrentUser, Authorized, Post, Body, Delete} from "routing-controllers";
-import winston, { Logger } from "winston";
 import { Bill } from "../models/Bill";
 import { User } from "../models/User";
-import Container from "typedi";
 import { BillService } from "../services/BillService";
+import { LoggerService } from "../services/LoggerService";
 
 @JsonController("/api/bills")
 export class BillController {
-    log: Logger;
-    constructor() {
-        this.log = winston.createLogger({
-            transports: [
-                new winston.transports.Console()
-                ]
-        });
-    }
+
+    log = Container.get(LoggerService);
 
     @Authorized()
     @Get("/")

@@ -1,22 +1,14 @@
+import { Container } from "typedi";
 import { Service } from 'typedi';
 import { RippleAPI, FormattedTransactionType } from "ripple-lib";
-
-import winston, { Logger } from 'winston';
 import { GetServerInfoResponse } from 'ripple-lib/dist/npm/common/serverinfo';
+import { LoggerService } from "../services/LoggerService";
 
 @Service()
 export class RippleLibService {
 
-    log: Logger;
+    log = Container.get(LoggerService);
     rippleAPI: RippleAPI;
-
-    constructor() {
-        this.log = winston.createLogger({
-            transports: [
-                new winston.transports.Console()
-              ]
-        });
-    }
 
     public async init(): Promise<void> {
         this.rippleAPI = new RippleAPI({server: process.env.RIPPLE_SERVER});

@@ -1,28 +1,13 @@
-import winston, {Logger} from "winston";
-import {Authorized, BadRequestError, Controller, Get, QueryParam} from "routing-controllers";
 import {Container} from "typedi";
+import {Authorized, BadRequestError, Controller, Get, QueryParam} from "routing-controllers";
 import {UserService} from "../services/UserService";
-import {OrmRepository} from "typeorm-typedi-extensions";
-import {UserRepository} from "../repositories/UserRepository";
 import {ChallengeRepository} from "../repositories/ChallengeRepository";
+import { LoggerService } from "../services/LoggerService";
 
 @Controller("/api/login")
 export class LoginController {
-    log: Logger;
 
-    constructor(@OrmRepository() private userRepository: UserRepository) {
-        this.log = winston.createLogger({
-            transports: [
-                new winston.transports.Console({
-                    level: 'debug',
-                    format: winston.format.combine(
-                        winston.format.colorize(),
-                        winston.format.simple()
-                    )
-                })
-            ]
-        });
-    }
+    log = Container.get(LoggerService);
 
     @Get("/")
     userLogin(@QueryParam("username") userName: string): Promise<string | Array<string>> {

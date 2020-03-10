@@ -1,28 +1,17 @@
+import { Container } from "typedi";
 import { Service } from 'typedi';
 import { OrmRepository } from 'typeorm-typedi-extensions';
-
 import { User } from '../models/User';
 import { UserRepository } from '../repositories/UserRepository';
-import winston, { Logger } from 'winston';
 import {BadRequestError} from "routing-controllers";
+import { LoggerService } from "../services/LoggerService";
 
 @Service()
 export class UserService {
-    log: Logger;
 
-    constructor(@OrmRepository() private userRepository: UserRepository) {
-        this.log = winston.createLogger({
-            transports: [
-                new winston.transports.Console({
-                    level: 'debug',
-                    format: winston.format.combine(
-                        winston.format.colorize(),
-                        winston.format.simple()
-                    )
-                })
-            ]
-        });
-    }
+    log = Container.get(LoggerService);
+
+    constructor(@OrmRepository() private userRepository: UserRepository) {}
 
     public findAll(): Promise<User[]> {
         this.log.info('Find all users');
