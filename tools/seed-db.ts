@@ -24,8 +24,9 @@ async function addUser(username: string, publickey: string, email: string, fullN
     try {
         await Container.get(UserService).create(user);
         logger.info("Added new user to db!");
-    } catch {
-        logger.info("User already exists in db!");
+    } catch(e) {
+        logger.error("Error occurred!");
+        logger.error(e);
     }
 }
 
@@ -63,7 +64,7 @@ async function setupTypeORM(): Promise<void> {
         database: process.env.TYPEORM_DATABASE,
         synchronize: process.env.TYPEORM_SYNCHRONIZE,
         logging: process.env.TYPEORM_LOGGING,
-        entities: [__dirname + "/../models/*.ts"],
+        entities: [__dirname + "/../src/models/*.ts"],
     });
 
     await createConnection(connectionOptions);
