@@ -65,10 +65,10 @@ export class UserController {
          text: 'https://localhost:3000/addfriend/'+username, 
          path: path.resolve(__dirname, "../assets/img/xplit-dark.png")
       }).then((buf: unknown) => {
-         qr = "data:image/png;base64,"+Buffer.from(buf).toString('base64')
+         qr = "data:image/png;base64,"+Buffer.from(buf).toString('base64');
       });
 
-      return {qr: qr}
+      return {qr: qr};
     }
 
 }

@@ -17,38 +17,38 @@ export class RouteController {
    @Get("/")
    @Redirect("/home")
    GetHome2(): unknown {
-      return {page: "home"}
+      return {page: "home"};
    }
 
    @Get("/home")
    @Render("index.ejs")
    GetHome(): unknown {
-      return {page: "home"}
+      return {page: "home"};
    }
 
    @Get("/404")
    @Render("index.ejs")
    Get404(): unknown {
-      return {page: "404"}
+      return {page: "404"};
    }
 
    @Get("/login")
    @Render("index.ejs")
    GetLogin(): unknown {
-      return {page: "login"}
+      return {page: "login"};
    }
 
    @Get("/register")
    @Render("index.ejs")
    GetRegister(): unknown {
-      return {page: "register"}
+      return {page: "register"};
    }
 
    @Get("/account")
    // @Authorized()
    @Render("index.ejs")
    GetAccount(): unknown {
-      return {page: "account"}
+      return {page: "account"};
    }
 
    @Get("/pay")
@@ -56,7 +56,7 @@ export class RouteController {
    @Render("index.ejs")
    GetPay(): unknown {
       const payments = [{receiver: "johndoe", amount: 384, subject: "Lunch at EWI"},{receiver: "Piet", amount: 112, subject: "Coffee"}];
-      return {page: "pay", payments: payments}
+      return {page: "pay", payments: payments};
    }
 
    @Get("/request")
@@ -64,26 +64,26 @@ export class RouteController {
    @Render("index.ejs")
    async GetRequest(): Promise<object> {
       const friends = await Container.get(UserService).findAll();
-      return {page: "request", username: "", friends: friends}
+      return {page: "request", username: "", friends: friends};
    }
 
    @Get("/request/:username")
    // @Authorized()
    @Render("index.ejs")
    GetRequestFromFriend(@Param("username") username: string): unknown {
-      return {page: "request", username: username, friends: ""}
+      return {page: "request", username: username, friends: ""};
    }
 
    @Get("/addfriend")
    @Render("index.ejs")
    GetAddFriend(): unknown {
-      return {page: "addfriend", friend: ""}
+      return {page: "addfriend", friend: ""};
    }
 
    @Get("/addfriend/:username")
    @Render("index.ejs")
    GetAddFriendFromQR(@Param("username") username: string): unknown {
-      return {page: "addfriend", friend: username}
+      return {page: "addfriend", friend: username};
    }
 
    @Get("/friends")
@@ -91,7 +91,7 @@ export class RouteController {
    async GetFriends(): Promise<object> {
       const friends = await Container.get(UserService).findAll();
 
-      return {page: "friends", friends: friends}
+      return {page: "friends", friends: friends};
    }
 
 }

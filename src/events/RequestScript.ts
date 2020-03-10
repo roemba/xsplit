@@ -69,12 +69,12 @@ function onRequestPageLoad(): void {
 
 					if (resp.status !== 200) {
 						console.error(resp.status);
-						return
+						return;
 					}
 
 					console.log("Transaction sent");
 				}
-			})
+			});
 		});
 	});
 }

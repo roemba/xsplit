@@ -5,14 +5,14 @@ async function getUserInfo(): Promise<User> {
 
 	const response = await fetch("/api/users");
 
-	return await response.json()
+	return await response.json();
 }
 
 async function genQR(username: string): Promise<string> {
 
 	const response = await fetch("/api/users/qr/"+username);
 
-	return (await response.json())['qr']
+	return (await response.json())['qr'];
 
 }
 
@@ -23,11 +23,11 @@ getUserInfo().then((data: User) => {
 	$(".email").html(data.email);
 
 	genQR(data.username).then((qr) => {
-		$(".account-qr").attr("src", qr)
+		$(".account-qr").attr("src", qr);
 	}).catch(reason => {
-		console.log(reason.message)
-	})
+		console.log(reason.message);
+	});
 }).catch(reason => { 
-	console.log(reason.message)
+	console.log(reason.message);
 });
 

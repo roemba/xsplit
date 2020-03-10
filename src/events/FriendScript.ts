@@ -4,21 +4,21 @@ async function removeFriend(username: string): Promise<void> {
 	});
 	if (resp.status !== 200) {
 		console.error(resp.status);
-		return
+		return;
 	}
 
-	console.log("User "+username+" deleted")
+	console.log("User "+username+" deleted");
 }
 
 function onFriendPageLoad(): void {
     jQuery(($) => {
         $(".remove-friend").on("click", function(){
 			const username = $(this).attr('data-id');
-			removeFriend(username)
+			removeFriend(username);
         });
         $(".request-friend").on("click", function(){
 			const username = $(this).attr('data-id');
-			document.location.href="/request/"+username
+			document.location.href="/request/"+username;
         });
 
     });
