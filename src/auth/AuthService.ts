@@ -1,23 +1,16 @@
 import * as express from 'express';
 import {Container, Service} from 'typedi';
-
 import {User} from '../models/User';
-import winston, {Logger} from "winston";
 import {verify} from 'ripple-keypairs';
 import {UserService} from "../services/UserService";
 import {ChallengeRepository} from "../repositories/ChallengeRepository";
+import { LoggerService } from "../services/LoggerService";
 import {parse as cookieParse} from "cookie";
 
 @Service()
 export class AuthService {
-    log: Logger;
-    constructor() {
-        this.log = winston.createLogger({
-            transports: [
-                new winston.transports.Console()
-              ]
-        });
-    }
+
+    log = Container.get(LoggerService);
 
     public parseBearerAuthFromRequest(req: express.Request): { username: string; signature: string } {
         const cookieHeader = req.header("Cookie");

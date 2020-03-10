@@ -1,17 +1,14 @@
+import { Container } from "typedi";
 import {EntityRepository, getRepository, Raw, Repository} from 'typeorm';
-import winston from 'winston';
-
 import {User} from '../models/User';
 import {Challenge} from "../models/Challenge";
 import {randomBytes} from "crypto";
+import { LoggerService } from "../services/LoggerService";
 
 @EntityRepository(Challenge)
 export class ChallengeRepository extends Repository<Challenge>  {
-    log = winston.createLogger({
-        transports: [
-            new winston.transports.Console()
-        ]
-    });
+    
+    log = Container.get(LoggerService);
 
     public async createChallenge(user: User): Promise<string> {
         const challenge = new Challenge();

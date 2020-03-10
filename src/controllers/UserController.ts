@@ -1,30 +1,19 @@
-import {Controller, Param, Get, Post, Put, Delete, Req, UseBefore, CurrentUser, Authorized} from "routing-controllers";
-import winston, { Logger } from "winston";
-import { UserService } from "../services/UserService";
+
 import { Container } from "typedi";
+import {Controller, Param, Get, Post, Put, Delete, Req, UseBefore, CurrentUser, Authorized} from "routing-controllers";
+import { UserService } from "../services/UserService";
 import { User } from '../models/User';
 import {Request} from "express";
 import {json} from "body-parser";
+import { LoggerService } from "../services/LoggerService";
 import 'babel-polyfill';
 import * as brandedQRCode from 'branded-qr-code';
 import path from "path";
 
 @Controller("/api/users")
 export class UserController {
-   log: Logger;
-   constructor() {
-    this.log = winston.createLogger({
-        transports: [
-            new winston.transports.Console({
-                level: 'debug',
-                format: winston.format.combine(
-                    winston.format.colorize(),
-                    winston.format.simple()
-                )
-            })
-        ]
-    });
-}
+  
+  log = Container.get(LoggerService);
 
     @Get("")
     @Authorized()

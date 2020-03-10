@@ -3,7 +3,6 @@ import path from "path";
 // Import reflect-metadata npm package necessary for class-transformer and routing-controller to function
 import "reflect-metadata";
 import { createExpressServer } from "routing-controllers";
-import winston from "winston";
 import { Container } from "typedi";
 import { setupTypeORM } from "./typeORMLoader";
 import { useContainer } from "typeorm";
@@ -12,25 +11,15 @@ import * as express from 'express';
 import { authorizationChecker } from "./auth/AuthorizationChecker";
 import { currentUserChecker } from "./auth/CurrentUserChecker";
 import {ChallengeRepository} from "./repositories/ChallengeRepository";
+import { LoggerService } from "./services/LoggerService";
 
 // Set up the typeorm and typedi integration
 useContainer(Container);
 
-// Create a basic logger that logs to console
-const logger = winston.createLogger({
-    transports: [
-        new winston.transports.Console({
-            level: 'debug',
-            format: winston.format.combine(
-                winston.format.colorize(),
-                winston.format.simple()
-            )
-        })
-      ]
-});
-
 // Initialise the dotenv environment
 dotenv.config();
+
+const logger = Container.get(LoggerService);
 
 // Initialise the ripple-lib service
 Container.get(RippleLibService).init().then(() => {

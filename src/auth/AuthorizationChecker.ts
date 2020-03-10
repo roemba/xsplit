@@ -1,15 +1,11 @@
 import { Action } from 'routing-controllers';
 import { Container } from 'typedi';
-
-import winston from 'winston';
 import { AuthService } from './AuthService';
+import { LoggerService } from "../services/LoggerService";
 
 export function authorizationChecker(): (action: Action, roles: string[]) => Promise<boolean> | boolean {
-    const log = winston.createLogger({
-        transports: [
-            new winston.transports.Console()
-          ]
-    });
+    
+    const log = Container.get(LoggerService);
     const authService = Container.get(AuthService);
 
     return async function innerAuthorizationChecker(action: Action /* , roles: string[] */): Promise<boolean> {
