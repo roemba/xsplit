@@ -23,6 +23,16 @@ export class TransactionRequestService {
         return this.transactionRepository.find({where: { debtor: { username: user.username }}});
     }
 
+    public async setPaid(requester: User, id: string): Promise<TransactionRequest> {
+        const tr = await this.transactionRepository.findOne(id, {relations: ["bill"]});
+        if (tr.bill.creditor.username === requester.username) {
+            await this.transactionRepository.update(tr.id, {paid: true});
+            return this.transactionRepository.findOne(id);
+        } else {
+            return undefined;
+        }
+    }
+
     public async isPaymentUnique(hash: string): Promise<boolean> {
         if (hash === undefined) {
             return false;
