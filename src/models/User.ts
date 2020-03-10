@@ -1,4 +1,6 @@
-import {Column, Entity, PrimaryColumn} from 'typeorm';
+import { Column, Entity, PrimaryColumn, OneToMany, ManyToMany } from 'typeorm';
+import { Bill } from './Bill';
+import { TransactionRequest } from './TransactionRequest';
 
 @Entity({name: "users"})
 export class User {
@@ -13,4 +15,13 @@ export class User {
 
     @Column({name: "fullName"})
     public fullName: string;
+
+    @OneToMany(() => Bill, bill => bill.creditor)
+    public ownedBills: Bill[];
+
+    @ManyToMany(() => Bill)
+    public participatingIn: Bill[];
+
+    @OneToMany(() => TransactionRequest, tr => tr.debtor)
+    public transactionRequests: TransactionRequest[];
 }

@@ -1,5 +1,5 @@
 import { Service } from 'typedi';
-import { RippleAPI } from "ripple-lib";
+import { RippleAPI, FormattedTransactionType } from "ripple-lib";
 
 import winston, { Logger } from 'winston';
 import { GetServerInfoResponse } from 'ripple-lib/dist/npm/common/serverinfo';
@@ -26,5 +26,9 @@ export class RippleLibService {
     public getServerInfo(): Promise<GetServerInfoResponse> {
         this.log.info('Get ripple server info');
         return this.rippleAPI.getServerInfo();
+    }
+
+    public getPayment(hash: string): Promise<FormattedTransactionType> {
+        return this.rippleAPI.getTransaction(hash);
     }
 }
