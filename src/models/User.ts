@@ -10,11 +10,11 @@ export class User {
     @Column({name: "publickey"})
     public publickey: string;
 
-    @Column({name: "email"})
-    public email: string;
+    @Column({name: "email", nullable: true})
+    public email: string | undefined;
 
     @Column({name: "fullName", nullable: true})
-    public fullName: string;
+    public fullName: string | undefined;
 
     @OneToMany(() => Bill, bill => bill.creditor)
     public ownedBills: Bill[];
