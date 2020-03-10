@@ -3,7 +3,7 @@ import {User} from "../models/User";
 
 async function getUserInfo(): Promise<User> {
 
-	const response = await fetch("/api/users/me");
+	const response = await fetch("/api/users");
 
 	return await response.json()
 }
