@@ -5,7 +5,7 @@ import { LoggerService } from "../services/LoggerService";
 
 export function authorizationChecker(): (action: Action, roles: string[]) => Promise<boolean> | boolean {
     
-    const log = Container.get(LoggerService)
+    const log = Container.get(LoggerService);
     const authService = Container.get(AuthService);
 
     return async function innerAuthorizationChecker(action: Action /* , roles: string[] */): Promise<boolean> {
