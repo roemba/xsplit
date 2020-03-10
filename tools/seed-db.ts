@@ -1,8 +1,8 @@
 import dotenv from "dotenv";
 import winston from "winston";
 import { Container } from "typedi";
-import { User } from "../models/User";
-import { UserService } from "../services/UserService";
+import { User } from "../src/models/User";
+import { UserService } from "../src/services/UserService";
 import { getConnectionOptions, createConnection, useContainer } from "typeorm";
 
 
@@ -21,11 +21,12 @@ async function addUser(username: string, publickey: string, email: string, fullN
     user.publickey = publickey;
     user.email = email;
     user.fullName = fullName;
-    Container.get(UserService).create(user).then(() => {
+    try {
+        await Container.get(UserService).create(user);
         logger.info("Added new user to db!");
-    }).catch(() => {
+    } catch {
         logger.info("User already exists in db!");
-    });
+    }
 }
 
 async function seedDB(): Promise<void> {
@@ -43,11 +44,11 @@ async function seedDB(): Promise<void> {
             "email": "bob@xsplit.com",
             "name": "Bob"
         }
-    }
+    };
 
     // add test users to db
-    addUser(users.alice.username, users.alice.publickey, users.alice.email, users.alice.name);
-    addUser(users.bob.username, users.bob.publickey, users.bob.email, users.bob.name);
+    await addUser(users.alice.username, users.alice.publickey, users.alice.email, users.alice.name);
+    await addUser(users.bob.username, users.bob.publickey, users.bob.email, users.bob.name);
 }
 
 async function setupTypeORM(): Promise<void> {
