@@ -19,11 +19,13 @@ useContainer(Container);
 // Initialise the dotenv environment
 dotenv.config();
 
+const logger = Container.get(LoggerService);
+
 // Initialise the ripple-lib service
 Container.get(RippleLibService).init().then(() => {
-    Container.get(LoggerService).info("Connected to ripple");
+    logger.info("Connected to ripple");
 }).catch(() => {
-    Container.get(LoggerService).error("Connecting to ripple failed");
+    logger.error("Connecting to ripple failed");
     process.exit(0);
 });
 
@@ -48,11 +50,11 @@ setupTypeORM().then(() => {
     app.use("/events", express.static(path.join(__dirname, "events")));
 
     app.listen(port, () => {
-        Container.get(LoggerService).info("App started, listening on port " + port);
+        logger.info("App started, listening on port " + port);
     }); 
 }).catch((e) => {
     setInterval(Container.get(ChallengeRepository).cleanChallenges, 60*1000);
-    Container.get(LoggerService).error("Database connection failed, exiting application...");
-    Container.get(LoggerService).error(e);
+    logger.error("Database connection failed, exiting application...");
+    logger.error(e);
     process.exit(0);
 });
