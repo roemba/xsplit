@@ -28,14 +28,14 @@ export class TransactionRequestService {
     }
 
     public findRequestsToUser(user: User): Promise<TransactionRequest[]> {
-        return this.transactionRepository.find({where: { debtor: { username: user.username }}})
+        return this.transactionRepository.find({where: { debtor: { username: user.username }}});
     }
 
     public async isPaymentUnique(hash: string): Promise<boolean> {
         if (hash === undefined) {
             return false;
         }
-        const res = await this.transactionRepository.find({where: { transactionHash: hash}})
+        const res = await this.transactionRepository.find({where: { transactionHash: hash}});
         return res.length === 0;
     }
 

@@ -9,7 +9,7 @@ async function doRegisterAction(e: Event): Promise<void> {
 
 	let derivationResult = null;
 	try {
-		derivationResult = deriveKeypair(secretStr)
+		derivationResult = deriveKeypair(secretStr);
 	} catch (e) {
 		console.error(e);
 		$("#parseError").removeClass("d-none");
@@ -30,7 +30,7 @@ async function doRegisterAction(e: Event): Promise<void> {
 	});
 	if (resp.status !== 200) {
 		console.error(resp.status);
-		return
+		return;
 	}
 	console.log("Registration complete!");
 	$("#registerForm").hide();
@@ -39,7 +39,7 @@ async function doRegisterAction(e: Event): Promise<void> {
 	// Wait 5 seconds
 	await new Promise(r => setTimeout(r, 5000));
 
-	document.location.href="/login"
+	document.location.href="/login";
 }
 
 function onRegisterPageLoad(): void {

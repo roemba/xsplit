@@ -21,7 +21,7 @@ export class UserRepository extends Repository<User>  {
             .getOne();
 
         if (user == null) {
-            throw new BadRequestError("Cannot find user with username!")
+            throw new BadRequestError("Cannot find user with username!");
         }
 
         return user.publickey;

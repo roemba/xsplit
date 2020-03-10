@@ -33,7 +33,7 @@ export class UserService {
     public async getPublicKey(username: string): Promise<string> {
         username = username.trim();
         if(username.length === 0) {
-            throw new BadRequestError("Empty username!")
+            throw new BadRequestError("Empty username!");
         }
 
         return this.userRepository.getPublicKey(username);
