@@ -1,6 +1,5 @@
 import { Service } from 'typedi';
 import { OrmRepository } from 'typeorm-typedi-extensions';
-
 import { User } from '../models/User';
 import { UserRepository } from '../repositories/UserRepository';
 import winston, { Logger } from 'winston';
@@ -22,6 +21,10 @@ export class UserService {
                 })
             ]
         });
+    }
+
+    public findMe(user: User): Promise<User[]> {
+        return this.userRepository.find({where: {username: user.username }})
     }
 
     public findAll(): Promise<User[]> {

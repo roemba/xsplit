@@ -45,3 +45,33 @@ input,textarea,.btn {
 .avatar {
   border-radius: 50%;
 }
+select {
+  border-radius: 0px !important;
+  -webkit-appearance: none;
+      -webkit-border-radius: 0px;
+  -moz-appearance: none;
+      background-position: 100% 50%;
+      background-repeat: no-repeat;
+}
+select.color {
+  border-radius: 0px !important;
+  -webkit-appearance: none;
+      -webkit-border-radius: 0px;
+  color: #000;
+  text-indent: 100%;
+}
+.amount-sign {
+  background-color: transparent;
+  color: #FFF;
+  border: 1px solid rgba(0,0,0,.125);
+}
+.icon-remove {
+  background-image: url("../img/remove.svg");
+  background-size: 50px;
+  background-repeat: no-repeat;
+}
+.icon-request {
+  background-image: url("../img/request.svg");
+  background-size: 50px;
+  background-repeat: no-repeat;
+}

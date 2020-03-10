@@ -1,10 +1,13 @@
-import {Controller, Param, Get, Post, Put, Delete, Req, UseBefore} from "routing-controllers";
+import {Controller, Param, Get, Post, Put, Delete, Req, UseBefore, CurrentUser, Authorized} from "routing-controllers";
 import winston, { Logger } from "winston";
 import { UserService } from "../services/UserService";
 import { Container } from "typedi";
 import { User } from '../models/User';
 import {Request} from "express";
 import {json} from "body-parser";
+import 'babel-polyfill';
+import * as brandedQRCode from 'branded-qr-code';
+import path from "path";
 
 @Controller("/api/users")
 export class UserController {
@@ -28,6 +31,22 @@ export class UserController {
          return Container.get(UserService).findAll();
     } 
 
+    @Get("/me")
+    @Authorized()
+    getMe(@CurrentUser() user: User): Promise<User[] | undefined> {
+        return Container.get(UserService).findMe(user);
+     }
+
+
+    // getMe(@CurrentUser() me: User): User {
+    //   return Container.get(UserService).currentUserChecker();
+      
+    // }
+
+    // getMe(@CurrentUser() user: User): Promise<User> {
+    //      return Container.get(UserService).findOne(user.username);
+    //  }
+
     @Get("/:id")
     getOne(@Param("id") id: string): Promise<User | undefined> {
       return Container.get(UserService).findOne(id);
@@ -39,7 +58,6 @@ export class UserController {
       const user = new User();
       user.username = request.body.username;
       user.email = request.body.email;
-      user.fullName = request.body.fullName;
       user.publickey = request.body.publickey;
       return Container.get(UserService).create(user);
     }
@@ -53,5 +71,19 @@ export class UserController {
     remove(@Param("id") id: string): string {
       return "Deleting user " + id;
     } 
+
+    @Get("/qr/:username")
+    async genQR(@Param("username") username: string): Promise<any> {
+      let qr
+
+      await brandedQRCode.generate({
+         text: 'https://localhost:3000/addfriend/'+username, 
+         path: path.resolve(__dirname, "../assets/img/xplit-dark.png")
+      }).then((buf: unknown) => {
+         qr = "data:image/png;base64,"+Buffer.from(buf).toString('base64')
+      })
+
+      return {qr: qr}
+    }
 
 }
