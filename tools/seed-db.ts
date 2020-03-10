@@ -1,16 +1,12 @@
 import dotenv from "dotenv";
-import winston from "winston";
 import { Container } from "typedi";
 import { User } from "../src/models/User";
 import { UserService } from "../src/services/UserService";
+import { LoggerService } from "../src/services/LoggerService";
 import { getConnectionOptions, createConnection, useContainer } from "typeorm";
 
 
-const logger = winston.createLogger({
-    transports: [
-        new winston.transports.Console()
-      ]
-});
+const logger = Container.get(LoggerService);
 
 useContainer(Container);
 dotenv.config();
@@ -25,8 +21,12 @@ async function addUser(username: string, publickey: string, email: string, fullN
         await Container.get(UserService).create(user);
         logger.info("Added new user to db!");
     } catch(e) {
-        logger.error("Error occurred!");
-        logger.error(e);
+        if (e.name == "BadRequestError" && e.message.includes("already exists a user")) {
+            logger.info("User already exists in the db!")
+        } else {
+            logger.error("Error occurred!");
+            logger.error(e);
+        }
     }
 }
 
