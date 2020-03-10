@@ -6,6 +6,7 @@ import winston, {Logger} from "winston";
 import {verify} from 'ripple-keypairs';
 import {UserService} from "../services/UserService";
 import {ChallengeRepository} from "../repositories/ChallengeRepository";
+import {parse as cookieParse} from "cookie";
 
 @Service()
 export class AuthService {
@@ -19,15 +20,19 @@ export class AuthService {
     }
 
     public parseBearerAuthFromRequest(req: express.Request): { username: string; signature: string } {
-        const authorization = req.header('authorization');
+        const cookieHeader = req.header("Cookie");
 
-        if (authorization && authorization.split(' ')[0] === 'Bearer') {
-            this.log.info('Credentials provided by the client');
-            const decodedBase64 = Buffer.from(authorization.split(' ')[1], 'base64').toString('ascii');
-            const username = decodedBase64.split(':')[0];
-            const signature = decodedBase64.split(':')[1];
-            if (username && signature) {
-                return { username, signature };
+        if (cookieHeader) {
+            const parsedCookie = cookieParse(cookieHeader);
+            if (Object.prototype.hasOwnProperty.call(parsedCookie, "bearer")) {
+                const bearer = parsedCookie['bearer'];
+                this.log.info('Credentials provided by the client');
+                const decodedBase64 = Buffer.from(bearer, 'base64').toString('ascii');
+                const username = decodedBase64.split(':')[0];
+                const signature = decodedBase64.split(':')[1];
+                if (username && signature) {
+                    return { username, signature };
+                }
             }
         }
 
