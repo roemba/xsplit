@@ -7,7 +7,7 @@ function onGenericPageLoad(): void {
 	jQuery(($) => {
 		$("#logOutButton").on("click", logOut);
 
-		if (sessionStorage.getItem("bearer")) {
+		if (sessionStorage.getItem("secret")) {
 			$(".not-logged-in").each((index, element) => {
 				$(element).hide()
 			});
