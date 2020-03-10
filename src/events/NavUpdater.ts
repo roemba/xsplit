@@ -1,6 +1,7 @@
 function logOut(): void {
 	sessionStorage.clear();
-	location.reload()
+	document.cookie = 'bearer=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+	location.reload();
 }
 
 function onGenericPageLoad(): void {
@@ -9,20 +10,20 @@ function onGenericPageLoad(): void {
 
 		if (sessionStorage.getItem("secret")) {
 			$(".not-logged-in").each((index, element) => {
-				$(element).hide()
+				$(element).hide();
 			});
 
 			$(".logged-in").each((index, element) => {
-				$(element).show()
-			})
+				$(element).show();
+			});
 		} else {
 			$(".not-logged-in").each((index, element) => {
-				$(element).show()
+				$(element).show();
 			});
 
 			$(".logged-in").each((index, element) => {
-				$(element).hide()
-			})
+				$(element).hide();
+			});
 		}
 	});
 }

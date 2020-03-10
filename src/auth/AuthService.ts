@@ -51,7 +51,7 @@ export class AuthService {
             }
         }
 
-        return undefined
+        return undefined;
     }
 
 }

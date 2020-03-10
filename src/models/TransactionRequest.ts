@@ -44,7 +44,7 @@ export class TransactionRequest {
         }
 
         // Get the bill that corresponds to this payment, the bills is not eagerly loaded so this line ensures that the bill field is loaded
-        const bill = (await Container.get(TransactionRequestService).findOne(this.id, {relations: ["bill"]})).bill
+        const bill = (await Container.get(TransactionRequestService).findOne(this.id, {relations: ["bill"]})).bill;
 
         const payment = await Container.get(RippleLibService).getPayment(this.transactionHash);
         const balanceChanges = payment.outcome.balanceChanges;

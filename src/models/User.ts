@@ -13,7 +13,7 @@ export class User {
     @Column({name: "email"})
     public email: string;
 
-    @Column({name: "fullName"})
+    @Column({name: "fullName", nullable: true})
     public fullName: string;
 
     @OneToMany(() => Bill, bill => bill.creditor)

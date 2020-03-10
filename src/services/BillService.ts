@@ -20,7 +20,7 @@ export class BillService {
     }
 
     public findUserBills(user: User): Promise<Bill[]> {
-        return this.billRepository.find({where: {bill: {creditor:{ username: user.username }}}})
+        return this.billRepository.find({where: {bill: {creditor:{ username: user.username }}}});
     }
 
     public async deleteUserBills(user: User): Promise<void> {

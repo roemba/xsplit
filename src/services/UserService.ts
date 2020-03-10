@@ -13,6 +13,10 @@ export class UserService {
 
     constructor(@OrmRepository() private userRepository: UserRepository) {}
 
+    public findMe(user: User): Promise<User> {
+        return this.userRepository.findOne({where: {username: user.username }});
+    }
+
     public findAll(): Promise<User[]> {
         this.log.info('Find all users');
         
@@ -22,7 +26,7 @@ export class UserService {
     public async getPublicKey(username: string): Promise<string> {
         username = username.trim();
         if(username.length === 0) {
-            throw new BadRequestError("Empty username!")
+            throw new BadRequestError("Empty username!");
         }
 
         return this.userRepository.getPublicKey(username);

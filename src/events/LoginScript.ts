@@ -7,7 +7,7 @@ async function doLoginAction(event: Event): Promise<void> {
 
     let derivationResult = null;
     try {
-        derivationResult = deriveKeypair(secretStr)
+        derivationResult = deriveKeypair(secretStr);
     } catch (e) {
         console.error(e);
         $("#parseError").removeClass("d-none");
@@ -39,12 +39,12 @@ async function doLoginAction(event: Event): Promise<void> {
             $("#invalidFields").removeClass("d-none");
         }
         console.warn("Got " + resp.status + " instead of 200");
-        return
+        return;
     }
     console.log("Login success!");
 
     sessionStorage.setItem("secret", secretStr);
-    document.location.href="/"
+    document.location.href="/";
 }
 
 function onLoginPageLoad(): void {
