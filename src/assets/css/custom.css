@@ -67,11 +67,15 @@ select.color {
 }
 .icon-remove {
   background-image: url("../img/remove.svg");
-  background-size: 50px;
+  background-size: 25px;
   background-repeat: no-repeat;
+  width: 25px;
+  height: 25px;
 }
 .icon-request {
   background-image: url("../img/request.svg");
-  background-size: 50px;
+  background-size: 25px;
   background-repeat: no-repeat;
+  width: 25px;
+  height: 25px;
 }

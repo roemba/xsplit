@@ -19,7 +19,9 @@
 				<tr>
 					<td><%= friend.username %></td>
 					<td><%= friend.publickey %></td>
-					<td><div class='remove-friend icon-remove' data-id='<%= friend.username %>'></div>&nbsp;<div class='request-friend icon-request' data-id='<%= friend.username %>'></div></td>
+					<td><div class='remove-friend icon-remove d-inline-block' data-id='<%= friend.username %>'>&nbsp;</div>
+						<div class='request-friend icon-request d-inline-block' data-id='<%= friend.username %>'>&nbsp;</div>
+					</td>
 				</tr>
 			<% }) %>
 				<tr>

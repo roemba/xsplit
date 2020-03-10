@@ -2,11 +2,7 @@ import {deriveAddress} from 'ripple-keypairs';
 
 async function getUserInfo(): Promise<any> {
 
-	const response = await fetch("/api/users/me", {
-        headers: {
-            'Authorization': sessionStorage.getItem("bearer")
-        }
-    });
+	const response = await fetch("/api/users/me");
 
 	return await response.json()
 }

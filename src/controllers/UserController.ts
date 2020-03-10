@@ -35,17 +35,7 @@ export class UserController {
     @Authorized()
     getMe(@CurrentUser() user: User): Promise<User[] | undefined> {
         return Container.get(UserService).findMe(user);
-     }
-
-
-    // getMe(@CurrentUser() me: User): User {
-    //   return Container.get(UserService).currentUserChecker();
-      
-    // }
-
-    // getMe(@CurrentUser() user: User): Promise<User> {
-    //      return Container.get(UserService).findOne(user.username);
-    //  }
+    }
 
     @Get("/:id")
     getOne(@Param("id") id: string): Promise<User | undefined> {
