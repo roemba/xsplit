@@ -37,8 +37,4 @@ export class LoggerService {
     public debug(message: string, ...meta: any[]): void {
         this.logger.debug(message, ...meta);
     }
-
-    public log(message: string, ...meta: any[]): void {
-        this.logger.info(message, ...meta);
-    }
 }
