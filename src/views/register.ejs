@@ -12,10 +12,7 @@
 			</div>
 			<div class="form-group">
 				<p>We require your secret key to generate a public key that is send to our servers. Your secret will never be sent to our servers.</p>
-				<input id="secret" name="secret" type="password" class="form-control form-control-lg" placeholder="Secret*" required/>
-			</div>
-			<div class="form-group" >
-  				<input id="fullName" name="fullName" type="text" class="form-control form-control-lg" placeholder="Full Name*" />
+ 				<input id="secret" name="secret" type="password" class="form-control form-control-lg" placeholder="Secret*" required/>
 			</div>
 			<div class="form-group">
   				<input id="email" name="email" type="email" class="form-control form-control-lg" placeholder="Email*" />
@@ -23,13 +20,12 @@
 			<div class="form-group">
   				<button id="register" type="submit" class="btn btn-secondary btn-lg col-12">Register</button>
 			</div>
-		
+
 			<p id="parseError" class="d-none text-danger">Cannot parse secret into public key. Please check the format!</p>
 
 			<a href="./login" class='text-light'>Already registered?</a>
 		</form>
 		<p id="success" class="d-none text-success">Registration complete! Redirecting to login in 5 seconds...</p>
-
 	</div>
 	<script src="/events/RegisterScriptBundled.js"></script>
 </div>

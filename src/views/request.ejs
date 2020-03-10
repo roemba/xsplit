@@ -1,82 +1,82 @@
 <div class='row'>
 	<div class="col-12 col-lg-6 offset-lg-3 text-center text-light">
 
-		<h1>Request Payment</h1>
-		Please select friends and amount to split.
+		<h1>Request Payment <% if (username) { %> from <%= username %> <% } %></h1>
+		<% if (!username) { %>
+			Please select friends and amount to split.
+		<% }else{ %>
+			Please give amount to request from <%= username %>.
+		<% } %>
 		<br /><br />
-		
-		<form class='text-left'>
-			<div class="form-group row align-top">
-				<div class="col-5">
-					Select Friends
-				</div>
-				<div class="col-7">
-					<div class='row'>
-						<div class='col-8'>
-							Friend 1
-						</div>
-						<div class='col-4'>
-							<input type='text' class='form-control form-control-sm rounded-0' />
-						</div>
-					</div>
-					<div class='row'>
-						<div class='col-8'>
-							Friend 2
-						</div>
-						<div class='col-4'>
-							<input type='text' class='form-control form-control-sm rounded-0' />
-						</div>
-					</div>
-					<div class='row'>
-						<div class='col-8'>
-							Friend 3
-						</div>
-						<div class='col-4'>
-							<input type='text' class='form-control form-control-sm rounded-0' />
-						</div>
-					</div>
-					<div class='row'>
-						<div class='col-8'>
-							Friend 4
-						</div>
-						<div class='col-4'>
-							<input type='text' class='form-control form-control-sm rounded-0' />
-						</div>
-					</div>
-				</div>
-			</div>
 
-			<div class="form-group row align-top">
-				<div class="col-5">
-					Include myself
-				</div>
-				<div class="col-7">
-					<input type="checkbox" class="form-control" id="meCheckbox" checked>
-				</div>
-			</div>
-
-			<div class="form-group row align-top">
-				<div class="col-5">
-					Total Amount
-				</div>
-				<div class="col-7">
-					<div class="input-group mb-3" id="amountRow">
-		  				<div class="input-group-prepend">
-		    				<span class="input-group-text rounded-0">&euro;</span>
-		  				</div>
-		  				<input type="text" class="form-control form-control-lg" id="amount" aria-label="Amount" placeholder="Amount">
-					</div>
-				</div>
-			</div>
-
-			<div class='form-group'>
-				The settlement of &euro;x in total is split over y persons. <br />
-				Every person should pay &euro;z to you.
-			</div>
-
+		<form class='text-left' style="padding: 0px;">
+			
 			<div class="form-group">
-  				<button type="submit" class="btn btn-secondary btn-lg col-12">Send</button>
-			</div>
+
+				<div class='row mb-0'>
+					<div class='col-12'>
+						<input type="text" class="form-control border-0 mb-3" id="subject" aria-label="Subject" placeholder="Subject">
+					</div>
+				</div>
+
+				<% if (username) { %>
+				<div class="row mb-0">
+					<div class="col-12">
+						<div class="input-group mb-3" id="amountRow">
+			  				<div class="input-group-prepend">
+			    				<span class="input-group-text rounded-0 border-0">&euro;</span>
+			  				</div>
+			  				<input type="text" class="form-control border-0" id="amount" aria-label="Amount" placeholder="Amount">
+						</div>
+					</div>
+				</div>
+				<% } %>
+
+				<% if (!username) { %>
+				<div class="row mb-0">
+					<div class="col-12 col-lg-6">
+						<div class="input-group mb-3" id="amountRow">
+			  				<div class="input-group-prepend">
+			    				<span class="input-group-text rounded-0 border-0">&euro;</span>
+			  				</div>
+			  				<input type="text" class="form-control border-0" id="amount" aria-label="Amount" placeholder="Amount">
+						</div>
+					</div>
+					<div class="col-12 col-lg-6">
+						<div class='friend-rows mb-3'>
+							<select class="form-group form-control selectpicker border-0" title="No friends selected" multiple>
+								<option value="">Me</option>
+								<option data-divider="true"></option>
+								<% friends.forEach(friend => { %>
+									<option value="<%= friend.username %>"><%= friend.username %></option>
+								<% }) %>
+							</select>
+						</div>
+					</div>
+				</div>
+
+				<% } else { %>
+					<input type='hidden' class='request-id' value='<%= username %>' />
+				<% } %>
+
+				<% if (!username) { %>
+					<div class='form-group text-center summary d-none mb-3 mt-0'>
+						The amount of &euro;<span class='nAmount'></span> is split by <span class='nFriends'></span> friend(s). <br />
+						Every person is &euro;<span class='amountFriend'></span> in debt to you.
+					</div>
+				<% } %>
+
+			<div class='row mb-0'>
+				<div class='col-12'>
+  					<button type="submit" class="btn btn-secondary col-12 mt-0 submit-request" disabled>Send</button>
+  				</div>
+  			</div>
+
 		</form>
 	</div>
+
+	<div class='col-12 text-center mt-3'>
+		<a href="./history/requests" class="text-muted">Click here</a> for your unsettled requests.
+	</div>
+	<script src="/events/RequestScriptBundled.js"></script>
 </div>
