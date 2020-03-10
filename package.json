@@ -29,6 +29,7 @@
   },
   "homepage": "https://github.com/roemba/xsplit#readme",
   "dependencies": {
+    "@types/cookie": "^0.3.3",
     "@types/crypto-js": "^3.1.43",
     "@types/cookie": "^0.3.3",
     "babel-polyfill": "^6.26.0",

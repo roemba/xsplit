@@ -30,12 +30,10 @@ async function doLoginAction(event: Event): Promise<void> {
 
     const result = sign(challenge, derivationResult.privateKey);
 
-    const bearerStr = "Bearer " + window.btoa(userName + ":" + result);
-    resp = await fetch("/api/login/validate", {
-        headers: {
-            'Authorization': bearerStr
-        }
-    });
+    const bearerStr = window.btoa(userName + ":" + result);
+    document.cookie = `bearer=${bearerStr};path=/;max-age=840;samesite=strict`;
+
+    resp = await fetch("/api/login/validate");
     if (resp.status !== 200) {
         if (resp.status == 401) {
             $("#invalidFields").removeClass("d-none");
@@ -46,7 +44,6 @@ async function doLoginAction(event: Event): Promise<void> {
     console.log("Login success!");
 
     sessionStorage.setItem("secret", secretStr);
-    sessionStorage.setItem("bearer", bearerStr);
     document.location.href="/"
 }
 
