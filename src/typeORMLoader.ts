@@ -13,7 +13,6 @@ export async function setupTypeORM(): Promise<void> {
         synchronize: process.env.TYPEORM_SYNCHRONIZE,
         logging: process.env.TYPEORM_LOGGING,
         entities: [__dirname + "/models/*.js"],
-        migrations: [],
     });
 
     await createConnection(connectionOptions);
