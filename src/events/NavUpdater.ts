@@ -1,5 +1,6 @@
 function logOut(): void {
 	sessionStorage.clear();
+	document.cookie = 'bearer=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 	location.reload()
 }
 
