@@ -1,32 +1,33 @@
 import {deriveAddress} from 'ripple-keypairs';
+import {User} from "../models/User";
 
-async function getUserInfo(): Promise<any> {
+async function getUserInfo(): Promise<User> {
 
 	const response = await fetch("/api/users/me");
 
 	return await response.json()
 }
 
-async function genQR(username: string): Promise<any> {
+async function genQR(username: string): Promise<string> {
 
-	const response = await fetch("/api/users/qr/"+username)
+	const response = await fetch("/api/users/qr/"+username);
 
-	return await response.json()
+	return (await response.json())['qr']
 
 }
 
-getUserInfo().then(data => {
+getUserInfo().then((data: User) => {
 
-	$(".userName").html(data[0].username);
-	$(".publicKey").html(deriveAddress(data[0].publickey));
-	$(".email").html(data[0].email);
+	$(".userName").html(data.username);
+	$(".publicKey").html(deriveAddress(data.publickey));
+	$(".email").html(data.email);
 
-	genQR(data[0].username).then(img => {
-		$(".account-qr").attr("src",img.qr)
+	genQR(data.username).then((qr) => {
+		$(".account-qr").attr("src", qr)
 	}).catch(reason => {
 		console.log(reason.message)
 	})
 }).catch(reason => { 
 	console.log(reason.message)
-})
+});
 

@@ -1,7 +1,7 @@
-import {Controller, Param, Get, Render, Redirect, Authorized} from "routing-controllers";
-import winston, { Logger } from "winston";
-import { UserService } from "../services/UserService";
-import { Container } from "typedi";
+import {Controller, Get, Param, Redirect, Render} from "routing-controllers";
+import winston, {Logger} from "winston";
+import {UserService} from "../services/UserService";
+import {Container} from "typedi";
 
 @Controller() 
 export class RouteController {
@@ -55,15 +55,15 @@ export class RouteController {
    // @Authorized()
    @Render("index.ejs")
    GetPay(): unknown {
-      const payments = [{receiver: "johndoe", amount: 384, subject: "Lunch at EWI"},{receiver: "Piet", amount: 112, subject: "Coffee"}]
+      const payments = [{receiver: "johndoe", amount: 384, subject: "Lunch at EWI"},{receiver: "Piet", amount: 112, subject: "Coffee"}];
       return {page: "pay", payments: payments}
    }
 
    @Get("/request")
    // @Authorized()
    @Render("index.ejs")
-   async GetRequest(): Promise<any> {
-      const friends = await Container.get(UserService).findAll()
+   async GetRequest(): Promise<object> {
+      const friends = await Container.get(UserService).findAll();
       return {page: "request", username: "", friends: friends}
    }
 
@@ -88,8 +88,8 @@ export class RouteController {
 
    @Get("/friends")
    @Render("index.ejs")
-   async GetFriends(): Promise<any> {
-      const friends = await Container.get(UserService).findAll()
+   async GetFriends(): Promise<object> {
+      const friends = await Container.get(UserService).findAll();
 
       return {page: "friends", friends: friends}
    }

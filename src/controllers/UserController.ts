@@ -33,7 +33,7 @@ export class UserController {
 
     @Get("/me")
     @Authorized()
-    getMe(@CurrentUser() user: User): Promise<User[] | undefined> {
+    getMe(@CurrentUser() user: User): Promise<User | undefined> {
         return Container.get(UserService).findMe(user);
     }
 
@@ -63,15 +63,15 @@ export class UserController {
     } 
 
     @Get("/qr/:username")
-    async genQR(@Param("username") username: string): Promise<any> {
-      let qr
+    async genQR(@Param("username") username: string): Promise<object> {
+      let qr;
 
       await brandedQRCode.generate({
          text: 'https://localhost:3000/addfriend/'+username, 
          path: path.resolve(__dirname, "../assets/img/xplit-dark.png")
       }).then((buf: unknown) => {
          qr = "data:image/png;base64,"+Buffer.from(buf).toString('base64')
-      })
+      });
 
       return {qr: qr}
     }

@@ -1,5 +1,3 @@
-import {deriveAddress} from 'ripple-keypairs';
-
 async function removeFriend(username: string): Promise<void> {
 	const resp = await fetch("/api/users/"+username, {
 		method: "DELETE"

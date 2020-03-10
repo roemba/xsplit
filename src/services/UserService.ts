@@ -23,8 +23,8 @@ export class UserService {
         });
     }
 
-    public findMe(user: User): Promise<User[]> {
-        return this.userRepository.find({where: {username: user.username }})
+    public findMe(user: User): Promise<User> {
+        return this.userRepository.findOne({where: {username: user.username }})
     }
 
     public findAll(): Promise<User[]> {
