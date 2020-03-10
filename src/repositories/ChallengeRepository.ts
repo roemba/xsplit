@@ -29,7 +29,7 @@ export class ChallengeRepository extends Repository<Challenge>  {
             where: {
                 "user": user
             }
-        })
+        });
     }
 
     public async cleanChallenges(): Promise<void> {

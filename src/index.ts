@@ -64,7 +64,7 @@ setupTypeORM().then(() => {
         logger.info("App started, listening on port " + port);
     }); 
 }).catch((e) => {
-    setInterval(Container.get(ChallengeRepository).cleanChallenges, 60*1000)
+    setInterval(Container.get(ChallengeRepository).cleanChallenges, 60*1000);
     logger.error("Database connection failed, exiting application...");
     logger.error(e);
     process.exit(0);
