@@ -21,6 +21,11 @@ export class UserController {
         return Container.get(UserService).findMe(user);
     }
 
+    @Get("/search/:searchString")
+   getSearchMatch(@Param("searchString") usernameSearch: string): Promise<string[]> {
+      return Container.get(UserService).findUsers(usernameSearch);
+   }
+
     @Get("/:id")
     getOne(@Param("id") id: string): Promise<User | undefined> {
       return Container.get(UserService).findOne(id);
