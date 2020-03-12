@@ -1,5 +1,5 @@
 import Container from "typedi";
-import {JsonController, Get, CurrentUser, Authorized, Body, Put, OnUndefined} from "routing-controllers";
+import {JsonController, Get, CurrentUser, Authorized, Body, Put, OnUndefined, Param} from "routing-controllers";
 import { User } from "../models/User";
 import { TransactionRequestService } from "../services/TransactionRequestService";
 import { TransactionRequest } from "../models/TransactionRequest";
@@ -14,6 +14,18 @@ export class TransactionRequestController {
     @Get("/")
     getMyTransactionRequests(@CurrentUser() user: User): Promise<TransactionRequest[]> {
         return Container.get(TransactionRequestService).findRequestsToUser(user);
+    }
+
+    @Authorized()
+    @OnUndefined(400)
+    @Put("/paid/:id")
+    async setPayedTransactionRequest(@CurrentUser() user: User, @Param("id") id: string): Promise<TransactionRequest> {
+        try {
+            return await Container.get(TransactionRequestService).setPaid(user, id);
+        } catch {
+            this.log.error("Setting TransactionRequest to paid failed");
+            return undefined;
+        }
     }
 
     @Authorized()
