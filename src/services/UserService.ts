@@ -38,7 +38,7 @@ export class UserService {
             }
         }
         return userMatches;
-    } 
+    }
 
     public async getPublicKey(username: string): Promise<string> {
         username = username.trim();
