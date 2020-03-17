@@ -16,6 +16,7 @@
     "dev": "nodemon --watch src -e ts,ejs --exec npm run dev:start",
     "start": "node .",
     "e2e": "jest ./test/e2e/.* --runInBand",
+    "e2e-web": "jest ./test/e2e/web/.* --runInBand",
     "e2e-api": "jest ./test/e2e/api/.* --runInBand",
     "test.unit": "jest ./test/unit/.* --collectCoverage",
     "test.e2e": "npm-run-all build e2e",
