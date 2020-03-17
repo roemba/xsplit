@@ -1,7 +1,8 @@
 import dotenv from "dotenv";
 import { fork, ChildProcess } from "child_process";
-import { Bill } from "../../../src/models/Bill";
 import fetch from "node-fetch";
+import { plainToClass } from "class-transformer";
+import { Bill } from "../../../src/models/Bill";
 import { User } from "../../../src/models/User";
 
 let child: ChildProcess;
@@ -29,6 +30,7 @@ test('create bill', async () => {
     const bob = new User();
     bob.username = "bob";
     bill.participants = [alice, bob];
+    // TODO fix: Uses hardcoded alice cookie to authenticate for now
     const res = await fetch('http://localhost:' + process.env.PORT + '/api/bills', {
         method: 'post',
          headers: {
@@ -38,6 +40,13 @@ test('create bill', async () => {
         body: JSON.stringify(bill)
     });
     expect(res.status).toBe(200);
+    const createdBill = plainToClass(Bill, await res.json());
+    expect(createdBill.totalXrp).toBe("100");
+    expect(createdBill.description).toBe("test bill");
+    expect(createdBill.participants.length).toBe(2);
+    expect(createdBill.transactionRequests.length).toBe(2);
+    // TODO fix: Since current implementation uses alice's cookie to authenticate
+    expect(createdBill.creditor.username).toBe("alice");
 });
 
 test('get own bills', async () => {
