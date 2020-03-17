@@ -49,6 +49,23 @@ test('create bill', async () => {
     expect(createdBill.creditor.username).toBe("alice");
 });
 
+test('get my bills', async () => {
+    // TODO fix: Uses hardcoded alice cookie to authenticate for now
+    const res = await fetch('http://localhost:' + process.env.PORT + '/api/bills', {
+         headers: {
+            cookie: "bearer=YWxpY2U6MzA0NDAyMjAzRkIyNzBCMTQ3QTg4MEFCQ0Y2NjUyODcyMzU4RTdDNzVDMDkwREI5NDE0M0NDMzVDRkUxNzJBRDNGNURBOTM3MDIyMDZDQ0VERkMwNzRCNTk3N0M0RkJFRkU5RTg1NzNBQzgyMEFCRTc4RjI0RUMwMDBBQzQzNjFERDJDQjZBMjRCMkQ="
+        },
+    });
+    expect(res.status).toBe(200);
+    const createdBills: Bill[] = plainToClass(Bill, await res.json() as Array<unknown>);
+    expect(createdBills.length).toBeGreaterThan(0);
+    // TODO fix: Alice hardcoded here
+    // Check if all retrieved bills are actually created by alice
+    for (let i = 0; i < createdBills.length; i++) {
+        expect(createdBills[i].creditor.username).toBe("alice");
+    }
+});
+
 afterAll(async () => {
     child.kill();
 });
