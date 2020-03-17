@@ -1,6 +1,6 @@
 
 import { Container } from "typedi";
-import {Controller, Param, Get, Post, Put, Delete, Req, UseBefore, CurrentUser, Authorized} from "routing-controllers";
+import {Controller, Param, Get, Post, Put, Delete, Req, UseBefore, CurrentUser, Authorized, OnUndefined} from "routing-controllers";
 import { UserService } from "../services/UserService";
 import { User } from '../models/User';
 import {Request} from "express";
@@ -32,13 +32,18 @@ export class UserController {
     }
 
     @Post("")
+    @OnUndefined(400)
     @UseBefore(json())
-    post(@Req() request: Request): Promise<User> {
+    async post(@Req() request: Request): Promise<User> {
       const user = new User();
       user.username = request.body.username;
       user.email = request.body.email;
       user.publickey = request.body.publickey;
-      return Container.get(UserService).create(user);
+      try {
+        return await Container.get(UserService).create(user);
+      } catch {
+        return undefined;
+      }
     }
 
     @Put("/:id")
