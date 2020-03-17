@@ -4,6 +4,7 @@ import fetch from "node-fetch";
 import { plainToClass } from "class-transformer";
 import { Bill } from "../../../src/models/Bill";
 import { User } from "../../../src/models/User";
+import { deriveKeypair, sign } from "ripple-keypairs";
 
 let child: ChildProcess;
 
@@ -11,7 +12,9 @@ function sleep(ms: number): Promise<void> {
     return new Promise((resolve) => {
         setTimeout(resolve, ms);
     });
-}   
+}
+
+let bearer: string;
 
 beforeAll(async () => {
     dotenv.config();
@@ -19,6 +22,18 @@ beforeAll(async () => {
     child = fork("./dist/index.js");
     // Sleep to wait for child process to start up
     await sleep(4000);
+
+    // Get authentication
+    let derivationResult = null;
+    derivationResult = deriveKeypair(process.env.ALICE_SECRET);
+
+    const resp = await fetch("http://localhost:8080/api/login/challenge?username=alice");
+    const challenge = await resp.text();
+
+    const result = sign(challenge, derivationResult.privateKey);
+
+    const bearerStr = Buffer.from("alice" + ":" + result).toString('base64');
+    bearer = `bearer=${bearerStr};path=/;max-age=840;samesite=strict`;
 });
 
 test('create bill', async () => {
@@ -34,7 +49,7 @@ test('create bill', async () => {
     const res = await fetch('http://localhost:' + process.env.PORT + '/api/bills', {
         method: 'post',
          headers: {
-            cookie: "bearer=YWxpY2U6MzA0NDAyMjAzRkIyNzBCMTQ3QTg4MEFCQ0Y2NjUyODcyMzU4RTdDNzVDMDkwREI5NDE0M0NDMzVDRkUxNzJBRDNGNURBOTM3MDIyMDZDQ0VERkMwNzRCNTk3N0M0RkJFRkU5RTg1NzNBQzgyMEFCRTc4RjI0RUMwMDBBQzQzNjFERDJDQjZBMjRCMkQ=",
+            cookie: bearer,
             "Content-Type": "application/json"
         },
         body: JSON.stringify(bill)
@@ -53,7 +68,7 @@ test('get my bills', async () => {
     // TODO fix: Uses hardcoded alice cookie to authenticate for now
     const res = await fetch('http://localhost:' + process.env.PORT + '/api/bills', {
          headers: {
-            cookie: "bearer=YWxpY2U6MzA0NDAyMjAzRkIyNzBCMTQ3QTg4MEFCQ0Y2NjUyODcyMzU4RTdDNzVDMDkwREI5NDE0M0NDMzVDRkUxNzJBRDNGNURBOTM3MDIyMDZDQ0VERkMwNzRCNTk3N0M0RkJFRkU5RTg1NzNBQzgyMEFCRTc4RjI0RUMwMDBBQzQzNjFERDJDQjZBMjRCMkQ="
+            cookie: bearer
         },
     });
     expect(res.status).toBe(200);
