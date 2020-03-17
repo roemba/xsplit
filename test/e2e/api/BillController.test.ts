@@ -49,22 +49,6 @@ test('create bill', async () => {
     expect(createdBill.creditor.username).toBe("alice");
 });
 
-test('get own bills', async () => {
-    expect(true).toBe(true);
-});
-
-test('get other bill', async () => {
-    expect(true).toBe(true);
-});
-
-test('delete own bill', async () => {
-    expect(true).toBe(true);
-});
-
-test('delete other bill', async () => {
-    expect(true).toBe(true);
-});
-
 afterAll(async () => {
     child.kill();
 });
