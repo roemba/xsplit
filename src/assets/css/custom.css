@@ -142,3 +142,11 @@ select.color {
 .dropdown-menu > li > a.dropdown-item {
   padding-left: 13px;
 }
+@media (min-width: 992px) {
+  .column-divider {
+    border-left: 2px solid #454d55;
+  }
+}
+.border-light {
+  border-color: #454d55 !important;
+}
