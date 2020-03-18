@@ -80,12 +80,6 @@ export class RouteController {
       return {page: "addfriend", friend: ""};
    }
 
-   @Get("/addfriend/:username")
-   @Render("index.ejs")
-   GetAddFriendFromQR(@Param("username") username: string): unknown {
-      return {page: "addfriend", friend: username};
-   }
-
    @Get("/friends")
    @Render("index.ejs")
    async GetFriends(): Promise<object> {

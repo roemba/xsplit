@@ -21,6 +21,7 @@ getUserInfo().then((data: User) => {
 	$(".userName").html(data.username);
 	$(".publicKey").html(deriveAddress(data.publickey));
 	$(".email").html(data.email);
+	$(".fname").html(data.fullName);
 
 	genQR(data.username).then((qr) => {
 		$(".account-qr").attr("src", qr);
