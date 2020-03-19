@@ -3,7 +3,8 @@
 		<img src='/assets/img/xplit-light.svg' width='200px' height='auto' />
 
 		<h1>Register</h1>
-		Please fill out the form to create an account.
+		<p id="registerError">Please fill out the form to create an account.</p>
+		<p id="parseError" class="d-none text-danger">Cannot parse secret into public key. Please check the format!</p>
 		<br /><br />
 		
 		<form id="registerForm">
@@ -20,8 +21,6 @@
 			<div class="form-group">
   				<button id="register" type="submit" class="btn btn-secondary btn-lg col-12">Register</button>
 			</div>
-
-			<p id="parseError" class="d-none text-danger">Cannot parse secret into public key. Please check the format!</p>
 
 			<a href="./login" class='text-light'>Already registered?</a>
 		</form>

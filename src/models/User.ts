@@ -7,14 +7,14 @@ export class User {
     @PrimaryColumn()
     public username: string;
 
-    @Column({name: "publickey"})
+    @Column({name: "publickey", unique: true})
     public publickey: string;
 
-    @Column({name: "email"})
-    public email: string;
+    @Column({name: "email", nullable: true})
+    public email: string | undefined;
 
     @Column({name: "fullName", nullable: true})
-    public fullName: string;
+    public fullName: string | undefined;
 
     @OneToMany(() => Bill, bill => bill.creditor)
     public ownedBills: Bill[];

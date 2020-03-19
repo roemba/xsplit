@@ -18,12 +18,22 @@ dotenv.config();
 const logger = Container.get(LoggerService);
 
 // Initialise the ripple-lib service
-Container.get(RippleLibService).init().then(() => {
-    logger.info("Connected to ripple");
-}).catch(() => {
-    logger.error("Connecting to ripple failed");
-    process.exit(0);
-});
+let retries = 0;
+const xrpConnection = setInterval(function() {
+    if (parseInt(process.env.MAX_RECONNECT) > retries) {
+        Container.get(RippleLibService).init().then(() => {
+            logger.info("Connected to ripple!");
+            clearInterval(xrpConnection);
+        }).catch((e) => {
+            retries += 1;
+            logger.error(e);
+            logger.error(`Connecting to ripple failed! (attempt: ${retries})`);
+        });
+    } else {
+        logger.error(`Connecting to ripple failed ${process.env.MAX_RECONNECT} times! (stopping app)`);
+        process.exit(0);
+    }
+}, 5000);
 
 // run express application when database has connected succesfully
 setupTypeORM().then(() => {

@@ -29,7 +29,8 @@ async function doRegisterAction(e: Event): Promise<void> {
 		})
 	});
 	if (resp.status !== 200) {
-		console.error(resp.status);
+		document.getElementById("registerError").innerHTML = resp.statusText.toString() + ", please try again";
+		document.getElementById("registerError").style.color = "red";
 		return;
 	}
 	console.log("Registration complete!");

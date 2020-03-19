@@ -1,6 +1,5 @@
-
 import { Container } from "typedi";
-import {Controller, Param, Get, Post, Put, Delete, Req, UseBefore, CurrentUser, Authorized} from "routing-controllers";
+import {Controller, Param, Get, Post, Put, Delete, Req, UseBefore, CurrentUser, Authorized, OnUndefined, BadRequestError} from "routing-controllers";
 import { UserService } from "../services/UserService";
 import { User } from '../models/User';
 import {Request} from "express";
@@ -21,19 +20,34 @@ export class UserController {
         return Container.get(UserService).findMe(user);
     }
 
+    @Get("/search/:searchString")
+    getSearchMatch(@Param("searchString") usernameSearch: string): Promise<string[]> {
+      return Container.get(UserService).findUsers(usernameSearch);
+    }
+
     @Get("/:id")
     getOne(@Param("id") id: string): Promise<User | undefined> {
       return Container.get(UserService).findOne(id);
     }
 
     @Post("")
+    @OnUndefined(400)
     @UseBefore(json())
-    post(@Req() request: Request): Promise<User> {
+    async post(@Req() request: Request): Promise<User> {
       const user = new User();
       user.username = request.body.username;
       user.email = request.body.email;
       user.publickey = request.body.publickey;
-      return Container.get(UserService).create(user);
+      try {
+        const newUser = await Container.get(UserService).create(user);
+        if(newUser.username === undefined) {
+          throw new BadRequestError("Public key and/or username is already in use");
+        } else {
+          return newUser;
+        }
+      } catch {
+        throw new BadRequestError("Public key and/or username is already in use");
+      }
     }
 
     @Put("/:id")

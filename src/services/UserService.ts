@@ -3,8 +3,9 @@ import { Service } from 'typedi';
 import { OrmRepository } from 'typeorm-typedi-extensions';
 import { User } from '../models/User';
 import { UserRepository } from '../repositories/UserRepository';
-import {BadRequestError} from "routing-controllers";
+import { BadRequestError } from "routing-controllers";
 import { LoggerService } from "../services/LoggerService";
+import * as levenshtein from 'fast-levenshtein';
 
 @Service()
 export class UserService {
@@ -23,6 +24,22 @@ export class UserService {
         return this.userRepository.find();
     }
 
+    public async findUsers(search: string): Promise<string[]> {
+        if(!search) {
+            throw new BadRequestError("No search string was provided");
+        } 
+        const userMatches  = [];
+        const users  = await this.userRepository.find();
+
+        for(let i = 0; i < users.length; i++) {
+            const deviation = users[i].username.length - (Math.floor(users[i].username.length*0.9));
+            if(levenshtein.get(users[i].username, search) <= deviation) {
+                userMatches.push(users[i].username);
+            }
+        }
+        return userMatches;
+    }
+
     public async getPublicKey(username: string): Promise<string> {
         username = username.trim();
         if(username.length === 0) {
@@ -33,7 +50,6 @@ export class UserService {
     }
 
     public findOne(username: string): Promise<User | undefined> {
-        this.log.info('Find one user');
         return this.userRepository.findOne({username});
     }
 
@@ -43,7 +59,7 @@ export class UserService {
             const newUser = await this.userRepository.save(user);
             return newUser;
         } else {
-            throw new BadRequestError("There already exists a user with this username, please try another one");
+            return new User();
         }
     }
 

@@ -1,70 +1,53 @@
 <div class='row'>
 	<div class="col-12 col-lg-6 offset-lg-3 text-center text-light">
 
-		<h1>Request Payment <% if (username) { %> from <%= username %> <% } %></h1>
-		<% if (!username) { %>
+		<h1>Request Payment</h1>
 			Please select friends and amount to split.
-		<% }else{ %>
-			Please give amount to request from <%= username %>.
-		<% } %>
 		<br /><br />
 
 		<form class='text-left' style="padding: 0px;">
 			
 			<div class="form-group">
-
 				<div class='row mb-0'>
-					<div class='col-12'>
+					<div class='col-12 col-lg-8'>
 						<input type="text" class="form-control border-0 mb-3" id="subject" aria-label="Subject" placeholder="Subject">
 					</div>
-				</div>
-
-				<% if (username) { %>
-				<div class="row mb-0">
-					<div class="col-12">
+					<div class="col-12 col-lg-4">
 						<div class="input-group mb-3" id="amountRow">
-			  				<div class="input-group-prepend">
-			    				<span class="input-group-text rounded-0 border-0">&euro;</span>
-			  				</div>
-			  				<input type="text" class="form-control border-0" id="amount" aria-label="Amount" placeholder="Amount">
-						</div>
-					</div>
-				</div>
-				<% } %>
-
-				<% if (!username) { %>
-				<div class="row mb-0">
-					<div class="col-12 col-lg-6">
-						<div class="input-group mb-3" id="amountRow">
-			  				<div class="input-group-prepend">
-			    				<span class="input-group-text rounded-0 border-0">&euro;</span>
-			  				</div>
-			  				<input type="text" class="form-control border-0" id="amount" aria-label="Amount" placeholder="Amount">
-						</div>
-					</div>
-					<div class="col-12 col-lg-6">
-						<div class='friend-rows mb-3'>
-							<select class="form-group form-control selectpicker border-0" title="No friends selected" multiple>
-								<option value="">Me</option>
-								<option data-divider="true"></option>
-								<% friends.forEach(friend => { %>
-									<option value="<%= friend.username %>"><%= friend.username %></option>
-								<% }) %>
-							</select>
+							<div class="input-group-prepend">
+								<span class="input-group-text rounded-0 border-0">&euro;</span>
+							</div>
+							<input type="text" class="form-control border-0" id="amount" aria-label="Amount" placeholder="Amount">
 						</div>
 					</div>
 				</div>
 
-				<% } else { %>
-					<input type='hidden' class='request-id' value='<%= username %>' />
-				<% } %>
-
-				<% if (!username) { %>
-					<div class='form-group text-center summary d-none mb-3 mt-0'>
-						The amount of &euro;<span class='nAmount'></span> is split by <span class='nFriends'></span> friend(s). <br />
-						Every person is &euro;<span class='amountFriend'></span> in debt to you.
+				<div class='row mb-0'>
+					<div class='form-group col-12'>
+						<div class="form-check">
+							<input type="checkbox" class="form-check-input" id="includeCheck">
+							<label class="form-check-label" for="includeCheck">Include me to the bill</label>
+						</div>
 					</div>
-				<% } %>
+				</div>
+
+				<div class='row mb-3'>
+					<div class='col-12'>
+						<h5>Users added to bill</h5>
+						<div class='added-users'></div>
+					</div>
+				</div>
+
+				<div class="row mb-3">
+					<div class='col-12'>
+						<input type="text" class="form-control" id="user-search" placeholder="Search for user...">
+						<div class='dropdown-menu username-list rounded-0'></div>
+					</div>
+				</div>
+
+				<div class='form-group text-center summary d-none mb-3 mt-0'>
+					The amount of &euro;<span class='nAmount'></span> is split by <span class='nFriends'></span> friend(s). <br />
+				</div>
 
 			<div class='row mb-0'>
 				<div class='col-12'>
