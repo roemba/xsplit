@@ -1,6 +1,5 @@
-
 import { Container } from "typedi";
-import {Controller, Param, Get, Post, Put, Delete, Req, UseBefore, CurrentUser, Authorized, OnUndefined} from "routing-controllers";
+import {Controller, Param, Get, Post, Put, Delete, Req, UseBefore, CurrentUser, Authorized, OnUndefined, BadRequestError} from "routing-controllers";
 import { UserService } from "../services/UserService";
 import { User } from '../models/User';
 import {Request} from "express";
@@ -40,9 +39,14 @@ export class UserController {
       user.email = request.body.email;
       user.publickey = request.body.publickey;
       try {
-        return await Container.get(UserService).create(user);
+        const newUser = await Container.get(UserService).create(user);
+        if(newUser.username === undefined) {
+          throw new BadRequestError("Public key and/or username is already in use");
+        } else {
+          return newUser;
+        }
       } catch {
-        return undefined;
+        throw new BadRequestError("Public key and/or username is already in use");
       }
     }
 
