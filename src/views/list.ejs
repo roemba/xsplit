@@ -1,0 +1,48 @@
+<div class='row'>
+	<div class="col-12 col-lg-12 text-light">
+		<h1 class='text-center'>
+			List name with id: (<%= id %>)
+		</h1>
+		<br /><br />
+
+		<div class='row'>
+			<div class='col-12 col-lg-3 subscribers-list mb-3'>
+				<h3>Users in list</h3>
+				<% users.forEach(function(user) { %>
+					<div class='subscriber-item d-block p-2' data-user='<%= user.name %>'>
+						<%= user.name %><span class='float-right badge badge-light mt-1 <% if(user.polarity === "+") { %>text-success<%} else if (user.polarity === "-") { %>text-danger<% } %>'>&euro;<%= user.balance %></span>
+					</div>
+				<% }); %>
+				
+				<br />
+				<a href="#" class="text-muted">Add users to list...</a>
+			</div>
+
+			<div class='col-12 col-lg-9 transactions column-divider'>
+				<h3>Transactions</h3>
+
+				<div class='row p-3'>
+					<div class='card bg-dark text-light text-center col-12 transaction-item mb-3 p-3 rounded-0 border-light' tx-id='1'>
+						<div>
+							<span class='float-left'>17-03-2020</span>
+							<span class='float-right'>&euro;20.00</span>
+						</div>
+						<h3 class='card-title text-center'><i>Test transaction</i> from <u>alice</u></h3>
+						<strong>Participants:</strong> alice (1x), bob (2x), joost (0x), piet (0x), henk (3x), marie (1x)
+					</div>
+
+					<div class='card bg-dark text-light text-center col-12 transaction-item mb-3 p-3 rounded-0 border-light' tx-id='2'>
+						<div>
+							<span class='float-left'>15-03-2020</span>
+							<span class='float-right'>&euro;37.00</span>
+						</div>
+						<h3 class='card-title text-center'><i>Drinks</i> from <u>bob</u></h3>
+						<strong>Participants:</strong> alice (1x), bob (1x), joost (1x)
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script src="/events/ListsScriptBundled.js"></script>

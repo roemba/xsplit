@@ -1,7 +1,5 @@
 import {Controller, Get, Param, Redirect, Render} from "routing-controllers";
 import winston, {Logger} from "winston";
-import {UserService} from "../services/UserService";
-import {Container} from "typedi";
 
 @Controller() 
 export class RouteController {
@@ -62,9 +60,8 @@ export class RouteController {
    @Get("/request")
    // @Authorized()
    @Render("index.ejs")
-   async GetRequest(): Promise<object> {
-      const friends = await Container.get(UserService).findAll();
-      return {page: "request", username: "", friends: friends};
+   GetRequest(): object {
+      return {page: "request"};
    }
 
    @Get("/request/:username")
@@ -74,18 +71,18 @@ export class RouteController {
       return {page: "request", username: username, friends: ""};
    }
 
-   @Get("/addfriend")
+   @Get("/lists/:id")
    @Render("index.ejs")
-   GetAddFriend(): unknown {
-      return {page: "addfriend", friend: ""};
+   GetList(@Param("id") id: number): unknown {
+      const users = [{name: "alice",balance: 10.12, polarity: '+'},{name: "bob",balance: 11.97, polarity: '+'},{name: "joost",balance: 33.74, polarity: '-'},{name: "piet",balance: 8.43, polarity: '+'},{name: "henk",balance: 3.47, polarity: '+'},{name: "marie",balance: 0.25, polarity: '+'}];
+      return {page: "list", id: id, users: users};
    }
 
-   @Get("/friends")
+   @Get("/lists")
    @Render("index.ejs")
-   async GetFriends(): Promise<object> {
-      const friends = await Container.get(UserService).findAll();
-
-      return {page: "friends", friends: friends};
+   GetLists(): object {
+      const lists = [{name: "XSPLIT Development Team", id: 1, balance: 10.99, balancePolarity: '+'},{name: "Sport Team", id: 2, balance: 23.78, balancePolarity: '-'},{name: "Friends", id: 3, balance: 0.00, balancePolarity: ''}];
+      return {page: "lists", lists: lists};
    }
 
 }
