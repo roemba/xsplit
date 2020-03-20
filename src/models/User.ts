@@ -1,6 +1,9 @@
 import { Column, Entity, PrimaryColumn, OneToMany, ManyToMany } from 'typeorm';
 import { Bill } from './Bill';
 import { TransactionRequest } from './TransactionRequest';
+import { GroupBalance } from './GroupBalance';
+import { GroupBill } from './GroupBill';
+import { Group } from './Group';
 
 @Entity({name: "users"})
 export class User {
@@ -19,9 +22,24 @@ export class User {
     @OneToMany(() => Bill, bill => bill.creditor)
     public ownedBills: Bill[];
 
+    @OneToMany(() => GroupBill, bill => bill.creditor)
+    public ownedGroupBills: GroupBill[];
+
     @ManyToMany(() => Bill)
-    public participatingIn: Bill[];
+    public participatingInBills: Bill[];
+
+    @ManyToMany(() => Group)
+    public participatingInGroups: Group[];
+
+    @ManyToMany(() => GroupBill)
+    public participatingInGroupBills: GroupBill[];
+
+    @OneToMany(() => GroupBalance, balance => balance.user)
+    public groupBalances: GroupBalance[];
 
     @OneToMany(() => TransactionRequest, tr => tr.debtor)
     public transactionRequests: TransactionRequest[];
+
+    @OneToMany(() => GroupBalance, tr => tr.user)
+    public balances: GroupBalance[];
 }
