@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Redirect, Render, Authorized } from "routing-controllers";
+import { Controller, Get, Param, Redirect, Render } from "routing-controllers";
 import { Container } from "typedi";
 import { LoggerService } from "../services/LoggerService";
 
