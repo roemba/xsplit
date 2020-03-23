@@ -1,31 +1,80 @@
+import { User } from "../models/User";
+
+function getUsername(): string {
+
+	const cookie = "; " + document.cookie;
+	const bearerStr = cookie.split("; ")[1];
+	const bearer = window.atob(bearerStr.replace("bearer=",""));
+	const username = bearer.split(":")[0];
+
+	return username;
+}
+
+function newUserRow(username: string): string {
+	let element = "<div class='form-row user-row mb-2' data-user='"+username+"'>";
+		element += "<div class='col-6 col-lg-7 line-height'>"+username+"<img src='/assets/img/remove.svg' class='remove-user ml-2' width='15' height='15' /></div>";
+		element += "<div class='col-3 col-lg-3 line-height user-amount text-right'></div>";
+		element += "<div class='col-3 col-lg-2'>";
+		element += "<select class='form-group form-control selectpicker border-0' data-id='"+username+"'>";
+		for (let i = 1; i <= 10; i++) {
+			element += "<option value='"+i+"'>"+i+"x</option>";
+		}
+		element += "</select>";
+		element += "</div>";
+		element += "</div>";
+
+	return element;
+}
+
+async function getUsers(usernames: string[]): Promise<User[] | undefined> {
+
+	const participants: User[] = [];
+
+	console.log(usernames);
+
+	usernames.forEach(async (username: string) => {
+		const response = await fetch("/api/users/"+username);
+		if (response.status !== 200) {
+			console.error(response.status);
+			return;
+		}
+
+		const user = await response.json();
+
+		console.log(user);
+
+		participants.push(user);
+	});
+
+	return await participants;
+}
+
+async function sendBill(subject: string, amount: number, participants: User[]): Promise<void> {
+
+	console.log(participants);
+
+	const response = await fetch("/api/bills", {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify({
+			description: subject,
+			totalXrp: amount,
+			participants: participants
+		})
+	});
+	if (response.status !== 200) {
+		console.error(response.status);
+		return;
+	}
+
+	console.log("Bill sent");
+}
+
 function onRequestPageLoad(): void {
+
 	jQuery(($) => {
-
-		function getUsername(): string {
-
-			const cookie = "; " + document.cookie;
-			const bearerStr = cookie.split("; ")[1];
-			const bearer = window.atob(bearerStr.replace("bearer=",""));
-			const username = bearer.split(":")[0];
-
-			return username;
-		}
-
-		function getUserRow(username: string): string {
-			let element = "<div class='form-row user-row mb-2' data-user='"+username+"'>";
-				element += "<div class='col-6 col-lg-7 line-height'>"+username+"<img src='/assets/img/remove.svg' class='remove-user ml-2' width='15' height='15' /></div>";
-				element += "<div class='col-3 col-lg-3 line-height user-amount text-right'></div>";
-				element += "<div class='col-3 col-lg-2'>";
-				element += "<select class='form-group form-control selectpicker border-0' data-id='"+username+"'>";
-				for (let i = 1; i <= 10; i++) {
-					element += "<option value='"+i+"'>"+i+"x</option>";
-				}
-				element += "</select>";
-				element += "</div>";
-				element += "</div>";
-
-			return element;
-		}
 
 		$(document).on("click", ".remove-user", function() {
 			const userRow = $(this).closest(".user-row");
@@ -45,7 +94,7 @@ function onRequestPageLoad(): void {
 			const username: string = getUsername();
 
 			if(this.checked) {
-				$(".added-users").prepend(getUserRow(username));
+				$(".added-users").prepend(newUserRow(username));
 				$('select').selectpicker();
 			}else{
 				$(".user-row[data-user='"+username+"']").remove();
@@ -85,6 +134,7 @@ function onRequestPageLoad(): void {
 
 		$("#user-search").autocomplete({
 			minLength: 2,
+			// eslint-disable-next-line
 			source: function(request: any, response: Function) {
 				$.ajax({
 					type: "GET",
@@ -94,6 +144,7 @@ function onRequestPageLoad(): void {
 					}
 				});
 			},
+			// eslint-disable-next-line
 			select: function (event: object, ui: any) {
 
 				const added = $("div.user-row[data-user='"+ui.item.label+"']");
@@ -103,9 +154,9 @@ function onRequestPageLoad(): void {
 					
 					if(ui.item.label == username) {
 						$("#includeCheck").prop("checked",true);
-						$(".added-users").prepend(getUserRow(ui.item.label));
+						$(".added-users").prepend(newUserRow(ui.item.label));
 					}else{
-						$(".added-users").append(getUserRow(ui.item.label));
+						$(".added-users").append(newUserRow(ui.item.label));
 					}
 
 					$("#user-search").val("");
@@ -116,38 +167,42 @@ function onRequestPageLoad(): void {
 			}
 		});
 
-		$(document).on("click", ".submit-request", function(e) {
+		$(document).on("click", ".submit-request", async function(e) {
 			e.preventDefault();
 
-			const selected: string[] = [];
-			const weights: number[] = [];
+			const selectedUsers: string[] = [];
+			// const weights: number[] = [];
 
 			$(".user-row").each(function() {
 				const username = $(this).attr('data-user');
-				const weight = $(this).find("select").val();
+				// const weight = $(this).find("select").val();
 
-				selected.push(username);
-				weights.push(Number(weight));
+				selectedUsers.push(username);
+				// weights.push(Number(weight));
 			});
 
 			const nAmount = Number($("#amount").val());
-			const subject = $("#subject").val();
+			const subject = String($("#subject").val());
 			
-			const nSplits = weights.reduce((a, b) => a + b, 0);
-			let difference: number = nAmount;
+			// const nSplits = weights.reduce((a, b) => a + b, 0);
+			// const difference: number = nAmount;
 
-			selected.forEach((username: string, index: number) => {
-
-				const thisAmount = Math.floor(nAmount/nSplits*weights[index]*100)/100;
-
-				difference -= thisAmount;
-
-				// TODO: connect to controller.
-
-				console.log("Transaction with subject " + subject + " sent to " + username + ", Amount: " + thisAmount);
+			getUsers(selectedUsers).then((users: User[]) => {
+				sendBill(subject, nAmount, users);
 			});
 
-			console.log("Difference in total: " + difference.toFixed(2));
+			// selected.forEach((username: string, index: number) => {
+
+			// 	const thisAmount = Math.floor(nAmount/nSplits*weights[index]*100)/100;
+
+			// 	difference -= thisAmount;
+
+			// 	// TODO: connect to controller.
+
+			// 	console.log("Transaction with subject " + subject + " sent to " + username + ", Amount: " + thisAmount);
+			// });
+
+			// console.log("Difference in total: " + difference.toFixed(2));
 
 		});
 	});
