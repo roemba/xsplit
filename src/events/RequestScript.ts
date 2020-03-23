@@ -85,6 +85,7 @@ function onRequestPageLoad(): void {
 
 		$("#user-search").autocomplete({
 			minLength: 2,
+			// eslint-disable-next-line
 			source: function(request: any, response: Function) {
 				$.ajax({
 					type: "GET",
@@ -94,6 +95,7 @@ function onRequestPageLoad(): void {
 					}
 				});
 			},
+			// eslint-disable-next-line
 			select: function (event: object, ui: any) {
 
 				const added = $("div.user-row[data-user='"+ui.item.label+"']");
