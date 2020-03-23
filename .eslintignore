@@ -1,2 +1,3 @@
 /src/assets/*
 /dist/**/*
+jest.config.js
