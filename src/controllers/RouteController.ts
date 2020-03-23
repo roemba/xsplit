@@ -1,16 +1,10 @@
-import {Controller, Get, Param, Redirect, Render} from "routing-controllers";
-import winston, {Logger} from "winston";
+import { Controller, Get, Param, Redirect, Render } from "routing-controllers";
+import { Container } from "typedi";
+import { LoggerService } from "../services/LoggerService";
 
 @Controller() 
 export class RouteController {
-   log: Logger;
-   constructor() {
-      this.log = winston.createLogger({
-         transports: [
-            new winston.transports.Console()
-         ]
-      });
-   }
+   log = Container.get(LoggerService);
 
    @Get("/")
    @Redirect("/home")
@@ -42,47 +36,50 @@ export class RouteController {
       return {page: "register"};
    }
 
-   @Get("/account")
    // @Authorized()
+   @Get("/account")
    @Render("index.ejs")
    GetAccount(): unknown {
       return {page: "account"};
    }
 
-   @Get("/pay")
    // @Authorized()
+   @Get("/pay")
    @Render("index.ejs")
    GetPay(): unknown {
       const payments = [{receiver: "johndoe", amount: 384, subject: "Lunch at EWI"},{receiver: "Piet", amount: 112, subject: "Coffee"}];
       return {page: "pay", payments: payments};
    }
 
-   @Get("/request")
    // @Authorized()
+   @Get("/request")
    @Render("index.ejs")
    GetRequest(): object {
       return {page: "request"};
    }
 
-   @Get("/request/:username")
-   // @Authorized()
+   // @Authorized()   
+   @Get("/bills")
    @Render("index.ejs")
-   GetRequestFromFriend(@Param("username") username: string): unknown {
-      return {page: "request", username: username, friends: ""};
+   GetBillOverview(): unknown {
+      const bills = [{id: "2130b428-32fa-4909-872b-8d0b010bf174", description: "ASDASDASD", dateCreated: "1584534675889", totalXrp: "124", participants: [{username: "jb", publickey: "02E3EFBF87E8E47CAE93286C600463A051D9DE664204A299D34FFDDA8107904B0A", email: "j.w.bambacht@student.tudelft.nl", fullName: ""},{username: "alice", publickey: "02C90CDEDE88AFD56FF51A41DDF8B12EB0380D3F4D21D2BB6CD15E64FEB25358F6", email: "alice@xsplit.com", fullName: "Alice"},{username: "bob", publickey: "02247DCA3727D848340F1520968A2191D3AC8F1299AFC7291969E6845AC7CFB579", email: "bob@xsplit.com", fullName: "Bob"}]}];
+      return {page: "bills", unsettledbills: bills, settledbills: bills};
    }
 
-   @Get("/lists/:id")
+   // @Authorized()
+   @Get("/groups/:id")
    @Render("index.ejs")
    GetList(@Param("id") id: number): unknown {
       const users = [{name: "alice",balance: 10.12, polarity: '+'},{name: "bob",balance: 11.97, polarity: '+'},{name: "joost",balance: 33.74, polarity: '-'},{name: "piet",balance: 8.43, polarity: '+'},{name: "henk",balance: 3.47, polarity: '+'},{name: "marie",balance: 0.25, polarity: '+'}];
-      return {page: "list", id: id, users: users};
+      return {page: "group", id: id, users: users};
    }
 
-   @Get("/lists")
+   // @Authorized()
+   @Get("/groups")
    @Render("index.ejs")
    GetLists(): object {
-      const lists = [{name: "XSPLIT Development Team", id: 1, balance: 10.99, balancePolarity: '+'},{name: "Sport Team", id: 2, balance: 23.78, balancePolarity: '-'},{name: "Friends", id: 3, balance: 0.00, balancePolarity: ''}];
-      return {page: "lists", lists: lists};
+      const groups = [{name: "XSPLIT Development Team", id: 1, balance: 10.99, balancePolarity: '+'},{name: "Sport Team", id: 2, balance: 23.78, balancePolarity: '-'},{name: "Friends", id: 3, balance: 0.00, balancePolarity: ''}];
+      return {page: "groups", groups: groups};
    }
 
 }

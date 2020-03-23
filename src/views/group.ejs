@@ -1,13 +1,13 @@
 <div class='row'>
 	<div class="col-12 col-lg-12 text-light">
 		<h1 class='text-center'>
-			List name with id: (<%= id %>)
+			Group name with id: (<%= id %>)
 		</h1>
 		<br /><br />
 
 		<div class='row'>
 			<div class='col-12 col-lg-3 subscribers-list mb-3'>
-				<h3>Users in list</h3>
+				<h3>Users in group</h3>
 				<% users.forEach(function(user) { %>
 					<div class='subscriber-item d-block p-2' data-user='<%= user.name %>'>
 						<%= user.name %><span class='float-right badge badge-light mt-1 <% if(user.polarity === "+") { %>text-success<%} else if (user.polarity === "-") { %>text-danger<% } %>'>&euro;<%= user.balance %></span>
@@ -15,7 +15,7 @@
 				<% }); %>
 				
 				<br />
-				<a href="#" class="text-muted">Add users to list...</a>
+				<a href="#" class="text-muted">Add users to group...</a>
 			</div>
 
 			<div class='col-12 col-lg-9 transactions column-divider'>
@@ -45,4 +45,4 @@
 	</div>
 </div>
 
-<script src="/events/ListsScriptBundled.js"></script>
+<script src="/events/GroupsScriptBundled.js"></script>
