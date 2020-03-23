@@ -1,5 +1,7 @@
 import { User } from "../models/User";
 
+let participants: User[] = [];
+
 function getUsername(): string {
 
 	const cookie = "; " + document.cookie;
@@ -26,30 +28,43 @@ function newUserRow(username: string): string {
 	return element;
 }
 
-async function getUsers(usernames: string[]): Promise<User[] | undefined> {
+async function getUser(username: string): Promise<User | undefined> {
 
-	const participants: User[] = [];
+	const response = await fetch("/api/users/"+username);
+	if (response.status !== 200) {
+		console.error(response.status);
+		return;
+	}
 
-	console.log(usernames);
+	const user = await response.json();
 
-	usernames.forEach(async (username: string) => {
-		const response = await fetch("/api/users/"+username);
-		if (response.status !== 200) {
-			console.error(response.status);
-			return;
-		}
-
-		const user = await response.json();
-
-		console.log(user);
-
-		participants.push(user);
-	});
-
-	return await participants;
+	return await user;
 }
 
-async function sendBill(subject: string, amount: number, participants: User[]): Promise<void> {
+// async function getUsers(usernames: string[]): Promise<User[] | undefined> {
+
+// 	const participants: User[] = [];
+
+// 	console.log(usernames);
+
+// 	usernames.forEach(async (username: string) => {
+// 		const response = await fetch("/api/users/"+username);
+// 		if (response.status !== 200) {
+// 			console.error(response.status);
+// 			return;
+// 		}
+
+// 		const user = await response.json();
+
+// 		console.log(user);
+
+// 		participants.push(user);
+// 	});
+
+// 	return await participants;
+// }
+
+async function sendBill(subject: string, amount: number): Promise<void> {
 
 	console.log(participants);
 
@@ -79,25 +94,35 @@ function onRequestPageLoad(): void {
 		$(document).on("click", ".remove-user", function() {
 			const userRow = $(this).closest(".user-row");
 
-			const username = getUsername();
+			const currentUsername = getUsername();
+			const username = userRow.attr('data-user');
 
-			if(userRow.attr('data-user') == username) {
+			if(username == currentUsername) {
 				$("#includeCheck").prop("checked",false);
 			}
 
 			userRow.remove();
 			$("#subject").trigger("change");
+
+			participants = participants.filter(u => u.username !== username);
 		});
 
-		$(document).on("change", "#includeCheck", function() {
+		$(document).on("change", "#includeCheck", async function() {
 			
 			const username: string = getUsername();
 
+			const user = await getUser(username);
+
 			if(this.checked) {
 				$(".added-users").prepend(newUserRow(username));
+
+				participants.push(await user);
+
 				$('select').selectpicker();
 			}else{
 				$(".user-row[data-user='"+username+"']").remove();
+
+				participants = participants.filter(u => u.username !== username);
 			}
 			$("#subject").trigger("change");
 		});
@@ -145,7 +170,7 @@ function onRequestPageLoad(): void {
 				});
 			},
 			// eslint-disable-next-line
-			select: function (event: object, ui: any) {
+			select: async function (event: object, ui: any) {
 
 				const added = $("div.user-row[data-user='"+ui.item.label+"']");
 
@@ -159,6 +184,14 @@ function onRequestPageLoad(): void {
 						$(".added-users").append(newUserRow(ui.item.label));
 					}
 
+					const user = await getUser(ui.item.label);
+
+					participants.push(await user);
+
+					participants.forEach(function(participant) {
+						console.log(participant);
+					});
+
 					$("#user-search").val("");
 					$('select').selectpicker();
 					$("#amount").trigger("change");
@@ -170,16 +203,16 @@ function onRequestPageLoad(): void {
 		$(document).on("click", ".submit-request", async function(e) {
 			e.preventDefault();
 
-			const selectedUsers: string[] = [];
+			// const selectedUsers: string[] = [];
 			// const weights: number[] = [];
 
-			$(".user-row").each(function() {
-				const username = $(this).attr('data-user');
+			// $(".user-row").each(function() {
+				// const username = $(this).attr('data-user');
 				// const weight = $(this).find("select").val();
 
-				selectedUsers.push(username);
+				// selectedUsers.push(username);
 				// weights.push(Number(weight));
-			});
+			// });
 
 			const nAmount = Number($("#amount").val());
 			const subject = String($("#subject").val());
@@ -187,9 +220,11 @@ function onRequestPageLoad(): void {
 			// const nSplits = weights.reduce((a, b) => a + b, 0);
 			// const difference: number = nAmount;
 
-			getUsers(selectedUsers).then((users: User[]) => {
-				sendBill(subject, nAmount, users);
-			});
+			// getUsers(selectedUsers).then((users: User[]) => {
+			// 	sendBill(subject, nAmount, users);
+			// });
+
+			sendBill(subject, nAmount);
 
 			// selected.forEach((username: string, index: number) => {
 
