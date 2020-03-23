@@ -161,6 +161,7 @@ function onRequestPageLoad(): void {
 			minLength: 2,
 			// eslint-disable-next-line
 			source: function(request: any, response: Function) {
+				console.log("typeof request " + typeof request);
 				$.ajax({
 					type: "GET",
 					url: "/api/users/search/"+request.term,
@@ -171,7 +172,6 @@ function onRequestPageLoad(): void {
 			},
 			// eslint-disable-next-line
 			select: async function (event: object, ui: any) {
-
 				const added = $("div.user-row[data-user='"+ui.item.label+"']");
 
 				if(added.length == 0) {

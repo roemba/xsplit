@@ -17,8 +17,8 @@ export class TransactionRequest {
     public totalXrp: number;
 
     @ManyToOne(() => Bill, bill => bill.transactionRequests, {
-         onDelete: "CASCADE"
-     })
+        onDelete: "CASCADE"
+    })
     public bill: Bill;
 
     @ManyToOne(() => User, user => user.transactionRequests, {

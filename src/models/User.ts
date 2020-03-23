@@ -7,7 +7,7 @@ export class User {
     @PrimaryColumn()
     public username: string;
 
-    @Column({name: "publickey"})
+    @Column({name: "publickey", unique: true})
     public publickey: string;
 
     @Column({name: "email", nullable: true})
