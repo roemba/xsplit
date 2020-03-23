@@ -9,41 +9,13 @@
 			<div class='col-12 col-lg-6'>
 				<h3>Unsettled Bills</h3>
 
-				<div class='unsettled-bills'>
-					<% unsettledbills.forEach(function(bill) { %>
-						<div class='card bg-dark text-light text-center col-12 bill-item mb-3 p-3 rounded-0 border-light' bill-id='<%= bill.id %>'>
-							<div>
-								<span class='float-left bill-date' data-timestamp='<%= bill.dateCreated %>'><%= bill.dateCreated %></span>
-								<span class='float-right'><%= bill.totalXrp %> XRP</span>
-							</div>
-							<h3 class='card-title text-center'><%= bill.description %></h3>
-							<strong>Participants:</strong> 
-							<% bill.participants.forEach(function(user) { %>
-								<%= user.username %> (1x), 
-							<% }) %>
-						</div>
-					<% }) %>
-				</div>
+				<div class='unsettled-bills'></div>
 			</div>
 
 			<div class='col-12 col-lg-6'>
 				<h3>Settled Bills</h3>
 
-				<div class='settled-bills'>
-					<% settledbills.forEach(function(bill) { %>
-						<div class='card bg-dark text-light text-center col-12 bill-item mb-3 p-3 rounded-0 border-light' bill-id='<%= bill.id %>'>
-							<div>
-								<span class='float-left bill-date' data-timestamp='<%= bill.dateCreated %>'><%= bill.dateCreated %></span>
-								<span class='float-right'><%= bill.totalXrp %> XRP</span>
-							</div>
-							<h3 class='card-title text-center'><%= bill.description %></h3>
-							<strong>Participants:</strong> 
-							<% bill.participants.forEach(function(user) { %>
-								<%= user.username %> (1x), 
-							<% }) %>
-						</div>
-					<% }) %>
-				</div>
+				<div class='settled-bills'></div>
 			</div>
 		</div>
 	</div>
