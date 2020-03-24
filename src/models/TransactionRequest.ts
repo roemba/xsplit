@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, BeforeInsert, } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, BeforeInsert } from 'typeorm';
 import { User } from './User';
 import { Bill } from './Bill';
 
@@ -14,7 +14,9 @@ export class TransactionRequest {
     @Column({ type: "bigint"})
     public totalXrp: number;
 
-    @ManyToOne(() => Bill, bill => bill.transactionRequests)
+    @ManyToOne(() => Bill, bill => bill.transactionRequests, {
+        onDelete: "CASCADE"
+    })
     public bill: Bill;
 
     @ManyToOne(() => User, user => user.transactionRequests, {
