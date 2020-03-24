@@ -43,17 +43,20 @@ export class BillService {
         for (const weight of newBill.weights) {
             await this.billWeightRepository.save(weight);
         }
+        newBill = await this.findOne(newBill.id);
         newBill = await this.createTransactionRequests(newBill);
         return newBill;
     }
 
     public async createTransactionRequests(bill: Bill): Promise<Bill> {
         const transactionService = Container.get(TransactionRequestService);
+        let totalWeight = 0;
+        bill.weights.forEach(w => totalWeight += w.weight);
         for (let i = 0; i < bill.participants.length; i++) {
             const tr = new TransactionRequest();
             tr.bill = bill;
             tr.debtor = bill.participants[i];
-            tr.totalXrp = Math.round(bill.totalXrp / bill.participants.length);
+            tr.totalXrp = Math.round(bill.totalXrp / totalWeight * bill.weights[i].weight);
             await transactionService.create(tr);
         }
         return Container.get(BillService).findOne(bill.id);
