@@ -59,7 +59,7 @@ export class UserService {
             const newUser = await this.userRepository.save(user);
             return newUser;
         } else {
-            return tempUser;
+            return undefined;
         }
     }
 

@@ -32,18 +32,20 @@ export class TransactionRequestController {
     @OnUndefined(400)
     @Put("/pay")
     async payTransactionRequest(@CurrentUser() user: User, @Body() body: TransactionRequest): Promise<TransactionRequest> {
+        const transactionRequest = await Container.get(TransactionRequestService).findOne(body.id);
         const trService = Container.get(TransactionRequestService);
-        if (!trService.isPaymentUnique(body.transactionHash)) {
+        if (!trService.isPaymentUnique(transactionRequest.transactionHash)) {
             return undefined;
         }
         let tr = new TransactionRequest();
-        tr.transactionHash = body.transactionHash;
+        tr.transactionHash = transactionRequest.transactionHash;
         await trService.update(body.id, tr);
         tr = await trService.findOne(tr.id, {relations: ["bill"]});
         if (trService.validatePayment(tr)) {
             tr.paid = true;
             return Container.get(TransactionRequestService).update(body.id, tr);
         }
+        
         return tr;
     }
 }

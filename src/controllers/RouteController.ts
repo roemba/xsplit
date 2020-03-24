@@ -1,6 +1,10 @@
-import { Controller, Get, Param, Redirect, Render } from "routing-controllers";
+import { Controller, Get, Param, Redirect, Render, Req } from "routing-controllers";
 import { Container } from "typedi";
 import { LoggerService } from "../services/LoggerService";
+import {Request} from "express";
+import { AuthService } from "../auth/AuthService";
+import { TransactionRequestService } from "../services/TransactionRequestService";
+import { User } from "../models/User";
 
 @Controller() 
 export class RouteController {
@@ -43,11 +47,30 @@ export class RouteController {
       return {page: "account"};
    }
 
+
    // @Authorized()
    @Get("/pay")
    @Render("index.ejs")
-   GetPay(): unknown {
-      const payments = [{receiver: "johndoe", amount: 384, subject: "Lunch at EWI"},{receiver: "Piet", amount: 112, subject: "Coffee"}];
+   async GetPay(@Req() request: Request): Promise<unknown> {
+      const user = new User();
+      user.username = Container.get(AuthService).parseBearerAuthFromRequest(request).username;
+      const transactions = await Container.get(TransactionRequestService).findRequestsToUser(user);
+      
+      const payments = Array<object>();
+
+      transactions.forEach((transaction) => {
+         /*this.log.info("Bill " + transaction.bill);
+         payments.push({
+            id: transaction.id, 
+            owner: transaction.bill.creditor, 
+            totalXrp: transaction.bill.totalXrp, 
+            debtorXrp: transaction.totalXrp
+         });*/
+         this.log.info("paid: " + transaction.paid);
+         if(!transaction.paid) {
+            payments.push(transaction);
+         }
+      });
       return {page: "pay", payments: payments};
    }
 
