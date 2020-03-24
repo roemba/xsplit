@@ -7,7 +7,6 @@ import { Group } from '../models/Group';
 import { GroupBalanceService } from './GroupBalanceService';
 import { GroupBalance } from '../models/GroupBalance';
 import { UserService } from './UserService';
-import { GroupBill } from '../models/GroupBill';
 import { Bill } from '../models/Bill';
 
 @Service()
@@ -70,11 +69,12 @@ export class GroupService {
 
     public async addBill(user: User, groupId: string, bill: Bill): Promise<Group> {
         const group = await this.findOne(groupId);
-        const newBill = new GroupBill();
+        const newBill = new Bill();
         newBill.creditor = user;
         newBill.description = bill.description;
         newBill.participants = bill.participants;
         newBill.totalXrp = bill.totalXrp;
+        group.bills.push(newBill);
         return this.update(groupId, group);
     }
 

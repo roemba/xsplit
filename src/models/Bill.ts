@@ -2,6 +2,7 @@ import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, ManyToMany, JoinTabl
 import { User } from './User';
 import { TransactionRequest } from './TransactionRequest';
 import { BillWeight } from './BillWeight';
+import { Group } from './Group';
 
 @Entity({ name: "bills" })
 export class Bill {
@@ -22,6 +23,9 @@ export class Bill {
         eager: true
     })
     public creditor: User;
+
+    @ManyToOne(() => Group, group => group.bills)
+    public group: Group;
 
     @ManyToMany(() => User, {
         eager: true

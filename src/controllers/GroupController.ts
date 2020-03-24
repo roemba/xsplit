@@ -46,7 +46,7 @@ export class GroupController {
     }
 
     @Authorized()
-    @Put("/:id")
+    @Put("/:id/bill")
     async addBill(@CurrentUser() user: User, @Param("id") id: string, @Body() bill: Bill): Promise<Group> {
         // Check if person trying to edit is member of group
         const group = await Container.get(GroupService).findOne(id);
