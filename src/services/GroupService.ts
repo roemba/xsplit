@@ -35,18 +35,18 @@ export class GroupService {
     public async create(grp: Group): Promise<Group> {
         this.log.info('Create a new group => ', grp.toString());
         const created = await this.groupRepository.save(grp);
-        this.initializeBalances(created);
-        return created;
+        return this.initializeBalances(created);
     }
 
-    public initializeBalances(group: Group): void {
-        group.participants.forEach(user => {
+    public async initializeBalances(group: Group): Promise<Group> {
+        for (const user of group.participants) {
             const balance = new GroupBalance();
             balance.balance = 0;
             balance.group = group;
             balance.user = user;
-            Container.get(GroupBalanceService).create(balance);
-        });
+            await Container.get(GroupBalanceService).create(balance);
+        }
+        return this.findOne(group.id);
     }
 
     public update(id: string, group: Group): Promise<Group> {

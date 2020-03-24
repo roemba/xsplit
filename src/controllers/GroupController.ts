@@ -2,7 +2,6 @@ import Container from "typedi";
 import {JsonController, Get, CurrentUser, Authorized, Post, Body, Put, Param, UnauthorizedError} from "routing-controllers";
 import { Bill } from "../models/Bill";
 import { User } from "../models/User";
-import { BillService } from "../services/BillService";
 import { LoggerService } from "../services/LoggerService";
 import { Group } from "../models/Group";
 import { GroupService } from "../services/GroupService";
@@ -14,8 +13,8 @@ export class GroupController {
 
     @Authorized()
     @Get("/")
-    getMyGroups(@CurrentUser() user: User): Promise<Bill[]> {
-        return Container.get(BillService).findUserBills(user);
+    getMyGroups(@CurrentUser() user: User): Promise<Group[]> {
+        return Container.get(GroupService).findUserGroups(user);
     }
 
     @Authorized()
