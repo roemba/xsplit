@@ -55,7 +55,7 @@ async function sendBill(subject: string, amount: number, weights: number[]): Pro
 			description: subject,
 			totalXrp: amount,
 			participants: participants,
-			weights: weights
+			weights: weights.map(w => {return {weight: w}})
 		})
 	});
 	if (response.status !== 200) {
