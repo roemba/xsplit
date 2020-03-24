@@ -1,6 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, ManyToMany, JoinTable, OneToMany, BeforeInsert } from 'typeorm';
 import { User } from './User';
 import { TransactionRequest } from './TransactionRequest';
+import { BillWeight } from './BillWeight';
 
 @Entity({ name: "bills" })
 export class Bill {
@@ -32,6 +33,11 @@ export class Bill {
         eager: true
     })
     public transactionRequests: TransactionRequest[];
+
+    @OneToMany(() => BillWeight, bw => bw.bill, {
+        eager: true
+    })
+    public weights: BillWeight[];
 
     @BeforeInsert()
     public setDateCreated(): void {

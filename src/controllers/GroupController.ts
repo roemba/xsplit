@@ -6,7 +6,6 @@ import { BillService } from "../services/BillService";
 import { LoggerService } from "../services/LoggerService";
 import { Group } from "../models/Group";
 import { GroupService } from "../services/GroupService";
-import { GroupBill } from "../models/GroupBill";
 
 @JsonController("/api/groups")
 export class GroupController {
@@ -48,7 +47,7 @@ export class GroupController {
 
     @Authorized()
     @Put("/:id")
-    async addBill(@CurrentUser() user: User, @Param("id") id: string, @Body() bill: GroupBill): Promise<Group> {
+    async addBill(@CurrentUser() user: User, @Param("id") id: string, @Body() bill: Bill): Promise<Group> {
         // Check if person trying to edit is member of group
         const group = await Container.get(GroupService).findOne(id);
         const index = group.participants.findIndex(participant => participant.username === user.username);

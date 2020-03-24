@@ -8,6 +8,7 @@ import { GroupBalanceService } from './GroupBalanceService';
 import { GroupBalance } from '../models/GroupBalance';
 import { UserService } from './UserService';
 import { GroupBill } from '../models/GroupBill';
+import { Bill } from '../models/Bill';
 
 @Service()
 export class GroupService {
@@ -67,7 +68,7 @@ export class GroupService {
         return this.update(id, group);
     }
 
-    public async addBill(user: User, groupId: string, bill: GroupBill): Promise<Group> {
+    public async addBill(user: User, groupId: string, bill: Bill): Promise<Group> {
         const group = await this.findOne(groupId);
         const newBill = new GroupBill();
         newBill.creditor = user;
