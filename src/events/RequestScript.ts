@@ -64,6 +64,10 @@ async function sendBill(subject: string, amount: number, weights: number[]): Pro
 	}
 
 	console.log("Bill sent");
+
+	$("#request-form").trigger('reset');
+	$(".added-users").empty();
+	participants = [];
 }
 
 function onRequestPageLoad(): void {
