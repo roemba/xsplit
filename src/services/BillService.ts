@@ -3,6 +3,7 @@ import { OrmRepository } from 'typeorm-typedi-extensions';
 import { BillRepository } from '../repositories/BillRepository';
 import { Bill } from '../models/Bill';
 import { User } from '../models/User';
+import { NotificationService } from '../services/NotificationService';
 import { TransactionRequestService } from './TransactionRequestService';
 import { TransactionRequest } from '../models/TransactionRequest';
 import { LoggerService } from "../services/LoggerService";
@@ -51,6 +52,7 @@ export class BillService {
             tr.totalXrp = Math.round(bill.totalXrp / bill.participants.length);
             await transactionService.create(tr);
         }
+        Container.get(NotificationService).sendPaymentRequestNotification(bill.participants);
         return Container.get(BillService).findOne(bill.id);
     }
 
