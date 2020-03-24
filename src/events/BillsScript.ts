@@ -52,8 +52,8 @@ function onBillsPageLoad(): void {
 					element += "<span class='float-left bill-date' data-timestamp='"+bill.dateCreated+"'>"+dateFormatted+"</span>";
 					element += "<span class='float-right'>"+bill.totalXrp+" XRP</span>";
 					element += "</div>";
-					element += "<h3 class='card-title text-center'>"+bill.description+"</h3>";
-					element += "<strong>Participants:</strong>";
+					element += "<h5 class='card-title text-center mb-0'>"+bill.description+"</h5>";
+					element += "<hr class='border-light horizontal-divider'>";
 
 				let parts = "<div class='row'>";
 
