@@ -43,9 +43,6 @@ async function getUser(username: string): Promise<User | undefined> {
 
 async function sendBill(subject: string, amount: number, weights: number[]): Promise<void> {
 
-	console.log(participants);
-	console.log(weights);
-
 	const response = await fetch("/api/bills", {
 		method: "POST",
 		headers: {
@@ -63,10 +60,10 @@ async function sendBill(subject: string, amount: number, weights: number[]): Pro
 		return;
 	}
 
-	console.log("Bill sent");
-
+	$("#bill-success").removeClass("d-none");
 	$("#request-form").trigger('reset');
 	$(".added-users").empty();
+	$("#subject").trigger("change");
 	participants = [];
 }
 
@@ -169,10 +166,6 @@ function onRequestPageLoad(): void {
 					const user = await getUser(ui.item.label);
 
 					participants.push(await user);
-
-					participants.forEach(function(participant) {
-						console.log(participant);
-					});
 
 					$("#user-search").val("");
 					$('select').selectpicker();
