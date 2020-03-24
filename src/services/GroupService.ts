@@ -5,6 +5,9 @@ import { User } from '../models/User';
 import { LoggerService } from "../services/LoggerService";
 import { Group } from '../models/Group';
 import { GroupBalanceService } from './GroupBalanceService';
+import { GroupBalance } from '../models/GroupBalance';
+import { UserService } from './UserService';
+import { GroupBill } from '../models/GroupBill';
 
 @Service()
 export class GroupService {
@@ -19,7 +22,7 @@ export class GroupService {
     }
 
     public async findUserGroups(user: User): Promise<Group[]> {
-        // Finds all user balances and gets the bill from there. It's this way because the query is easier.
+        // Finds all user balances and gets the bill from there. It's implemented this way because the query is easier.
         const balances = await Container.get(GroupBalanceService).findUserBalances(user, {relations: ["group"]});
         return balances.map(e => e.group);
     }
@@ -29,15 +32,49 @@ export class GroupService {
         return this.groupRepository.findOne({ id });
     }
 
-    public create(grp: Group): Promise<Group> {
+    public async create(grp: Group): Promise<Group> {
         this.log.info('Create a new group => ', grp.toString());
-        return this.groupRepository.save(grp);
+        const created = await this.groupRepository.save(grp);
+        this.initializeBalances(created);
+        return created;
+    }
+
+    public initializeBalances(group: Group): void {
+        group.participants.forEach(user => {
+            const balance = new GroupBalance();
+            balance.balance = 0;
+            balance.group = group;
+            balance.user = user;
+            Container.get(GroupBalanceService).create(balance);
+        });
     }
 
     public update(id: string, group: Group): Promise<Group> {
         this.log.info('Update a group');
         group.id = id;
         return this.groupRepository.save(group);
+    }
+
+    public async addParticipant(id: string, username: string): Promise<Group> {
+        const user = await Container.get(UserService).findOne(username);
+        const group = await this.findOne(id);
+        const balance = new GroupBalance();
+        balance.balance = 0;
+        balance.group = group;
+        balance.user = user;
+        group.participants.push(user);
+        group.groupBalances.push(balance);
+        return this.update(id, group);
+    }
+
+    public async addBill(user: User, groupId: string, bill: GroupBill): Promise<Group> {
+        const group = await this.findOne(groupId);
+        const newBill = new GroupBill();
+        newBill.creditor = user;
+        newBill.description = bill.description;
+        newBill.participants = bill.participants;
+        newBill.totalXrp = bill.totalXrp;
+        return this.update(groupId, group);
     }
 
     public async delete(id: string): Promise<void> {
