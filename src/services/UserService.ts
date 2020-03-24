@@ -54,12 +54,12 @@ export class UserService {
     }
 
     public async create(user: User): Promise<User> {
-        const tempUser = await this.userRepository.findOne(user.username);
-        if(tempUser == null) {
+        const tempUser = await this.userRepository.findOne({username: user.username});
+        if(tempUser === undefined) {
             const newUser = await this.userRepository.save(user);
             return newUser;
         } else {
-            return new User();
+            return tempUser;
         }
     }
 

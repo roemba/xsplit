@@ -6,13 +6,15 @@ import { User } from '../models/User';
 import { TransactionRequestService } from './TransactionRequestService';
 import { TransactionRequest } from '../models/TransactionRequest';
 import { LoggerService } from "../services/LoggerService";
+import { BillWeightRepository } from '../repositories/BillWeightRepository';
 
 @Service()
 export class BillService {
 
     log = Container.get(LoggerService);
 
-    constructor(@OrmRepository() private billRepository: BillRepository) {}
+    constructor(@OrmRepository() private billRepository: BillRepository,
+                @OrmRepository() private billWeightRepository: BillWeightRepository) {}
 
     public find(): Promise<Bill[]> {
         this.log.info('Find all users');
@@ -38,6 +40,9 @@ export class BillService {
     public async create(bill: Bill): Promise<Bill> {
         this.log.info('Create a new bill => ', bill.toString());
         let newBill = await this.billRepository.save(bill);
+        for (const weight of newBill.weights) {
+            await this.billWeightRepository.save(weight);
+        }
         newBill = await this.createTransactionRequests(newBill);
         return newBill;
     }
