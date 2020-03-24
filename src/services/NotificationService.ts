@@ -14,6 +14,24 @@ export class NotificationService {
         setApiKey(process.env.SENDGRID_API_KEY);
     }
 
+    public async sendPaymentReceivedNotification(user: User): Promise<void> {
+        this.log.info("Creating payment received notification");
+        const addresses = [(await Container.get(UserService).findOne(user.username)).email];
+        const subject = "XPLIT: payment received";
+        const message = `Hello, &#x1F44B; <br><br>
+            You have received a new payment! &#x26A1;&#x1F447;  <br>
+            Please check your current bills in your account: <a href='http://xsplit.ewi.tudelft.nl/home' target='_blank'>xsplit.ewi.tudelft.nl</a>`
+        ;
+        this.log.info("Sending new payment received notification to: " + addresses.toString());
+        const notify = this.sendNotificationEmail(addresses, subject, message, message);
+        notify.then(() => {
+            this.log.info("Email(s) sent successfully!");
+        }).catch((e) => {
+            this.log.error("Error occurred while sending email(s)!");
+            this.log.error(e);
+        });
+    }
+
     public async sendPaymentRequestNotification(users: User[]): Promise<void> {
         this.log.info("Creating payment request notification");
         const addresses = [];
