@@ -41,32 +41,10 @@ async function getUser(username: string): Promise<User | undefined> {
 	return await user;
 }
 
-// async function getUsers(usernames: string[]): Promise<User[] | undefined> {
-
-// 	const participants: User[] = [];
-
-// 	console.log(usernames);
-
-// 	usernames.forEach(async (username: string) => {
-// 		const response = await fetch("/api/users/"+username);
-// 		if (response.status !== 200) {
-// 			console.error(response.status);
-// 			return;
-// 		}
-
-// 		const user = await response.json();
-
-// 		console.log(user);
-
-// 		participants.push(user);
-// 	});
-
-// 	return await participants;
-// }
-
-async function sendBill(subject: string, amount: number): Promise<void> {
+async function sendBill(subject: string, amount: number, weights: number[]): Promise<void> {
 
 	console.log(participants);
+	console.log(weights);
 
 	const response = await fetch("/api/bills", {
 		method: "POST",
@@ -76,7 +54,8 @@ async function sendBill(subject: string, amount: number): Promise<void> {
 		body: JSON.stringify({
 			description: subject,
 			totalXrp: amount,
-			participants: participants
+			participants: participants,
+			weights: weights.map(w => {return {weight: w};})
 		})
 	});
 	if (response.status !== 200) {
@@ -161,7 +140,6 @@ function onRequestPageLoad(): void {
 			minLength: 2,
 			// eslint-disable-next-line
 			source: function(request: any, response: Function) {
-				console.log("typeof request " + typeof request);
 				$.ajax({
 					type: "GET",
 					url: "/api/users/search/"+request.term,
@@ -203,41 +181,17 @@ function onRequestPageLoad(): void {
 		$(document).on("click", ".submit-request", async function(e) {
 			e.preventDefault();
 
-			// const selectedUsers: string[] = [];
-			// const weights: number[] = [];
+			const weights: number[] = [];
 
-			// $(".user-row").each(function() {
-				// const username = $(this).attr('data-user');
-				// const weight = $(this).find("select").val();
-
-				// selectedUsers.push(username);
-				// weights.push(Number(weight));
-			// });
+			$(".user-row").each(function() {
+				const weight = $(this).find("select").val();
+				weights.push(Number(weight));
+			});
 
 			const nAmount = Number($("#amount").val());
 			const subject = String($("#subject").val());
-			
-			// const nSplits = weights.reduce((a, b) => a + b, 0);
-			// const difference: number = nAmount;
 
-			// getUsers(selectedUsers).then((users: User[]) => {
-			// 	sendBill(subject, nAmount, users);
-			// });
-
-			sendBill(subject, nAmount);
-
-			// selected.forEach((username: string, index: number) => {
-
-			// 	const thisAmount = Math.floor(nAmount/nSplits*weights[index]*100)/100;
-
-			// 	difference -= thisAmount;
-
-			// 	// TODO: connect to controller.
-
-			// 	console.log("Transaction with subject " + subject + " sent to " + username + ", Amount: " + thisAmount);
-			// });
-
-			// console.log("Difference in total: " + difference.toFixed(2));
+			sendBill(subject, nAmount, weights);
 
 		});
 	});
