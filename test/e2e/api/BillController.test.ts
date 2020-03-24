@@ -46,6 +46,7 @@ test('create bill', async () => {
     const bob = new User();
     bob.username = "bob";
     bill.participants = [alice, bob];
+    // eslint-disable-next-line
     bill.weights = bill.participants.map(_ => {
         const w = new BillWeight();
         w.weight = 1;
