@@ -1,12 +1,4 @@
-function getUsername(): string {
-
-	const cookie = "; " + document.cookie;
-	const bearerStr = cookie.split("; ")[1];
-	const bearer = window.atob(bearerStr.replace("bearer=",""));
-	const username = bearer.split(":")[0];
-
-	return username;
-}
+import {CookieParseUtil} from "../util/CookieParseUtil";
 
 async function sendPaymentRequest(requestId: string): Promise<void> {
     const response = await fetch("/api/transactions/pay", {
@@ -15,7 +7,7 @@ async function sendPaymentRequest(requestId: string): Promise<void> {
 			"Content-Type": "application/json"
 		},
 		body: JSON.stringify({
-            currentUser: getUsername(),
+            currentUser: CookieParseUtil.getUsername(),
             id: requestId
 		})
 	});

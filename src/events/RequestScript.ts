@@ -1,16 +1,7 @@
 import { User } from "../models/User";
+import {CookieParseUtil} from "../util/CookieParseUtil";
 
 let participants: User[] = [];
-
-function getUsername(): string {
-
-	const cookie = "; " + document.cookie;
-	const bearerStr = cookie.split("; ")[1];
-	const bearer = window.atob(bearerStr.replace("bearer=",""));
-	const username = bearer.split(":")[0];
-
-	return username;
-}
 
 function newUserRow(username: string): string {
 	let element = "<div class='form-row user-row mb-2' data-user='"+username+"'>";
@@ -73,7 +64,7 @@ function onRequestPageLoad(): void {
 		$(document).on("click", ".remove-user", function() {
 			const userRow = $(this).closest(".user-row");
 
-			const currentUsername = getUsername();
+			const currentUsername = CookieParseUtil.getUsername();
 			const username = userRow.attr('data-user');
 
 			if(username == currentUsername) {
@@ -88,7 +79,7 @@ function onRequestPageLoad(): void {
 
 		$(document).on("change", "#includeCheck", async function() {
 			
-			const username: string = getUsername();
+			const username: string = CookieParseUtil.getUsername();
 
 			const user = await getUser(username);
 
@@ -153,7 +144,7 @@ function onRequestPageLoad(): void {
 				const added = $("div.user-row[data-user='"+ui.item.label+"']");
 
 				if(added.length == 0) {
-					const username = getUsername();
+					const username = CookieParseUtil.getUsername();
 					
 					if(ui.item.label == username) {
 						$("#includeCheck").prop("checked",true);

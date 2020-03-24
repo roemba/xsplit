@@ -8,3 +8,4 @@ shell.exec("browserify dist/events/RequestScript.js > dist/events/RequestScriptB
 shell.exec("browserify dist/events/GroupsScript.js > dist/events/GroupsScriptBundled.js");
 shell.exec("browserify dist/events/BillsScript.js > dist/events/BillsScriptBundled.js");
 shell.exec("browserify dist/events/PaymentScript.js > dist/events/PaymentScriptBundled.js");
+shell.exec("browserify dist/util/CookieParseUtil.js > dist/events/CookieUtilBundled.js");
