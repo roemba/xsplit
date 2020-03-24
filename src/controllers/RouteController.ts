@@ -66,7 +66,6 @@ export class RouteController {
             totalXrp: transaction.bill.totalXrp, 
             debtorXrp: transaction.totalXrp
          });*/
-         this.log.info("paid: " + transaction.paid);
          if(!transaction.paid) {
             payments.push(transaction);
          }
