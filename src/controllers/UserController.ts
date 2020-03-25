@@ -1,15 +1,15 @@
 import {Container} from "typedi";
 import {
-  Authorized,
-  BadRequestError,
-  Body,
-  CurrentUser,
-  Delete,
-  Get,
-  JsonController,
-  Param,
-  Post,
-  Put
+    Authorized,
+    BadRequestError,
+    Body,
+    CurrentUser,
+    Delete,
+    Get,
+    JsonController,
+    Param,
+    Post,
+    Put
 } from "routing-controllers";
 import {UserService} from "../services/UserService";
 import {User} from '../models/User';
@@ -67,17 +67,25 @@ export class UserController {
 
     @Post("")
     async post(@Body() body: CreateUserRequest): Promise<User> {
-      const user = new User();
-      user.username = body.username;
-      user.email = body.email;
-      user.publickey = body.publickey;
+        const user = new User();
+        user.username = body.username;
+        user.email = body.email;
+        user.publickey = body.publickey;
 
-      const newUser = await Container.get(UserService).create(user);
-      if(newUser.username !== undefined) {
-        return newUser;
-      }
+        const newUser = await Container.get(UserService).create(user);
+        if (newUser.username !== undefined) {
+            return newUser;
+        }
 
-      throw new BadRequestError("Public key and/or username is already in use");
+
+        throw new BadRequestError("Public key and/or username is already in use");
+    }
+
+    @Put("")
+    @Authorized()
+    put(@CurrentUser() user: User, @Body() body: User): string {
+      Container.get(UserService).update(user.username, body);
+      return "Updating the user";
     }
 
     @Get("/qr/:username")

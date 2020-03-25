@@ -1,5 +1,5 @@
-import {deriveAddress} from 'ripple-keypairs';
-import {User} from "../models/User";
+import { deriveAddress } from 'ripple-keypairs';
+import { User } from "../models/User";
 
 async function getUserInfo(): Promise<User> {
 
@@ -8,27 +8,49 @@ async function getUserInfo(): Promise<User> {
 	return await response.json();
 }
 
-async function genQR(username: string): Promise<string> {
+function onAccountPageLoad(): void {
+	jQuery(($) => {
 
-	const response = await fetch("/api/users/qr/"+username);
+		$(document).ready(function() {
+			getUserInfo().then((data: User) => {
+				$("#userName").html(data.username);
+				$("#publicKey").html(deriveAddress(data.publickey));
+				$("#emailAddress").val(data.email);
+				$("#fullName").val(data.fullName);
+				$("#notificationsCheck").prop("checked",data.notifications);
+			}).catch(reason => { 
+				console.log(reason.message);
+			});
+		});
 
-	return (await response.json())['qr'];
+		$(document).on("click", "#submitDetailsButton", async function(event: Event) {
+			event.preventDefault();
 
+			const emailaddress = $("#emailAddress").val();
+			const fullname = $("#fullName").val();
+			const notifications = $("#notificationsCheck").prop("checked");
+
+			const resp = await fetch("/api/users", {
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify({
+					email: emailaddress,
+					fullName: fullname,
+					notifications: notifications
+				})
+			});
+			if (resp.status !== 200) {
+				$("#error-save").removeClass("d-none");
+				return;
+			}
+
+			$("#error-save").addClass("d-none");
+			$("#success-save").removeClass("d-none").delay(5000).fadeOut();
+
+		});
+	});
 }
 
-getUserInfo().then((data: User) => {
-
-	$(".userName").html(data.username);
-	$(".publicKey").html(deriveAddress(data.publickey));
-	$(".email").html(data.email);
-	$(".fname").html(data.fullName);
-
-	genQR(data.username).then((qr) => {
-		$(".account-qr").attr("src", qr);
-	}).catch(reason => {
-		console.log(reason.message);
-	});
-}).catch(reason => { 
-	console.log(reason.message);
-});
-
+document.addEventListener("DOMContentLoaded", onAccountPageLoad);

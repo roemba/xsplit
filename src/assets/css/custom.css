@@ -150,6 +150,14 @@ select.color {
 .border-light {
   border-color: #454d55 !important;
 }
+
+.no-text-overflow {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+#notificationsCheck {
+   margin-left: 5px;
 .nav-balance {
   line-height: 1.25;
   padding: 10px;
