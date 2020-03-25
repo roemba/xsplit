@@ -10,8 +10,9 @@ export class ChallengeRepository extends Repository<Challenge>  {
     
     log = Container.get(LoggerService);
     expireTime = Number(process.env.SESSION_EXPIRY_IN_MINUTES) * 60000;
+    frontendTimeMargin = 10 * 1000;
 
-    public async createChallenge(user: User): Promise<string> {
+    public async createChallenge(user: User): Promise<object> {
         const challenge = new Challenge();
         challenge.user = user;
         challenge.challenge = randomBytes(32).toString("hex");
@@ -19,7 +20,10 @@ export class ChallengeRepository extends Repository<Challenge>  {
 
         await getRepository(Challenge).save(challenge);
 
-        return challenge.challenge;
+        return {
+            challenge: challenge.challenge,
+            expiresIn: this.expireTime - this.frontendTimeMargin
+        };
     }
 
     public async getChallenges(user: User): Promise<Challenge[]> {
