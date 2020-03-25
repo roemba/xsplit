@@ -60,7 +60,9 @@ async function sendBill(subject: string, amount: number, weights: number[]): Pro
 		return;
 	}
 
-	$("#bill-success").removeClass("d-none");
+	$("#submitBill").text("Send");
+
+	$("#bill-success").removeClass("d-none").delay(5000).fadeOut();
 	$("#request-form").trigger('reset');
 	$(".added-users").empty();
 	$("#subject").trigger("change");
@@ -177,6 +179,8 @@ function onRequestPageLoad(): void {
 
 		$(document).on("click", ".submit-request", async function(e) {
 			e.preventDefault();
+
+			$("#submitBill").text("Creating bill...");
 
 			const weights: number[] = [];
 
