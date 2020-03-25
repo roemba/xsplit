@@ -1,18 +1,45 @@
-import { Container } from "typedi";
-import {Controller, Param, Get, Post, Put, Delete, Req, UseBefore, CurrentUser, Authorized, OnUndefined, BadRequestError} from "routing-controllers";
-import { UserService } from "../services/UserService";
-import { User } from '../models/User';
-import {Request} from "express";
-import {json} from "body-parser";
-import { LoggerService } from "../services/LoggerService";
+import {Container} from "typedi";
+import {
+  Authorized,
+  BadRequestError,
+  Body,
+  CurrentUser,
+  Delete,
+  Get,
+  JsonController,
+  Param,
+  Post,
+  Put
+} from "routing-controllers";
+import {UserService} from "../services/UserService";
+import {User} from '../models/User';
+import {LoggerService} from "../services/LoggerService";
 import 'babel-polyfill';
 import * as brandedQRCode from 'branded-qr-code';
 import path from "path";
+import {IsEmail, IsNotEmpty, IsString, MaxLength} from "class-validator";
 
-@Controller("/api/users")
+class CreateUserRequest {
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(1000)
+  username: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(4000)
+  publickey: string;
+}
+
+@JsonController("/api/users")
 export class UserController {
   
-  log = Container.get(LoggerService);
+    log = Container.get(LoggerService);
 
     @Get("")
     @Authorized()
@@ -20,47 +47,45 @@ export class UserController {
         return Container.get(UserService).findMe(user);
     }
 
+    @Put("")
+    @Authorized()
+    putMe(@CurrentUser() user: User): string {
+      return "Updating the user " + user.username;
+    }
+
+    @Delete("")
+    @Authorized()
+    removeMe(@CurrentUser() user: User): string {
+      return "Deleting user " + user.username;
+    }
+
     @Get("/search/:searchString")
+    @Authorized()
     getSearchMatch(@Param("searchString") usernameSearch: string): Promise<string[]> {
       return Container.get(UserService).findUsers(usernameSearch);
     }
 
     @Post("")
-    @OnUndefined(400)
-    @UseBefore(json())
-    async post(@Req() request: Request): Promise<User> {
+    async post(@Body() body: CreateUserRequest): Promise<User> {
       const user = new User();
-      user.username = request.body.username;
-      user.email = request.body.email;
-      user.publickey = request.body.publickey;
-      try {
-        const newUser = await Container.get(UserService).create(user);
-        if(newUser.username === undefined) {
-          throw new BadRequestError("Public key and/or username is already in use");
-        } else {
-          return newUser;
-        }
-      } catch {
-        throw new BadRequestError("Public key and/or username is already in use");
+      user.username = body.username;
+      user.email = body.email;
+      user.publickey = body.publickey;
+
+      const newUser = await Container.get(UserService).create(user);
+      if(newUser.username !== undefined) {
+        return newUser;
       }
-    }
 
-    @Put("/:id")
-    put(@Param("id") id: string): string {
-       return "Updating the user " + id;
+      throw new BadRequestError("Public key and/or username is already in use");
     }
-
-    @Delete("/:id")
-    remove(@Param("id") id: string): string {
-      return "Deleting user " + id;
-    } 
 
     @Get("/qr/:username")
     async genQR(@Param("username") username: string): Promise<object> {
       let qr;
 
       await brandedQRCode.generate({
-         text: 'https://localhost:3000/addfriend/'+username, 
+         text: 'https://localhost:3000/addfriend/'+username,
          path: path.resolve(__dirname, "../assets/img/xplit-dark.png")
       }).then((buf: unknown) => {
          qr = "data:image/png;base64,"+Buffer.from(buf).toString('base64');
@@ -68,5 +93,4 @@ export class UserController {
 
       return {qr: qr};
     }
-
 }
