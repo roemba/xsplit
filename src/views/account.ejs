@@ -1,45 +1,54 @@
 <div class='row'>
-	<div class="col-12 col-lg-8 offset-lg-2 text-light">
+	<div class="col-12 col-lg-6 offset-lg-3 text-light">
 
 		<h1 class='text-center'>My Account</h1>
 		
 		<br />
 		
 		<div class='row'>
-			<div class='col-4'>
+<!-- 			<div class='col-4'>
 				<img class='account-qr' width="100%" height="auto" />
+			</div> -->
+			<div class='col-12'>
+				<span class='text-muted'>Username</span>
 			</div>
-			<div class='col-6'>
-				<div class='col-4'>
-					<h3 class='userName'></h3>
-					<small class='publicKey'></small>
-				</div>
-
-				<br />
-
-				<div class='col-4 font-weight-bold'>
-					Email:
-				</div>
-				<div class='col-8 email'>
-					
-				</div>
-
-				<br />
-
-				<div class='col-4 font-weight-bold'>
-					Full Name:
-				</div>
-				<div class='col-8 fname'>
-					
-				</div>
-
-				<br />
-
-				<div class='col-10'>
-					<a href="#" class='text-muted'>Change profile...</a>
-				</div>
-
+			<div class='col-12'>
+				<span id='userName'></span>
 			</div>
+			<br />
+			<br />
+			<div class='col-12'>
+				<span class='text-muted'>Public Key</span>
+			</div>
+			<div class='col-12'>
+				<span id='publicKey'></span>
+			</div>
+			<br />
+			<br />
+			<div class='col-12'>
+				<span class='text-muted'>Email Address</span>
+			</div>
+			<div class='col-12'>
+				<input type='text' class='form-control' id='emailAddress' value='' />
+			</div>
+			<br />
+			<br />
+			<div class='col-12'>
+				<span class='text-muted'>Full Name</span>
+			</div>
+			<div class='col-12'>
+				<input type='text' class='form-control' id='fullName' value='' />
+			</div>
+			<br />
+			<br />
+
+			<div class='col-12'>
+				<button type='submit' class='btn btn-secondary col-12' id='submitDetailsButton'>Save</button>
+			</div>
+			<br />
+
+
+				
 		</div>
 	</div>
 	<script src="/events/AccountScriptBundled.js"></script>

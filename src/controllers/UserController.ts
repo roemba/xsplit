@@ -1,5 +1,5 @@
 import { Container } from "typedi";
-import {Controller, Param, Get, Post, Put, Delete, Req, UseBefore, CurrentUser, Authorized, OnUndefined, BadRequestError} from "routing-controllers";
+import {Controller, Param, Get, Post, Put, Delete, Req, UseBefore, CurrentUser, Authorized, OnUndefined, BadRequestError, Body} from "routing-controllers";
 import { UserService } from "../services/UserService";
 import { User } from '../models/User';
 import {Request} from "express";
@@ -50,9 +50,12 @@ export class UserController {
       }
     }
 
-    @Put("/:id")
-    put(@Param("id") id: string): string {
-       return "Updating the user " + id;
+    @Put("")
+    @Authorized()
+    put(@CurrentUser() user: User, @Body() body: User): string {
+      this.log.info(user.username);
+      this.log.info(body.email + " " + body.fullName);
+       return "Updating the user";
     }
 
     @Delete("/:id")

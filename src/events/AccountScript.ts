@@ -16,19 +16,55 @@ async function genQR(username: string): Promise<string> {
 
 }
 
-getUserInfo().then((data: User) => {
+function onAccountPageLoad(): void {
+	jQuery(($) => {
 
-	$(".userName").html(data.username);
-	$(".publicKey").html(deriveAddress(data.publickey));
-	$(".email").html(data.email);
-	$(".fname").html(data.fullName);
+		$(document).ready(function() {
+			getUserInfo().then((data: User) => {
 
-	genQR(data.username).then((qr) => {
-		$(".account-qr").attr("src", qr);
-	}).catch(reason => {
-		console.log(reason.message);
+				$("#userName").html(data.username);
+				$("#publicKey").html(deriveAddress(data.publickey));
+				$("#emailAddress").val(data.email);
+				$("#fullname").val(data.fullName);
+
+				// genQR(data.username).then((qr) => {
+				// 	$(".account-qr").attr("src", qr);
+				// }).catch(reason => {
+				// 	console.log(reason.message);
+				// });
+			}).catch(reason => { 
+				console.log(reason.message);
+			});
+		});
+
+		$(document).on("click", "#submitDetailsButton", async function(event: Event): Promise<void> {
+			event.preventDefault();
+
+			const emailaddress = $("#emailAddress").val();
+			const fullname = $("#fullName").val();
+
+			// console.log(username + " " + publickey + " " + emailaddress + " " + fullname);
+
+			const resp = await fetch("/api/users", {
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify({
+					email: emailaddress,
+					fullName: fullname
+				})
+			});
+			if (resp.status !== 200) {
+				return;
+			}
+
+			console.log("Save succesfull, please reload");
+
+			// location.reload();
+
+		});
 	});
-}).catch(reason => { 
-	console.log(reason.message);
-});
+}
 
+document.addEventListener("DOMContentLoaded", onAccountPageLoad);
