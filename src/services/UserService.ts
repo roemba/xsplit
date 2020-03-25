@@ -63,11 +63,8 @@ export class UserService {
         }
     }
 
-    public update(email: string, fullName: string, notifications: boolean, user: User): Promise<User> {
+    public update(username: string, user: User): Promise<User> {
         this.log.info('Update a user');
-        user.email = email;
-        user.fullName = fullName;
-        user.notifications = notifications;
         return this.userRepository.save(user);
     }
 

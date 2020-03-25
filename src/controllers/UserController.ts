@@ -53,7 +53,10 @@ export class UserController {
     @Put("")
     @Authorized()
     put(@CurrentUser() user: User, @Body() body: User): string {
-      Container.get(UserService).update(body.email, body.fullName, body.notifications, user);
+      user.email = body.email;
+      user.fullName = body.fullName;
+      user.notifications = body.notifications;
+      Container.get(UserService).update(user.username, user);
       return "Updating the user";
     }
 
