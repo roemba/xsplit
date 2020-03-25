@@ -8,9 +8,8 @@
 				<% payments.forEach(payment => { %>
 					<div class='col-12 col-lg-6'>
 						<div class='mb-4' style='padding: 0px;'>
-							<h5 class='pt-1 pb-1'><%= payment.subject %></h5>
+							<h5 class='pt-1 pb-1'><%= payment.description %>, total spent: <%= payment.totalXrp %> XRP </h5>
 							<div class="form-group row" style='padding: 10px 10px 0px 10px;'>
-	
 								<div class='col-4 col-lg-3 text-center'>
 									<img src='/assets/img/avatar.svg' class='avatar' width='100%' height='auto'  style='max-width: 100px;' />
 									<br />
@@ -23,7 +22,7 @@
 									</span>-->
 									<img src='/assets/img/arrow-right.svg' style='max-width: 50px; height: auto;' />
 									<span class='mt-2 d-block'>
-										<%= payment.totalXrp %> XRP
+										<%= payment.debtorXrp %> XRP
 									</span>
 								</div>
 	

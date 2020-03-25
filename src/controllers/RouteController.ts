@@ -5,6 +5,7 @@ import {Request} from "express";
 import { AuthService } from "../auth/AuthService";
 import { TransactionRequestService } from "../services/TransactionRequestService";
 import { User } from "../models/User";
+import { BillService } from "../services/BillService";
 
 @Controller() 
 export class RouteController {
@@ -57,19 +58,19 @@ export class RouteController {
       const transactions = await Container.get(TransactionRequestService).findRequestsToUser(user);
       
       const payments = Array<object>();
-
-      transactions.forEach((transaction) => {
-         /*this.log.info("Bill " + transaction.bill);
-         payments.push({
-            id: transaction.id, 
-            owner: transaction.bill.creditor, 
-            totalXrp: transaction.bill.totalXrp, 
-            debtorXrp: transaction.totalXrp
-         });*/
+      
+      for(let transaction of transactions) {
+         transaction = await Container.get(TransactionRequestService).findOne(transaction.id, {relations: ["bill"]});
          if(!transaction.paid) {
-            payments.push(transaction);
+            payments.push({
+               id: transaction.id, 
+               owner: transaction.bill.creditor.username, 
+               totalXrp: transaction.bill.totalXrp.toString(), 
+               description: transaction.bill.description.toString(),
+               debtorXrp: transaction.totalXrp
+            });
          }
-      });
+      }
       return {page: "pay", payments: payments};
    }
 
