@@ -65,6 +65,7 @@ export class UserService {
 
     public update(username: string, user: User): Promise<User> {
         this.log.info('Update a user');
+        user.username = username;
         return this.userRepository.save(user);
     }
 
