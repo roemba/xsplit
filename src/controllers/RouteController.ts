@@ -5,7 +5,6 @@ import {Request} from "express";
 import { AuthService } from "../auth/AuthService";
 import { TransactionRequestService } from "../services/TransactionRequestService";
 import { User } from "../models/User";
-import { BillService } from "../services/BillService";
 
 @Controller() 
 export class RouteController {

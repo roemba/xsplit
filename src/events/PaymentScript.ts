@@ -1,5 +1,3 @@
-import {CookieParseUtil} from "../util/CookieParseUtil";
-
 async function sendPaymentRequest(requestId: string): Promise<void> {
     const response = await fetch("/api/transactions/pay", {
 		method: "PUT",
@@ -7,7 +5,6 @@ async function sendPaymentRequest(requestId: string): Promise<void> {
 			"Content-Type": "application/json"
 		},
 		body: JSON.stringify({
-            currentUser: CookieParseUtil.getUsername(),
             id: requestId
 		})
 	});

@@ -31,7 +31,7 @@ export class TransactionRequestController {
     @Authorized()
     @OnUndefined(400)
     @Put("/pay")
-    async payTransactionRequest(@CurrentUser() user: User, @Body() body: TransactionRequest): Promise<TransactionRequest> {
+    async payTransactionRequest(@Body() body: TransactionRequest): Promise<TransactionRequest> {
         const transactionRequest = await Container.get(TransactionRequestService).findOne(body.id);
         const trService = Container.get(TransactionRequestService);
         if (!trService.isPaymentUnique(transactionRequest.transactionHash)) {
