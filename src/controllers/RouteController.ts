@@ -1,8 +1,6 @@
-import { Controller, Get, Param, Redirect, Render, Req } from "routing-controllers";
+import { Controller, Get, Param, Redirect, Render, CurrentUser, Authorized } from "routing-controllers";
 import { Container } from "typedi";
 import { LoggerService } from "../services/LoggerService";
-import {Request} from "express";
-import { AuthService } from "../auth/AuthService";
 import { TransactionRequestService } from "../services/TransactionRequestService";
 import { User } from "../models/User";
 
@@ -48,14 +46,11 @@ export class RouteController {
    }
 
 
-   // @Authorized()
+   @Authorized()
    @Get("/pay")
    @Render("index.ejs")
-   async GetPay(@Req() request: Request): Promise<unknown> {
-      const user = new User();
-      user.username = Container.get(AuthService).parseBearerAuthFromRequest(request).username;
+   async GetPay(@CurrentUser() user: User): Promise<unknown> {
       const transactions = await Container.get(TransactionRequestService).findRequestsToUser(user);
-      
       const payments = Array<object>();
       
       for(let transaction of transactions) {
