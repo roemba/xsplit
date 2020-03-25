@@ -1,45 +1,58 @@
 <div class='row'>
-	<div class="col-12 col-lg-8 offset-lg-2 text-light">
+	<div class="col-12 col-lg-6 offset-lg-3 text-light">
 
 		<h1 class='text-center'>My Account</h1>
 		
 		<br />
 		
 		<div class='row'>
-			<div class='col-4'>
-				<img class='account-qr' width="100%" height="auto" />
+			<div class='col-12 col-lg-4 mb-2'>
+				<span class='text-muted'>Username</span>
 			</div>
-			<div class='col-6'>
-				<div class='col-4'>
-					<h3 class='userName'></h3>
-					<small class='publicKey'></small>
-				</div>
-
-				<br />
-
-				<div class='col-4 font-weight-bold'>
-					Email:
-				</div>
-				<div class='col-8 email'>
-					
-				</div>
-
-				<br />
-
-				<div class='col-4 font-weight-bold'>
-					Full Name:
-				</div>
-				<div class='col-8 fname'>
-					
-				</div>
-
-				<br />
-
-				<div class='col-10'>
-					<a href="#" class='text-muted'>Change profile...</a>
-				</div>
-
+			<div class='col-12 col-lg-8 mb-3 text-right'>
+				<span id='userName'></span>
 			</div>
+
+			<div class='col-12 col-lg-4 mb-2'>
+				<span class='text-muted'>Public Key</span>
+			</div>
+			<div class='col-12 col-lg-8 mb-3 text-right no-text-overflow'>
+				<span id='publicKey'></span>
+			</div>
+
+			<div class='col-12 col-lg-4 mb-2'>
+				<span class='text-muted line-height'>Full Name</span>
+			</div>
+			<div class='col-12 col-lg-8 mb-3 text-right'>
+				<input type='text' class='form-control border-0 text-right' id='fullName' value='' />
+			</div>
+
+			<div class='col-12 col-lg-4 mb-2'>
+				<span class='text-muted line-height'>Email Address</span>
+			</div>
+			<div class='col-12 col-lg-8 mb-3 text-right'>
+				<input type='text' class='form-control border-0 text-right' id='emailAddress' value='' />
+			</div>
+
+			<div class='col-10 col-lg-4 mb-2'>
+				<span class='text-muted'>Email Notifications</span>
+			</div>
+			<div class='col-2 col-lg-8 mb-3'>
+				<input type="checkbox" class="form-check-input" id="notificationsCheck">
+			</div>
+
+			<div class='col-12 d-none text-success text-center' id='success-save'>
+				Account details are successfully saved!
+			</div>
+
+			<div class='col-12 d-none text-danger text-center' id='error-save'>
+				An error occurred, please try again later.
+			</div>
+
+			<div class='col-12 mt-3'>
+				<button type='submit' class='btn btn-secondary col-12' id='submitDetailsButton'>Save</button>
+			</div>
+				
 		</div>
 	</div>
 	<script src="/events/AccountScriptBundled.js"></script>
