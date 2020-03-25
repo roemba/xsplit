@@ -34,6 +34,8 @@
   },
   "homepage": "https://github.com/roemba/xsplit#readme",
   "dependencies": {
+    "@hapi/joi": "^17.1.1",
+    "@types/hapi__joi": "^16.0.12",
     "babel-polyfill": "^6.26.0",
     "body-parser": "^1.19.0",
     "bootstrap-4-autocomplete": "^1.2.2",

@@ -1,15 +1,11 @@
-import { User } from "../models/User";
-
-let participants: User[] = [];
+let participants: string[] = [];
 
 function getUsername(): string {
 
 	const cookie = "; " + document.cookie;
 	const bearerStr = cookie.split("; ")[1];
 	const bearer = window.atob(bearerStr.replace("bearer=",""));
-	const username = bearer.split(":")[0];
-
-	return username;
+	return bearer.split(":")[0];
 }
 
 function newUserRow(username: string): string {
@@ -28,19 +24,6 @@ function newUserRow(username: string): string {
 	return element;
 }
 
-async function getUser(username: string): Promise<User | undefined> {
-
-	const response = await fetch("/api/users/"+username);
-	if (response.status !== 200) {
-		console.error(response.status);
-		return;
-	}
-
-	const user = await response.json();
-
-	return await user;
-}
-
 async function sendBill(subject: string, amount: number, weights: number[]): Promise<void> {
 
 	const response = await fetch("/api/bills", {
@@ -52,7 +35,7 @@ async function sendBill(subject: string, amount: number, weights: number[]): Pro
 			description: subject,
 			totalXrp: amount,
 			participants: participants,
-			weights: weights.map(w => {return {weight: w};})
+			weights: weights
 		})
 	});
 	if (response.status !== 200) {
@@ -86,25 +69,23 @@ function onRequestPageLoad(): void {
 			userRow.remove();
 			$("#subject").trigger("change");
 
-			participants = participants.filter(u => u.username !== username);
+			participants = participants.filter(u => u !== username);
 		});
 
 		$(document).on("change", "#includeCheck", async function() {
 			
 			const username: string = getUsername();
 
-			const user = await getUser(username);
-
 			if(this.checked) {
 				$(".added-users").prepend(newUserRow(username));
 
-				participants.push(await user);
+				participants.push(username);
 
 				$('select').selectpicker();
 			}else{
 				$(".user-row[data-user='"+username+"']").remove();
 
-				participants = participants.filter(u => u.username !== username);
+				participants = participants.filter(u => u !== username);
 			}
 			$("#subject").trigger("change");
 		});
@@ -165,9 +146,7 @@ function onRequestPageLoad(): void {
 						$(".added-users").append(newUserRow(ui.item.label));
 					}
 
-					const user = await getUser(ui.item.label);
-
-					participants.push(await user);
+					participants.push(ui.item.label);
 
 					$("#user-search").val("");
 					$('select').selectpicker();

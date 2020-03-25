@@ -25,11 +25,6 @@ export class UserController {
       return Container.get(UserService).findUsers(usernameSearch);
     }
 
-    @Get("/:id")
-    getOne(@Param("id") id: string): Promise<User | undefined> {
-      return Container.get(UserService).findOne(id);
-    }
-
     @Post("")
     @OnUndefined(400)
     @UseBefore(json())
