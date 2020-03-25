@@ -6,48 +6,52 @@
 		<br />
 		
 		<div class='row'>
-<!-- 			<div class='col-4'>
-				<img class='account-qr' width="100%" height="auto" />
-			</div> -->
-			<div class='col-12'>
+			<div class='col-12 col-lg-4 mb-2'>
 				<span class='text-muted'>Username</span>
 			</div>
-			<div class='col-12'>
+			<div class='col-12 col-lg-8 mb-3 text-right'>
 				<span id='userName'></span>
 			</div>
-			<br />
-			<br />
-			<div class='col-12'>
+
+			<div class='col-12 col-lg-4 mb-2'>
 				<span class='text-muted'>Public Key</span>
 			</div>
-			<div class='col-12'>
+			<div class='col-12 col-lg-8 mb-3 text-right no-text-overflow'>
 				<span id='publicKey'></span>
 			</div>
-			<br />
-			<br />
-			<div class='col-12'>
-				<span class='text-muted'>Email Address</span>
+
+			<div class='col-12 col-lg-4 mb-2'>
+				<span class='text-muted line-height'>Full Name</span>
 			</div>
-			<div class='col-12'>
-				<input type='text' class='form-control' id='emailAddress' value='' />
+			<div class='col-12 col-lg-8 mb-3 text-right'>
+				<input type='text' class='form-control border-0 text-right' id='fullName' value='' />
 			</div>
-			<br />
-			<br />
-			<div class='col-12'>
-				<span class='text-muted'>Full Name</span>
+
+			<div class='col-12 col-lg-4 mb-2'>
+				<span class='text-muted line-height'>Email Address</span>
 			</div>
-			<div class='col-12'>
-				<input type='text' class='form-control' id='fullName' value='' />
+			<div class='col-12 col-lg-8 mb-3 text-right'>
+				<input type='text' class='form-control border-0 text-right' id='emailAddress' value='' />
 			</div>
-			<br />
-			<br />
+
+			<div class='col-10 col-lg-4 mb-2'>
+				<span class='text-muted'>Email Notifications</span>
+			</div>
+			<div class='col-2 col-lg-8 mb-3'>
+				<input type="checkbox" class="form-check-input" id="notificationsCheck">
+			</div>
+
+			<div class='col-12 d-none mb-3 text-success text-center' id='success-save'>
+				Account details are successfully saved!
+			</div>
+
+			<div class='col-12 d-none mb-3 text-danger text-center' id='error-save'>
+				An error occurred, please try again later.
+			</div>
 
 			<div class='col-12'>
 				<button type='submit' class='btn btn-secondary col-12' id='submitDetailsButton'>Save</button>
 			</div>
-			<br />
-
-
 				
 		</div>
 	</div>

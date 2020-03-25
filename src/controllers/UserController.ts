@@ -1,5 +1,5 @@
 import { Container } from "typedi";
-import {Controller, Param, Get, Post, Put, Delete, Req, UseBefore, CurrentUser, Authorized, OnUndefined, BadRequestError, Body} from "routing-controllers";
+import { JsonController, Param, Get, Post, Put, Delete, Req, UseBefore, CurrentUser, Authorized, OnUndefined, BadRequestError, Body} from "routing-controllers";
 import { UserService } from "../services/UserService";
 import { User } from '../models/User';
 import {Request} from "express";
@@ -9,7 +9,7 @@ import 'babel-polyfill';
 import * as brandedQRCode from 'branded-qr-code';
 import path from "path";
 
-@Controller("/api/users")
+@JsonController("/api/users")
 export class UserController {
   
   log = Container.get(LoggerService);
@@ -53,9 +53,8 @@ export class UserController {
     @Put("")
     @Authorized()
     put(@CurrentUser() user: User, @Body() body: User): string {
-      this.log.info(user.username);
-      this.log.info(body.email + " " + body.fullName);
-       return "Updating the user";
+      Container.get(UserService).update(body.email, body.fullName, body.notifications, user);
+      return "Updating the user";
     }
 
     @Delete("/:id")

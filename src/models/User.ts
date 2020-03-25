@@ -19,6 +19,9 @@ export class User {
     @Column({name: "fullName", nullable: true})
     public fullName: string | undefined;
 
+    @Column({name: "notifications", nullable: true})
+    public notifications: boolean | undefined;
+
     @OneToMany(() => Bill, bill => bill.creditor)
     public ownedBills: Bill[];
 

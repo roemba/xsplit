@@ -1,5 +1,5 @@
-import {deriveAddress} from 'ripple-keypairs';
-import {User} from "../models/User";
+import { deriveAddress } from 'ripple-keypairs';
+import { User } from "../models/User";
 
 async function getUserInfo(): Promise<User> {
 
@@ -8,42 +8,27 @@ async function getUserInfo(): Promise<User> {
 	return await response.json();
 }
 
-async function genQR(username: string): Promise<string> {
-
-	const response = await fetch("/api/users/qr/"+username);
-
-	return (await response.json())['qr'];
-
-}
-
 function onAccountPageLoad(): void {
 	jQuery(($) => {
 
 		$(document).ready(function() {
 			getUserInfo().then((data: User) => {
-
 				$("#userName").html(data.username);
 				$("#publicKey").html(deriveAddress(data.publickey));
 				$("#emailAddress").val(data.email);
-				$("#fullname").val(data.fullName);
-
-				// genQR(data.username).then((qr) => {
-				// 	$(".account-qr").attr("src", qr);
-				// }).catch(reason => {
-				// 	console.log(reason.message);
-				// });
+				$("#fullName").val(data.fullName);
+				$("#notificationsCheck").prop("checked",data.notifications);
 			}).catch(reason => { 
 				console.log(reason.message);
 			});
 		});
 
-		$(document).on("click", "#submitDetailsButton", async function(event: Event): Promise<void> {
+		$(document).on("click", "#submitDetailsButton", async function(event: Event) {
 			event.preventDefault();
 
 			const emailaddress = $("#emailAddress").val();
 			const fullname = $("#fullName").val();
-
-			// console.log(username + " " + publickey + " " + emailaddress + " " + fullname);
+			const notifications = $("#notificationsCheck").prop("checked");
 
 			const resp = await fetch("/api/users", {
 				method: "PUT",
@@ -52,16 +37,17 @@ function onAccountPageLoad(): void {
 				},
 				body: JSON.stringify({
 					email: emailaddress,
-					fullName: fullname
+					fullName: fullname,
+					notifications: notifications
 				})
 			});
 			if (resp.status !== 200) {
+				$("#error-save").removeClass("d-none");
 				return;
 			}
 
-			console.log("Save succesfull, please reload");
-
-			// location.reload();
+			$("#error-save").addClass("d-none");
+			$("#success-save").removeClass("d-none").delay(5000).fadeOut();
 
 		});
 	});
