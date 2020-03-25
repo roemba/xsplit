@@ -46,7 +46,7 @@ export class BillController {
         const bill = new Bill();
         bill.creditor = user;
         bill.description = body.description;
-        bill.totalXrp = body.totalXrp;
+        bill.totalXrpDrops = body.totalXrpDrops;
         bill.participants = [];
         bill.weights = [];
 

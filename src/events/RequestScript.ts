@@ -1,3 +1,5 @@
+import { XRPUtil } from "../util/XRPUtil";
+
 let participants: string[] = [];
 
 function getUsername(): string {
@@ -33,7 +35,7 @@ async function sendBill(subject: string, amount: number, weights: number[]): Pro
 		},
 		body: JSON.stringify({
 			description: subject,
-			totalXrp: amount,
+			totalXrpDrops: XRPUtil.XRPtoDrops(amount),
 			participants: participants,
 			weights: weights
 		})

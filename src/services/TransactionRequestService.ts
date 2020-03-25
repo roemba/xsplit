@@ -44,7 +44,7 @@ export class TransactionRequestService {
             if (bill.creditor.publickey === addr) {
                 const changes = balanceChanges[addr];
                 for (const change of changes) {
-                    if (change.value === "XRP" && Number(change.value) * 1000000 === tr.totalXrp) {
+                    if (change.value === "XRP" && Number(change.value) * 1000000 === tr.totalXrpDrops) {
                         foundPayment = true;
                     }
                 }

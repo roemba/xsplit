@@ -17,7 +17,7 @@ export class Bill {
 
     // totalXrp is stored in drops; 1 xrp is 1 million drops
     @Column({ type: "bigint"})
-    public totalXrp: number;
+    public totalXrpDrops: number;
 
     @ManyToOne(() => User, user => user.ownedBills, {
         eager: true
