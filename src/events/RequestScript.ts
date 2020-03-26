@@ -3,7 +3,6 @@ import { XRPUtil } from "../util/XRPUtil";
 let participants: string[] = [];
 
 function getUsername(): string {
-
 	const cookie = "; " + document.cookie;
 	const bearerStr = cookie.split("; ")[1];
 	const bearer = window.atob(bearerStr.replace("bearer=",""));

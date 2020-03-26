@@ -58,6 +58,9 @@ export class BillService {
             tr.bill = bill;
             tr.debtor = bill.participants[i];
             tr.totalXrpDrops = Math.round(bill.totalXrpDrops / totalWeight * bill.weights[i].weight);
+            if(tr.debtor.username === bill.creditor.username) {
+                tr.paid = true;
+            }
             await transactionService.create(tr);
         }
         Container.get(NotificationService).sendPaymentRequestNotification(bill.participants);

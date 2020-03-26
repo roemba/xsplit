@@ -27,7 +27,7 @@ export class TransactionRequestService {
     }
 
     public async validatePayment(tr: TransactionRequest): Promise<boolean> {
-        if (tr.transactionHash === null) {
+        if (tr.transactionHash === undefined || tr.transactionHash === null) {
             return false;
         }
 
@@ -70,7 +70,7 @@ export class TransactionRequestService {
     }
 
     public async isPaymentUnique(hash: string): Promise<boolean> {
-        if (hash === undefined) {
+        if (hash === undefined || hash === null) {
             return false;
         }
         const res = await this.transactionRepository.find({where: { transactionHash: hash}});

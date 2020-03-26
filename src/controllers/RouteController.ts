@@ -1,6 +1,9 @@
-import { Controller, Get, Param, Redirect, Render } from "routing-controllers";
+import { Controller, Get, Param, Redirect, Render, CurrentUser, Authorized } from "routing-controllers";
 import { Container } from "typedi";
 import { LoggerService } from "../services/LoggerService";
+import { TransactionRequestService } from "../services/TransactionRequestService";
+import { User } from "../models/User";
+import { XRPUtil } from "../util/XRPUtil";
 
 @Controller() 
 export class RouteController {
@@ -43,12 +46,27 @@ export class RouteController {
       return {page: "account"};
    }
 
-   // @Authorized()
+
+   @Authorized()
    @Get("/pay")
    @Render("index.ejs")
-   GetPay(): unknown {
-      const payments = [{receiver: "johndoe", amount: 384, subject: "Lunch at EWI"},{receiver: "Piet", amount: 112, subject: "Coffee"}];
-      return {page: "pay", payments: payments};
+   async GetPay(@CurrentUser() user: User): Promise<unknown> {
+      const transactions = await Container.get(TransactionRequestService).findRequestsToUser(user);
+      const payments = Array<object>();
+      
+      for(let transaction of transactions) {
+         transaction = await Container.get(TransactionRequestService).findOne(transaction.id, {relations: ["bill"]});
+         if(!transaction.paid) {
+            payments.push({
+               id: transaction.id, 
+               owner: transaction.bill.creditor.username, 
+               totalXrp: XRPUtil.dropsToXRP(transaction.bill.totalXrpDrops), 
+               description: transaction.bill.description.toString(),
+               debtorXrp: XRPUtil.dropsToXRP(transaction.totalXrpDrops)
+            });
+         }
+      }
+      return {page: "pay", payments: payments, rippleServer: process.env.RIPPLE_SERVER};
    }
 
    // @Authorized()

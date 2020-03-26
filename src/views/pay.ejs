@@ -1,49 +1,48 @@
 <div class='row'>
 	<div class="col-12 text-center text-light">
-
 		<h1>Open Payment Requests</h1>
-		Below you can find the request(s) you still have to pay.
-		<br /><br />
-
-		<div class='row'>
-			<% payments.forEach(payment => { %>
-				<div class='col-12 col-lg-6'>
-					<div class='mb-4' style='padding: 0px;'>
-						<h5 class='pt-1 pb-1'><%= payment.subject %></h5>
-						<div class="form-group row" style='padding: 10px 10px 0px 10px;'>
-
-							<div class='col-4 col-lg-3 text-center'>
-								<img src='/assets/img/avatar.svg' class='avatar' width='100%' height='auto'  style='max-width: 100px;' />
-								<br />
-								<small>me</small>
+		<%if (payments.length > 0) { %>
+			Below you can find the request(s) you still have to pay.
+			<br /><br />
+			<div class='row'>
+				<% payments.forEach(payment => { %>
+					<div class='col-12 col-lg-6'>
+						<div class='mb-4' style='padding: 0px;'>
+							<h5 class='pt-1 pb-1'><%= payment.description %>, total spent: <%= payment.totalXrp %> XRP </h5>
+							<div class="form-group row" style='padding: 10px 10px 0px 10px;'>
+								<div class='col-4 col-lg-3 text-center'>
+									<img src='/assets/img/avatar.svg' class='avatar' width='100%' height='auto'  style='max-width: 100px;' />
+									<br />
+									<small>me</small>
+								</div>
+	
+								<div class='col-4 col-lg-6 text-center align-self-center font-weight-bold'>
+									<!--<span class='mb-2 d-block'>
+										&euro;13,17
+									</span>-->
+									<img src='/assets/img/arrow-right.svg' style='max-width: 50px; height: auto;' />
+									<span class='mt-2 d-block'>
+										<%= payment.debtorXrp %> XRP
+									</span>
+								</div>
+	
+								<div class='col-4 col-lg-3'>
+									<img src='/assets/img/avatar.svg' class='avatar' width='100%' height='auto'  style='max-width: 100px;' />
+									<br />
+									<small><%= payment.owner %></small>
+								</div>
+	
 							</div>
-
-							<div class='col-4 col-lg-6 text-center align-self-center font-weight-bold'>
-								<span class='mb-2 d-block'>
-									&euro;13,17
-								</span>
-								<img src='/assets/img/arrow-right.svg' style='max-width: 50px; height: auto;' />
-								<span class='mt-2 d-block'>
-									<%= payment.amount %> XRP
-								</span>
-							</div>
-
-							<div class='col-4 col-lg-3'>
-								<img src='/assets/img/avatar.svg' class='avatar' width='100%' height='auto'  style='max-width: 100px;' />
-								<br />
-								<small><%= payment.receiver %></small>
-							</div>
-
+							
+							<button type="submit" class="btn btn-secondary col-12 mt-0 submit-request" id=<%= payment.id %>>Submit Payment</button>
 						</div>
-
-						<button type="submit" class="btn btn-secondary col-12">Submit Payment</button>
 					</div>
-				</div>
-			<% }) %>
-		</div>
-
-		<div class='col-12 text-center mt-3'>
-			<a href="./history/payments" class="text-muted">Click here</a> for your unsettled payments.
-		</div>
+				<% }) %>
+			</div>
+		<% } else{ %>  
+			<p>You have no open payment requests</p>
+		<% } %>
 	</div>
+	<script src="/events/PaymentScriptBundled.js"></script>
+	<div hidden id="rippleServer"><%= rippleServer %></div>
 </div>

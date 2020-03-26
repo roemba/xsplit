@@ -9,7 +9,7 @@ export class TransactionRequest {
 
     @Column({ type: "bigint"})
     public dateCreated: number;
-
+  
     // totalXrp is stored in drops; 1 xrp is 1 million drops
     @Column({ type: "bigint"})
     public totalXrpDrops: number;
