@@ -2,8 +2,9 @@ import { RippleAPI } from "ripple-lib";
 import rippleKey from "ripple-keypairs";
 
 function setError(text: string, id: string): void {
-    document.getElementById(`performingPayment-${id}`).innerHTML = text + ", please try again";
-    document.getElementById(`performingPayment-${id}`).style.color = "red";
+    document.getElementById(`${id}`).innerHTML = text + ", please try again.";
+    document.getElementById(`${id}`).classList.add("border-0");
+    document.getElementById(`${id}`).style.background = "red";
 }
 
 async function sendPaymentRequest(requestId: string, rippleServer: string): Promise<void> {
@@ -50,7 +51,9 @@ async function sendPaymentRequest(requestId: string, rippleServer: string): Prom
 		return;
     }
 
-    document.getElementById(`performingPayment-${requestId}`).innerHTML = "Success!";
+    document.getElementById(`${requestId}`).style.background = "green";
+    document.getElementById(`${requestId}`).classList.add("border-0");
+    document.getElementById(`${requestId}`).innerHTML = "Success!";
     
     await new Promise(r => setTimeout(r, 1000));
     
@@ -60,7 +63,7 @@ async function sendPaymentRequest(requestId: string, rippleServer: string): Prom
 function onRequestPageLoad(): void {
     jQuery(($) => {
         $("button").click(function() {
-            $(`#performingPayment-${this.id}`).removeClass("d-none");
+            $(this).val("Performing payment, please wait...");
             const rippleServer = $("#rippleServer").html();
             sendPaymentRequest(this.id, rippleServer);
         });
