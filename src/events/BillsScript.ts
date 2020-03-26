@@ -83,7 +83,12 @@ function onBillsPageLoad(): void {
 								parts += debtor+" ("+weight+"x) <img src='/assets/img/cross.svg' class='mb-1' style='width: 20px; height: 20px;' />";
 							}
 						}else{
-							parts += "Me ("+weight+"x) <img src='/assets/img/check.svg' class='mb-1' style='width: 20px; height: 20px;' />";
+							if(tr.paid) {
+								parts += "Me ("+weight+"x) <img src='/assets/img/check.svg' class='mb-1' style='width: 20px; height: 20px;' />";	
+							}else{
+								parts += "Me ("+weight+"x) <img src='/assets/img/cross.svg' class='mb-1' style='width: 20px; height: 20px;' />";
+							}
+							
 						}
 	
 						parts += "</div></div>";
