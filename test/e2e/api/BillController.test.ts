@@ -40,7 +40,7 @@ beforeAll(async () => {
 test('create bill', async () => {
     const bill = new Bill();
     bill.description = "test bill";
-    bill.totalXrp = 100;
+    bill.totalXrpDrops = 100;
     const alice = new User();
     alice.username = "alice";
     const bob = new User();
@@ -63,7 +63,7 @@ test('create bill', async () => {
     });
     expect(res.status).toBe(200);
     const createdBill = plainToClass(Bill, await res.json());
-    expect(createdBill.totalXrp).toBe("100");
+    expect(createdBill.totalXrpDrops).toBe("100");
     expect(createdBill.description).toBe("test bill");
     expect(createdBill.participants.length).toBe(2);
     expect(createdBill.transactionRequests.length).toBe(2);

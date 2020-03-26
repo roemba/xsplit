@@ -5,19 +5,19 @@
 			Please select friends and amount to split.
 		<br /><br />
 
-		<form class='text-left' style="padding: 0px;">
+		<form id="request-form" class='text-left' style="padding: 0px;">
 			
 			<div class="form-group">
 				<div class='row mb-0'>
 					<div class='col-12 col-lg-8'>
-						<input type="text" class="form-control border-0 mb-3" id="subject" aria-label="Subject" placeholder="Subject">
+						<input type="text" class="form-control border-0 mb-3" id="subject" aria-label="Subject" required placeholder="Subject">
 					</div>
 					<div class="col-12 col-lg-4">
 						<div class="input-group mb-3" id="amountRow">
 							<div class="input-group-prepend">
-								<span class="input-group-text rounded-0 border-0">&euro;</span>
+								<span class="input-group-text rounded-0 border-0">XRP</span>
 							</div>
-							<input type="text" class="form-control border-0" id="amount" aria-label="Amount" placeholder="Amount">
+							<input type="text" class="form-control border-0" id="amount" aria-label="Amount" required placeholder="Amount">
 						</div>
 					</div>
 				</div>
@@ -46,20 +46,28 @@
 				</div>
 
 				<div class='form-group text-center summary d-none mb-3 mt-0'>
-					The amount of &euro;<span class='nAmount'></span> is split by <span class='nFriends'></span> friend(s). <br />
+					The amount of <span class='nAmount'></span> XRP is split by <span class='nFriends'></span> friend(s). <br />
 				</div>
 
-			<div class='row mb-0'>
-				<div class='col-12'>
-  					<button type="submit" class="btn btn-secondary col-12 mt-0 submit-request" disabled>Send</button>
-  				</div>
-  			</div>
+				<div class='col-12 text-center mt-3 mb-3 text-success d-none' id="bill-success">
+					Bill created and sent to users!
+				</div>
 
+				<div class='col-12 text-center mt-3 mb-3 text-error d-none' id="bill-error">
+					Bill couldn't be created, try again.
+				</div>
+
+				<div class='row mb-0'>
+					<div class='col-12'>
+						<button type="submit" class="btn btn-secondary col-12 mt-0 submit-request" id="submitBill" disabled>Send</button>
+					</div>
+				</div>
+			</div>
 		</form>
 	</div>
 
 	<div class='col-12 text-center mt-3'>
-		<a href="/bills" class="text-muted">Click here</a> for all your bills.
+		<a href="/bills" class="text-muted">Click here</a> for an overview of all your bill requests.
 	</div>
 	<script src="/events/RequestScriptBundled.js"></script>
 </div>

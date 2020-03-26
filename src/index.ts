@@ -35,11 +35,14 @@ const xrpConnection = setInterval(function() {
     }
 }, 5000);
 
-// run express application when database has connected succesfully
+// run express application when database has connected successfully
 setupTypeORM().then(() => {
     setupExpressApp(logger);
+    setInterval(async () => {
+        const repo = await Container.get(ChallengeRepository);
+        await repo.cleanChallenges();
+    }, 6*1000);
 }).catch((e) => {
-    setInterval(Container.get(ChallengeRepository).cleanChallenges, 60*1000);
     logger.error("Database connection failed, exiting application...");
     logger.error(e);
     process.exit(0);

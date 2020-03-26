@@ -57,7 +57,7 @@ export class BillService {
             const tr = new TransactionRequest();
             tr.bill = bill;
             tr.debtor = bill.participants[i];
-            tr.totalXrp = Math.round(bill.totalXrp / totalWeight * bill.weights[i].weight);
+            tr.totalXrpDrops = Math.round(bill.totalXrpDrops / totalWeight * bill.weights[i].weight);
             await transactionService.create(tr);
         }
         Container.get(NotificationService).sendPaymentRequestNotification(bill.participants);
