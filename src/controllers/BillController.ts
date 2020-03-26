@@ -5,7 +5,7 @@ import { User } from "../models/User";
 import { BillService } from "../services/BillService";
 import { LoggerService } from "../services/LoggerService";
 import { BillWeight } from "../models/BillWeight";
-import {MaxLength, IsNotEmpty, IsInt, IsPositive, ArrayNotEmpty, IsString, IsNumber} from "class-validator";
+import {MaxLength, IsNotEmpty, IsInt, IsPositive, ArrayNotEmpty, IsString} from "class-validator";
 
 class AddBillRequest {
     @IsString()
