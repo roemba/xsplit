@@ -5,6 +5,7 @@ import { OrmRepository } from 'typeorm-typedi-extensions';
 import { TransactionRequest } from '../models/TransactionRequest';
 import { User } from '../models/User';
 import { FindOneOptions } from 'typeorm';
+import { NotificationService } from '../services/NotificationService';
 import { LoggerService } from "../services/LoggerService";
 import { RippleLibService } from "./RippleLibService";
 import { XRPUtil } from "../util/XRPUtil";
@@ -61,6 +62,7 @@ export class TransactionRequestService {
         const tr = await this.transactionRepository.findOne(id, {relations: ["bill"]});
         if (tr.bill.creditor.username === requester.username) {
             await this.transactionRepository.update(tr.id, {paid: true});
+            Container.get(NotificationService).sendPaymentReceivedNotification(requester);
             return this.transactionRepository.findOne(id);
         } else {
             return undefined;

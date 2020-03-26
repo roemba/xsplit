@@ -13,7 +13,7 @@ export class User {
     @Column({name: "publickey", unique: true})
     public publickey: string;
 
-    @Column({name: "email", nullable: true})
+    @Column({name: "email", nullable: false})
     public email: string | undefined;
 
     @Column({name: "fullName", nullable: true})
