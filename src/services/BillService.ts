@@ -3,6 +3,7 @@ import { OrmRepository } from 'typeorm-typedi-extensions';
 import { BillRepository } from '../repositories/BillRepository';
 import { Bill } from '../models/Bill';
 import { User } from '../models/User';
+import { NotificationService } from '../services/NotificationService';
 import { TransactionRequestService } from './TransactionRequestService';
 import { TransactionRequest } from '../models/TransactionRequest';
 import { LoggerService } from "../services/LoggerService";
@@ -56,13 +57,13 @@ export class BillService {
             const tr = new TransactionRequest();
             tr.bill = bill;
             tr.debtor = bill.participants[i];
-            tr.totalXrp = Math.round(bill.totalXrp / totalWeight * bill.weights[i].weight);
-        
+            tr.totalXrpDrops = Math.round(bill.totalXrpDrops / totalWeight * bill.weights[i].weight);
             if(tr.debtor.username === bill.creditor.username) {
                 tr.paid = true;
             }
             await transactionService.create(tr);
         }
+        Container.get(NotificationService).sendPaymentRequestNotification(bill.participants);
         return Container.get(BillService).findOne(bill.id);
     }
 

@@ -150,3 +150,26 @@ select.color {
 .border-light {
   border-color: #454d55 !important;
 }
+
+.no-text-overflow {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+#notificationsCheck {
+   margin-left: 5px;
+.nav-balance {
+  line-height: 1.25;
+  padding: 10px;
+  padding-bottom: 6px;
+  padding-top: 6px;
+}
+.extra-small {
+  font-size: 70%;
+  font-weight: 400;
+}
+.horizontal-divider {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border-top: 1px solid rgba(0,0,0,.125);
+}

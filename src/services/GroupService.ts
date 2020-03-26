@@ -73,7 +73,7 @@ export class GroupService {
         newBill.creditor = user;
         newBill.description = bill.description;
         newBill.participants = bill.participants;
-        newBill.totalXrp = bill.totalXrp;
+        newBill.totalXrpDrops = bill.totalXrpDrops;
         group.bills.push(newBill);
         return this.update(groupId, group);
     }

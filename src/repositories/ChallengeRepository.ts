@@ -9,8 +9,10 @@ import { LoggerService } from "../services/LoggerService";
 export class ChallengeRepository extends Repository<Challenge>  {
     
     log = Container.get(LoggerService);
+    expireTime = Number(process.env.SESSION_EXPIRY_IN_MINUTES) * 60000;
+    frontendTimeMargin = 10 * 1000;
 
-    public async createChallenge(user: User): Promise<string> {
+    public async createChallenge(user: User): Promise<object> {
         const challenge = new Challenge();
         challenge.user = user;
         challenge.challenge = randomBytes(32).toString("hex");
@@ -18,7 +20,10 @@ export class ChallengeRepository extends Repository<Challenge>  {
 
         await getRepository(Challenge).save(challenge);
 
-        return challenge.challenge;
+        return {
+            challenge: challenge.challenge,
+            expiresIn: this.expireTime - this.frontendTimeMargin
+        };
     }
 
     public async getChallenges(user: User): Promise<Challenge[]> {
@@ -30,17 +35,21 @@ export class ChallengeRepository extends Repository<Challenge>  {
     }
 
     public async cleanChallenges(): Promise<void> {
-        const expireTime = Number(process.env.SESSION_EXPIRY_IN_MINUTES) * 60000;
-
-        const repo = await getRepository(Challenge);
-        const challenges = await repo.find({
-            where: {
-                "createdAt": Raw(alias => `${Date.now().toString()} - ${alias} > ${expireTime}`)
+        try {
+            const repo = await getRepository(Challenge);
+            const challenges = await repo.find({
+                where: {
+                    "createdAt": Raw(alias => `${Date.now().toString()} - ${alias} > ${this.expireTime}`)
+                }
+            });
+            if (challenges.length > 0) {
+                this.log.info(`Deleting ${challenges.length} stale challenges...`);
+                for (const challenge of challenges) {
+                    repo.delete(challenge);
+                }
             }
-        });
-        console.log(`Deleting ${challenges.length} stale challenges...`);
-        for (const challenge of challenges) {
-            repo.delete(challenge);
+        } catch (e) {
+            this.log.error(e);
         }
     }
 

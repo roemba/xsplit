@@ -4,6 +4,19 @@ import { User } from "../models/User";
 import { TransactionRequestService } from "../services/TransactionRequestService";
 import { TransactionRequest } from "../models/TransactionRequest";
 import { LoggerService } from "../services/LoggerService";
+import {IsNotEmpty, IsString, MaxLength} from "class-validator";
+
+class PayTransactionRequestRequest {
+    @IsString()
+    @IsNotEmpty()
+    @MaxLength(1000)
+    id: string;
+
+    @IsString()
+    @IsNotEmpty()
+    @MaxLength(2000)
+    transactionHash: string;
+}
 
 @JsonController("/api/transactions")
 export class TransactionRequestController {
@@ -28,20 +41,19 @@ export class TransactionRequestController {
     }
 
     @Authorized()
-    @OnUndefined(400)
     @Put("/paid/:id")
     async setPayedTransactionRequest(@CurrentUser() user: User, @Param("id") id: string): Promise<TransactionRequest> {
         try {
             return await Container.get(TransactionRequestService).setPaid(user, id);
         } catch {
             this.log.error("Setting TransactionRequest to paid failed");
-            return undefined;
+            throw new BadRequestError("Setting transaction request to paid failed")
         }
     }
 
     @Authorized()
     @Put("/pay")
-    async payTransactionRequest(@Body() body: TransactionRequest): Promise<TransactionRequest> {
+    async payTransactionRequest(@Body() body: PayTransactionRequestRequest): Promise<TransactionRequest> {
         this.log.info("Pay request =>", body);
         const trService = Container.get(TransactionRequestService);
         if (body.transactionHash === undefined || !trService.isPaymentUnique(body.transactionHash)) {
