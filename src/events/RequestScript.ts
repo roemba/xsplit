@@ -9,8 +9,6 @@ function getUsername(): string {
 	return bearer.split(":")[0];
 }
 
-let participants: User[] = [];
-
 function newUserRow(username: string): string {
 	let element = "<div class='form-row user-row mb-2' data-user='"+username+"'>";
 		element += "<div class='col-6 col-lg-7 line-height'>"+username+"<img src='/assets/img/remove.svg' class='remove-user ml-2' width='15' height='15' /></div>";

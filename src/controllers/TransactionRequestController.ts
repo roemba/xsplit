@@ -1,5 +1,5 @@
 import Container from "typedi";
-import {JsonController, Get, CurrentUser, Authorized, Body, Put, OnUndefined, Param, BadRequestError, UnauthorizedError} from "routing-controllers";
+import {JsonController, Get, CurrentUser, Authorized, Body, Put, Param, BadRequestError, UnauthorizedError} from "routing-controllers";
 import { User } from "../models/User";
 import { TransactionRequestService } from "../services/TransactionRequestService";
 import { TransactionRequest } from "../models/TransactionRequest";
@@ -47,7 +47,7 @@ export class TransactionRequestController {
             return await Container.get(TransactionRequestService).setPaid(user, id);
         } catch {
             this.log.error("Setting TransactionRequest to paid failed");
-            throw new BadRequestError("Setting transaction request to paid failed")
+            throw new BadRequestError("Setting transaction request to paid failed");
         }
     }
 

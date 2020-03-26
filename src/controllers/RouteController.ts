@@ -3,6 +3,7 @@ import { Container } from "typedi";
 import { LoggerService } from "../services/LoggerService";
 import { TransactionRequestService } from "../services/TransactionRequestService";
 import { User } from "../models/User";
+import { XRPUtil } from "../util/XRPUtil";
 
 @Controller() 
 export class RouteController {
@@ -59,9 +60,9 @@ export class RouteController {
             payments.push({
                id: transaction.id, 
                owner: transaction.bill.creditor.username, 
-               totalXrp: transaction.bill.totalXrp.toString(), 
+               totalXrp: XRPUtil.dropsToXRP(transaction.bill.totalXrpDrops), 
                description: transaction.bill.description.toString(),
-               debtorXrp: transaction.totalXrp
+               debtorXrp: XRPUtil.dropsToXRP(transaction.totalXrpDrops)
             });
          }
       }

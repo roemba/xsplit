@@ -23,14 +23,15 @@ async function sendPaymentRequest(requestId: string, rippleServer: string): Prom
     const transaction = {
         Account: rippleKey.deriveAddress(rippleKey.deriveKeypair(secret).publicKey),
         TransactionType: "Payment",
-        Amount: transactionRequest.totalXrp,
+        Amount: transactionRequest.totalXrpDrops,
         Destination: rippleKey.deriveAddress(transactionRequest.bill.creditor.publickey)
     };
     try {
         const preparedTransaction = await api.prepareTransaction(transaction);
         signedTransaction = api.sign(preparedTransaction.txJSON, secret);
         await api.submit(signedTransaction.signedTransaction);
-    } catch {
+    } catch(e) {
+        console.log(e);
         setError("Submitting transaction failed");
         return;
     }
