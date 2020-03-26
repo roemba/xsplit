@@ -41,7 +41,8 @@ function onBillsPageLoad(): void {
 				$("#loading").hide();
 				bills.sort((a, b) => a.dateCreated > b.dateCreated ? - 1 : Number(a.dateCreated < b.dateCreated));
 				await bills.forEach(function(bill) {
-
+					$("#unsettled").removeAttr("style");
+					$("#settled").removeAttr("style");
 					const date: Date = new Date(Number(bill.dateCreated));
 					const dateFormatted: string = date.getDate()+"/"+(date.getMonth()+1)+"/"+date.getFullYear();
 	
