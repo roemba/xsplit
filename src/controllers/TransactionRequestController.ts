@@ -1,5 +1,5 @@
 import Container from "typedi";
-import {JsonController, Get, CurrentUser, Authorized, Body, Put, OnUndefined, Param} from "routing-controllers";
+import {JsonController, Get, CurrentUser, Authorized, Body, Put, OnUndefined, Param, BadRequestError} from "routing-controllers";
 import { User } from "../models/User";
 import { TransactionRequestService } from "../services/TransactionRequestService";
 import { TransactionRequest } from "../models/TransactionRequest";
@@ -29,16 +29,15 @@ export class TransactionRequestController {
     }
 
     @Authorized()
-    @OnUndefined(400)
     @Put("/pay")
     async payTransactionRequest(@Body() body: TransactionRequest): Promise<TransactionRequest> {
-        const transactionRequest = await Container.get(TransactionRequestService).findOne(body.id);
+        this.log.info("Pay request =>", body);
         const trService = Container.get(TransactionRequestService);
-        if (!trService.isPaymentUnique(transactionRequest.transactionHash)) {
-            return undefined;
+        if (body.transactionHash === undefined || !trService.isPaymentUnique(body.transactionHash)) {
+            throw new BadRequestError("Transaction hash undefined or already used");
         }
         let tr = new TransactionRequest();
-        tr.transactionHash = transactionRequest.transactionHash;
+        tr.transactionHash = body.transactionHash;
         await trService.update(body.id, tr);
         tr = await trService.findOne(tr.id, {relations: ["bill"]});
         if (trService.validatePayment(tr)) {
