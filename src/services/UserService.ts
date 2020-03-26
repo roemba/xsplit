@@ -54,7 +54,7 @@ export class UserService {
     }
 
     public async create(user: User): Promise<User> {
-        return this.userRepository.create(user);
+        return this.userRepository.save(user);
     }
 
     public update(user: User): Promise<User> {
