@@ -39,12 +39,7 @@ export class UserController {
       user.email = request.body.email;
       user.publickey = request.body.publickey;
       try {
-        const newUser = await Container.get(UserService).create(user);
-        if(newUser === undefined) {
-          throw new BadRequestError("Public key and/or username is already in use");
-        } else {
-          return newUser;
-        }
+        return Container.get(UserService).create(user);
       } catch {
         throw new BadRequestError("Public key and/or username is already in use");
       }

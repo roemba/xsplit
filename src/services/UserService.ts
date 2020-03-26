@@ -54,13 +54,7 @@ export class UserService {
     }
 
     public async create(user: User): Promise<User> {
-        const tempUser = await this.userRepository.findOne({username: user.username});
-        if(tempUser === undefined) {
-            const newUser = await this.userRepository.save(user);
-            return newUser;
-        } else {
-            return undefined;
-        }
+        return this.userRepository.create(user);
     }
 
     public update(username: string, user: User): Promise<User> {
