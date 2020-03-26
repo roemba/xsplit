@@ -12,7 +12,7 @@ export class TransactionRequest {
 
     // totalXrp is stored in drops; 1 xrp is 1 million drops
     @Column({ type: "bigint"})
-    public totalXrp: number;
+    public totalXrpDrops: number;
 
     @ManyToOne(() => Bill, bill => bill.transactionRequests, {
         onDelete: "CASCADE"

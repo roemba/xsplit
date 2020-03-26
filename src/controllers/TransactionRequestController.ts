@@ -4,6 +4,19 @@ import { User } from "../models/User";
 import { TransactionRequestService } from "../services/TransactionRequestService";
 import { TransactionRequest } from "../models/TransactionRequest";
 import { LoggerService } from "../services/LoggerService";
+import {IsNotEmpty, IsString, MaxLength} from "class-validator";
+
+class PayTransactionRequestRequest {
+    @IsString()
+    @IsNotEmpty()
+    @MaxLength(1000)
+    id: string;
+
+    @IsString()
+    @IsNotEmpty()
+    @MaxLength(2000)
+    transactionHash: string;
+}
 
 @JsonController("/api/transactions")
 export class TransactionRequestController {
@@ -31,7 +44,7 @@ export class TransactionRequestController {
     @Authorized()
     @OnUndefined(400)
     @Put("/pay")
-    async payTransactionRequest(@CurrentUser() user: User, @Body() body: TransactionRequest): Promise<TransactionRequest> {
+    async payTransactionRequest(@CurrentUser() user: User, @Body() body: PayTransactionRequestRequest): Promise<TransactionRequest> {
         const trService = Container.get(TransactionRequestService);
         if (!trService.isPaymentUnique(body.transactionHash)) {
             return undefined;

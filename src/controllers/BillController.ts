@@ -1,10 +1,32 @@
 import Container from "typedi";
-import {JsonController, Get, CurrentUser, Authorized, Post, Body, Delete, OnUndefined} from "routing-controllers";
+import {JsonController, Get, CurrentUser, Authorized, Post, Body, Delete, BadRequestError} from "routing-controllers";
 import { Bill } from "../models/Bill";
 import { User } from "../models/User";
 import { BillService } from "../services/BillService";
 import { LoggerService } from "../services/LoggerService";
 import { BillWeight } from "../models/BillWeight";
+import {MaxLength, IsNotEmpty, IsInt, IsPositive, ArrayNotEmpty, IsString} from "class-validator";
+
+class AddBillRequest {
+    @IsString()
+    @IsNotEmpty()
+    @MaxLength(1000)
+    description: string;
+
+
+    @ArrayNotEmpty()
+    @IsString({each: true})
+    @MaxLength(1000, {each: true})
+    participants: string[];
+
+    @IsInt()
+    @IsPositive()
+    totalXrpDrops: number;
+
+    @ArrayNotEmpty()
+    @IsInt({each: true})
+    weights: number[];
+}
 
 @JsonController("/api/bills")
 export class BillController {
@@ -25,30 +47,31 @@ export class BillController {
     }
 
     @Authorized()
-    @OnUndefined(400)
     @Post("/")
-    addBill(@CurrentUser() user: User, @Body() body: Bill): Promise<Bill> {
+    async addBill(@CurrentUser() user: User, @Body() body: AddBillRequest): Promise<string> {
         const bill = new Bill();
         bill.creditor = user;
         bill.description = body.description;
-        bill.totalXrp = body.totalXrp;
+        bill.totalXrpDrops = body.totalXrpDrops;
         bill.participants = [];
         bill.weights = [];
 
         if (body.participants.length !== body.weights.length) {
-            return undefined;
+            throw new BadRequestError("Participant length and weight length must match!");
         }
 
         for (let i = 0; i < body.participants.length; i++) {
             const part = new User();
-            part.username = body.participants[i].username;
+            part.username = body.participants[i];
             bill.participants.push(part);
             const weight = new BillWeight();
             weight.user = part;
             weight.bill = bill;
-            weight.weight = body.weights[i].weight;
+            weight.weight = body.weights[i];
             bill.weights.push(weight);
           }
-        return Container.get(BillService).create(bill);
+        const newBill = await Container.get(BillService).create(bill);
+        return `Bill ${newBill.id} created`;
     }
 }
+
