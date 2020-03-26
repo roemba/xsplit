@@ -36,13 +36,13 @@ async function seedDB(): Promise<void> {
         "alice": {
             "username": "alice",
             "publickey": "02C90CDEDE88AFD56FF51A41DDF8B12EB0380D3F4D21D2BB6CD15E64FEB25358F6",
-            "email": "alice@xsplit.com",
+            "email": "xplit20@yahoo.com",
             "name": "Alice"
         },
         "bob": {
             "username": "bob",
             "publickey": "02247DCA3727D848340F1520968A2191D3AC8F1299AFC7291969E6845AC7CFB579",
-            "email": "bob@xsplit.com",
+            "email": "xplit20@yahoo.com",
             "name": "Bob"
         }
     };

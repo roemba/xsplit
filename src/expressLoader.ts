@@ -13,7 +13,12 @@ export async function setupExpressApp(logger?: LoggerService): Promise<void> {
         defaultErrorHandler: false,
         authorizationChecker: authorizationChecker(),
         currentUserChecker: currentUserChecker(),
-        
+        validation: {
+            validationError: {
+                target: false
+            },
+            forbidUnknownValues: true
+        }
     });
     const port = process.env.PORT || 8080; // get port from env, otherwise take default
 

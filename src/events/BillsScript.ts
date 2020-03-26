@@ -1,4 +1,5 @@
 import { Bill } from "../models/Bill";
+import { XRPUtil } from "../util/XRPUtil";
 
 function getUsername(): string {
 
@@ -49,7 +50,7 @@ function onBillsPageLoad(): void {
 					let element = "<div class='card bg-dark text-light text-center col-12 bill-item mb-3 p-3 rounded-0 border-light' bill-id='"+bill.id+"'>";
 						element += "<div>";
 						element += "<span class='float-left bill-date' data-timestamp='"+bill.dateCreated+"'>"+dateFormatted+"</span>";
-						element += "<span class='float-right'>"+bill.totalXrp+" XRP</span>";
+						element += "<span class='float-right'>"+XRPUtil.dropsToXRP(bill.totalXrpDrops)+" XRP</span>";
 						element += "</div>";
 						element += "<h5 class='card-title text-center mb-0'>"+bill.description+"</h5>";
 						element += "<hr class='border-light horizontal-divider'>";
@@ -90,7 +91,6 @@ function onBillsPageLoad(): void {
 					element += parts+"</div>";
 					element += "</div>";
 
-					//$(".unsettled-bills").append(element);
 					console.log("all paid " + allPaid);
 					if(allPaid == true) {
 						$("#settled-bills-info").hide();

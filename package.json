@@ -34,6 +34,7 @@
   },
   "homepage": "https://github.com/roemba/xsplit#readme",
   "dependencies": {
+    "@sendgrid/mail": "^6.5.5",
     "babel-polyfill": "^6.26.0",
     "body-parser": "^1.19.0",
     "bootstrap-4-autocomplete": "^1.2.2",
