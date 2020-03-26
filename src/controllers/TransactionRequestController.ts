@@ -1,5 +1,5 @@
 import Container from "typedi";
-import {JsonController, Get, CurrentUser, Authorized, Body, Put, OnUndefined, Param, BadRequestError} from "routing-controllers";
+import {JsonController, Get, CurrentUser, Authorized, Body, Put, OnUndefined, Param, BadRequestError, UnauthorizedError} from "routing-controllers";
 import { User } from "../models/User";
 import { TransactionRequestService } from "../services/TransactionRequestService";
 import { TransactionRequest } from "../models/TransactionRequest";
@@ -14,6 +14,17 @@ export class TransactionRequestController {
     @Get("/")
     getMyTransactionRequests(@CurrentUser() user: User): Promise<TransactionRequest[]> {
         return Container.get(TransactionRequestService).findRequestsToUser(user);
+    }
+
+    @Authorized()
+    @Get("/:id")
+    async getTransactionRequest(@CurrentUser() user: User, @Param("id") id: string): Promise<TransactionRequest> {
+        const tr = await Container.get(TransactionRequestService).findOne(id, {relations: ["bill"]});
+        if (tr.bill.creditor.username === user.username || tr.debtor.username === user.username) {
+            return tr;
+        } else {
+            throw new UnauthorizedError("You are not a creditor or debtor of this transaction request");
+        }
     }
 
     @Authorized()

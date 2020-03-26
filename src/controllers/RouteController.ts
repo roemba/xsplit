@@ -65,7 +65,7 @@ export class RouteController {
             });
          }
       }
-      return {page: "pay", payments: payments};
+      return {page: "pay", payments: payments, rippleServer: process.env.RIPPLE_SERVER};
    }
 
    // @Authorized()
