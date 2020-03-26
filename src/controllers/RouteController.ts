@@ -1,11 +1,33 @@
-import { Controller, Get, Param, Redirect, Render, CurrentUser, Authorized } from "routing-controllers";
+import {
+   Controller,
+   Get,
+   Param,
+   Redirect,
+   Render,
+   CurrentUser,
+   Authorized,
+   ExpressErrorMiddlewareInterface, UnauthorizedError, UseAfter
+} from "routing-controllers";
 import { Container } from "typedi";
 import { LoggerService } from "../services/LoggerService";
 import { TransactionRequestService } from "../services/TransactionRequestService";
 import { User } from "../models/User";
 import { XRPUtil } from "../util/XRPUtil";
+import * as express from 'express';
 
-@Controller() 
+
+class UnauthorizedHandler implements ExpressErrorMiddlewareInterface {
+   error(error: Error, req: express.Request, res: express.Response): void {
+      if (error instanceof UnauthorizedError) {
+         res.redirect("/login");
+         return;
+      }
+   }
+
+}
+
+@Controller()
+@UseAfter(UnauthorizedHandler)
 export class RouteController {
    log = Container.get(LoggerService);
 
