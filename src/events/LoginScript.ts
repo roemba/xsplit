@@ -47,6 +47,8 @@ async function doLoginAction(event: Event): Promise<void> {
 }
 
 function onLoginPageLoad(): void {
+    sessionStorage.clear();
+
     jQuery(($) => {
         $("#loginForm").on("submit", doLoginAction);
 
