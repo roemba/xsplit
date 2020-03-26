@@ -1,9 +1,9 @@
 import { RippleAPI } from "ripple-lib";
 import rippleKey from "ripple-keypairs";
 
-function setError(text: string): void {
-    document.getElementById("performingPayment").innerHTML = text + ", please try again";
-    document.getElementById("registerError").style.color = "red";
+function setError(text: string, id: string): void {
+    document.getElementById(`performingPayment-${id}`).innerHTML = text + ", please try again";
+    document.getElementById(`performingPayment-${id}`).style.color = "red";
 }
 
 async function sendPaymentRequest(requestId: string, rippleServer: string): Promise<void> {
@@ -16,7 +16,7 @@ async function sendPaymentRequest(requestId: string, rippleServer: string): Prom
         api = new RippleAPI({server: rippleServer});
         await api.connect();
     } catch {
-        setError("Connecting to ripple failed");
+        setError("Connecting to ripple failed", requestId);
         return;
     }
     const secret = sessionStorage.getItem('secret');
@@ -31,8 +31,7 @@ async function sendPaymentRequest(requestId: string, rippleServer: string): Prom
         signedTransaction = api.sign(preparedTransaction.txJSON, secret);
         await api.submit(signedTransaction.signedTransaction);
     } catch(e) {
-        console.log(e);
-        setError("Submitting transaction failed");
+        setError("Submitting transaction failed", requestId);
         return;
     }
 
@@ -47,11 +46,11 @@ async function sendPaymentRequest(requestId: string, rippleServer: string): Prom
 		})
 	});
 	if (response.status !== 200) {
-        setError(response.statusText.toString());
+        setError(response.statusText.toString(), requestId);
 		return;
     }
 
-    document.getElementById("performingPayment").innerHTML = "Success!";
+    document.getElementById(`performingPayment-${requestId}`).innerHTML = "Success!";
     
     await new Promise(r => setTimeout(r, 1000));
     
@@ -61,10 +60,9 @@ async function sendPaymentRequest(requestId: string, rippleServer: string): Prom
 function onRequestPageLoad(): void {
     jQuery(($) => {
         $("button").click(function() {
-            $("#performingPayment").removeClass("d-none");
+            $(`#performingPayment-${this.id}`).removeClass("d-none");
             const rippleServer = $("#rippleServer").html();
             sendPaymentRequest(this.id, rippleServer);
-            console.log(this.id);
         });
     });
 }
