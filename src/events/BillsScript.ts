@@ -41,9 +41,9 @@ function onBillsPageLoad(): void {
 				$("#loading").hide();
 				bills.sort((a, b) => a.dateCreated > b.dateCreated ? - 1 : Number(a.dateCreated < b.dateCreated));
 				await bills.forEach(function(bill) {
-					
+
 					const date: Date = new Date(Number(bill.dateCreated));
-					const dateFormatted: string = date.getDay()+"/"+date.getMonth()+"/"+date.getFullYear();
+					const dateFormatted: string = date.getDate()+"/"+(date.getMonth()+1)+"/"+date.getFullYear();
 	
 					let element = "<div class='card bg-dark text-light text-center col-12 bill-item mb-3 p-3 rounded-0 border-light' bill-id='"+bill.id+"'>";
 						element += "<div>";
