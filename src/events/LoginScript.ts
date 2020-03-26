@@ -25,13 +25,12 @@ async function doLoginAction(event: Event): Promise<void> {
         }
         return;
     }
+    const data = await resp.json();
 
-    const challenge = await resp.text();
-
-    const result = sign(challenge, derivationResult.privateKey);
+    const result = sign(data.challenge, derivationResult.privateKey);
 
     const bearerStr = window.btoa(userName + ":" + result);
-    document.cookie = `bearer=${bearerStr};path=/;max-age=840;samesite=strict`;
+    document.cookie = `bearer=${bearerStr};path=/;max-age=${Math.round(data.expiresIn/1000)};samesite=strict`;
 
     resp = await fetch("/api/login/validate");
     if (resp.status !== 200) {

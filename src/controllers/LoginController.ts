@@ -10,7 +10,7 @@ export class LoginController {
     log = Container.get(LoggerService);
 
     @Get("/challenge")
-    async getChallenge(@QueryParam("username") userName: string): Promise<string> {
+    async getChallenge(@QueryParam("username") userName: string): Promise<object> {
         const user = await Container.get(UserService).findOne(userName);
         if (user == null) {
             throw new BadRequestError("Cannot find User!");
