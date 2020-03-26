@@ -21,12 +21,6 @@ export class RouteController {
       return {page: "home"};
    }
 
-   @Get("/404")
-   @Render("index.ejs")
-   Get404(): unknown {
-      return {page: "404"};
-   }
-
    @Get("/login")
    @Render("index.ejs")
    GetLogin(): unknown {
@@ -39,7 +33,7 @@ export class RouteController {
       return {page: "register"};
    }
 
-   // @Authorized()
+   @Authorized()
    @Get("/account")
    @Render("index.ejs")
    GetAccount(): unknown {
@@ -69,14 +63,14 @@ export class RouteController {
       return {page: "pay", payments: payments, rippleServer: process.env.RIPPLE_SERVER};
    }
 
-   // @Authorized()
+   @Authorized()
    @Get("/request")
    @Render("index.ejs")
    GetRequest(): object {
       return {page: "request"};
    }
 
-   // @Authorized()   
+   @Authorized()   
    @Get("/bills")
    @Render("index.ejs")
    GetBillOverview(): unknown {
@@ -85,7 +79,7 @@ export class RouteController {
       return {page: "bills"};
    }
 
-   // @Authorized()
+   @Authorized()
    @Get("/groups/:id")
    @Render("index.ejs")
    GetList(@Param("id") id: number): unknown {
@@ -93,7 +87,7 @@ export class RouteController {
       return {page: "group", id: id, users: users};
    }
 
-   // @Authorized()
+   @Authorized()
    @Get("/groups")
    @Render("index.ejs")
    GetLists(): object {
