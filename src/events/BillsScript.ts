@@ -40,12 +40,14 @@ function onBillsPageLoad(): void {
 					const date: Date = new Date(Number(bill.dateCreated));
 					const dateFormatted: string = date.getDate()+"/"+(date.getMonth()+1)+"/"+date.getFullYear();
 	
-					let element = "<div class='card bg-dark text-light text-center col-12 bill-item mb-3 p-3 rounded-0 border-light' bill-id='"+bill.id+"'>";
+					let element = "<div class='col-12'>";
+						element += "<div class='card bg-dark text-light text-center bill-item mb-3 p-3 rounded-0 border-light' bill-id='"+bill.id+"'>";
 						element += "<div>";
-						element += "<span class='float-left bill-date' data-timestamp='"+bill.dateCreated+"'>"+dateFormatted+"</span>";
-						element += "<span class='float-right'>"+XRPUtil.dropsToXRP(bill.totalXrpDrops)+" XRP</span>";
+						element += "<span class='float-left bill-date' data-timestamp='"+bill.dateCreated+"'><small>"+dateFormatted+"</small></span>";
+						element += "<span class='float-right'><small>From: "+bill.creditor.username+"</small></span>";
 						element += "</div>";
-						element += "<h5 class='card-title text-center mb-0'>"+bill.description+"</h5>";
+						element += "<h5 class='text-center'>"+XRPUtil.dropsToXRP(bill.totalXrpDrops)+" XRP</h6>";
+						element += "<span class='text-center d-block mt-2'>"+bill.description+"</span>";
 						element += "<hr class='border-light horizontal-divider'>";
 	
 					let parts = "<div class='row'>";
@@ -86,10 +88,8 @@ function onBillsPageLoad(): void {
 	
 						parts += "</div></div>";
 					});
-					element += parts+"</div>";
-					element += "</div>";
+					element += parts+"</div></div></div>";
 
-					console.log("all paid " + allPaid);
 					if(allPaid == true) {
 						$("#settled-bills-info").hide();
 						$(".settled-bills").append(element);

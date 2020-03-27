@@ -73,9 +73,13 @@ export class RouteController {
       for(let transaction of transactions) {
          transaction = await Container.get(TransactionRequestService).findOne(transaction.id, {relations: ["bill"]});
          if(!transaction.paid) {
+            const date: Date = new Date(Number(transaction.dateCreated));
+            const dateFormatted: string = date.getDate()+"/"+(date.getMonth()+1)+"/"+date.getFullYear();
+            
             payments.push({
                id: transaction.id, 
                owner: transaction.bill.creditor.username, 
+               dateCreated: dateFormatted,
                totalXrp: XRPUtil.dropsToXRP(transaction.bill.totalXrpDrops), 
                description: transaction.bill.description.toString(),
                debtorXrp: XRPUtil.dropsToXRP(transaction.totalXrpDrops)
