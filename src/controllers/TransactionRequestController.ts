@@ -63,7 +63,7 @@ export class TransactionRequestController {
         tr.transactionHash = body.transactionHash;
         await trService.update(body.id, tr);
         tr = await trService.findOne(tr.id, {relations: ["bill"]});
-        if (trService.validatePayment(tr)) {
+        if (await trService.validatePayment(tr)) {
             tr.paid = true;
             return Container.get(TransactionRequestService).update(body.id, tr);
         }
