@@ -39,7 +39,7 @@ const xrpConnection = setInterval(function() {
 setupTypeORM().then(() => {
     setupExpressApp(logger).then(() => {
         setInterval(async () => {
-        const repo = await Container.get(ChallengeRepository);
+        const repo = Container.get(ChallengeRepository);
         await repo.cleanChallenges();
         }, 6*1000);
     });
