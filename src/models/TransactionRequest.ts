@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, BeforeInsert } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, BeforeInsert, AfterLoad } from 'typeorm';
 import { User } from './User';
 import { Bill } from './Bill';
 
@@ -35,5 +35,10 @@ export class TransactionRequest {
     @BeforeInsert()
     public setDateCreated(): void {
         this.dateCreated = Date.now();
+    }
+
+    @AfterLoad()
+    convertXrpToNumber(): void {
+        this.totalXrpDrops = parseInt(this.totalXrpDrops as unknown as string);
     }
 }

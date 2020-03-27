@@ -3,7 +3,8 @@ import { Service } from 'typedi';
 import { RippleAPI, FormattedTransactionType } from "ripple-lib";
 import { GetServerInfoResponse } from 'ripple-lib/dist/npm/common/serverinfo';
 import { LoggerService } from "../services/LoggerService";
-
+import { BadRequestError } from "routing-controllers";
+import sleep from "../util/SleepUtil";
 @Service()
 export class RippleLibService {
 
@@ -20,7 +21,19 @@ export class RippleLibService {
         return this.rippleAPI.getServerInfo();
     }
 
-    public getPayment(hash: string): Promise<FormattedTransactionType> {
-        return this.rippleAPI.getTransaction(hash);
+    public async getPayment(hash: string, retries?: number): Promise<FormattedTransactionType> {
+        try {
+            return await this.rippleAPI.getTransaction(hash);
+        } catch {
+            this.log.error(`Payment not found on try: ${retries === undefined ? 1 : retries + 1}`);
+            if (retries === undefined || retries < 5) {
+                this.log.error("Checking again in 2 seconds...");
+                await sleep(2000);
+                return this.getPayment(hash, retries === undefined ? 1 : retries + 1);
+            } else {
+                this.log.error("Payment could not be found after 5 tries");
+                throw new BadRequestError("Payment could not be found");
+            }
+        }
     }
 }

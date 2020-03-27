@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, ManyToOne, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, ManyToOne, Column, AfterLoad } from 'typeorm';
 import { User } from './User';
 import { Group } from './Group';
 
@@ -18,4 +18,9 @@ export class GroupBalance {
     // totalXrp is stored in drops; 1 xrp is 1 million drops
     @Column({ type: "bigint"})
     public balance: number;
+
+    @AfterLoad()
+    convertBalanceToNumber(): void {
+        this.balance = parseInt(this.balance as unknown as string);
+    }
 }

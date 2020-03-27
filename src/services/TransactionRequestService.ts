@@ -9,6 +9,8 @@ import { NotificationService } from '../services/NotificationService';
 import { LoggerService } from "../services/LoggerService";
 import { RippleLibService } from "./RippleLibService";
 import { XRPUtil } from "../util/XRPUtil";
+import { BadRequestError } from "routing-controllers";
+import rippleKey from "ripple-keypairs";
 
 @Service()
 export class TransactionRequestService {
@@ -32,18 +34,22 @@ export class TransactionRequestService {
         }
 
         // Get the bill that corresponds to this payment, the bills is not eagerly loaded so this line ensures that the bill field is loaded
-        const bill = (await this.findOne(tr.id, {relations: ["bill"]})).bill;
-
-        const payment = await Container.get(RippleLibService).getPayment(tr.transactionHash);
+        const bill = (await this.findOne(tr.id, {relations: ["bill", "bill.creditor"]})).bill;
+        let payment;
+        try {
+            payment = await Container.get(RippleLibService).getPayment(tr.transactionHash);
+        } catch (e) {
+            throw new BadRequestError("Payment could not be retreived");
+        }
         const balanceChanges = payment.outcome.balanceChanges;
         let foundPayment = false;
 
+        const creditorAddress = rippleKey.deriveAddress(bill.creditor.publickey);
         // Loop through all addresses that had their balance changed
         for (const addr in balanceChanges) {
-
             // If address corresponds to the creditor's address, loop through the currencies and find XRP, validate if the value is equal to the totalXrp value
             // Convert XRP value to drops
-            if (bill.creditor.publickey === addr) {
+            if (creditorAddress === addr) {
                 const changes = balanceChanges[addr];
                 for (const change of changes) {
                     if (change.currency === "XRP" && XRPUtil.XRPtoDrops(Number(change.value)) === tr.totalXrpDrops) {
@@ -52,9 +58,10 @@ export class TransactionRequestService {
                 }
             }
         }
+
         return payment.outcome.result === "tesSUCCESS"
             && payment.type === "payment"
-            && payment.address === tr.debtor.publickey
+            && payment.address === rippleKey.deriveAddress(tr.debtor.publickey)
             && foundPayment;
     }
 

@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, ManyToMany, JoinTable, OneToMany, BeforeInsert } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, ManyToMany, JoinTable, OneToMany, BeforeInsert, AfterLoad } from 'typeorm';
 import { User } from './User';
 import { TransactionRequest } from './TransactionRequest';
 import { BillWeight } from './BillWeight';
@@ -46,5 +46,10 @@ export class Bill {
     @BeforeInsert()
     public setDateCreated(): void {
         this.dateCreated = Date.now();
+    }
+
+    @AfterLoad()
+    convertBalanceToNumber(): void {
+        this.totalXrpDrops = parseInt(this.totalXrpDrops as unknown as string);
     }
 }

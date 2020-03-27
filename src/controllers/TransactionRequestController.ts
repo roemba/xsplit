@@ -66,8 +66,8 @@ export class TransactionRequestController {
         if (await trService.validatePayment(tr)) {
             tr.paid = true;
             return Container.get(TransactionRequestService).update(body.id, tr);
+        } else {
+            throw new BadRequestError("Payment validation failed");
         }
-        
-        return tr;
     }
 }
