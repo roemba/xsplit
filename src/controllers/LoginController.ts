@@ -25,10 +25,4 @@ export class LoginController {
     testSignature(): string {
         return "ok!";
     }
-
-    @Get("/whoAmI")
-    @Authorized()
-    whoAmI(@CurrentUser() user: User): object {
-        return {username: user.username};
-    }
 }

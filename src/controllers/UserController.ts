@@ -63,8 +63,8 @@ export class UserController {
 
     @Get("")
     @Authorized()
-    getMe(@CurrentUser() user: User): Promise<User | undefined> {
-        return Container.get(UserService).findMe(user);
+    getMe(@CurrentUser() user: User): User | undefined {
+      return user;
     }
 
     @Put("")
