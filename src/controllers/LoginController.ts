@@ -1,8 +1,9 @@
 import {Container} from "typedi";
-import {Authorized, BadRequestError, Controller, Get, QueryParam} from "routing-controllers";
+import {Authorized, BadRequestError, Controller, Get, QueryParam, CurrentUser} from "routing-controllers";
 import {UserService} from "../services/UserService";
 import {ChallengeRepository} from "../repositories/ChallengeRepository";
 import { LoggerService } from "../services/LoggerService";
+import { User } from "../models/User";
 
 @Controller("/api/login")
 export class LoginController {
@@ -23,5 +24,11 @@ export class LoginController {
     @Authorized()
     testSignature(): string {
         return "ok!";
+    }
+
+    @Get("/whoAmI")
+    @Authorized()
+    whoAmI(@CurrentUser() user: User): object {
+        return {username: user.username};
     }
 }

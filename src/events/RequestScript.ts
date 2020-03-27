@@ -1,13 +1,8 @@
 import { XRPUtil } from "../util/XRPUtil";
+import {CookieUtil} from "../util/CookieUtil";
 
 let participants: string[] = [];
 
-function getUsername(): string {
-	const cookie = "; " + document.cookie;
-	const bearerStr = cookie.split("; ")[1];
-	const bearer = window.atob(bearerStr.replace("bearer=",""));
-	return bearer.split(":")[0];
-}
 
 function newUserRow(username: string): string {
 	let element = "<div class='form-row user-row mb-2' data-user='"+username+"'>";
@@ -57,10 +52,10 @@ function onRequestPageLoad(): void {
 
 	jQuery(($) => {
 
-		$(document).on("click", ".remove-user", function() {
+		$(document).on("click", ".remove-user", async function() {
 			const userRow = $(this).closest(".user-row");
 
-			const currentUsername = getUsername();
+			const currentUsername = await CookieUtil.getUsername();
 			const username = userRow.attr('data-user');
 
 			if(username == currentUsername) {
@@ -75,7 +70,7 @@ function onRequestPageLoad(): void {
 
 		$(document).on("change", "#includeCheck", async function() {
 			
-			const username: string = getUsername();
+			const username: string = await CookieUtil.getUsername();
 
 			if(this.checked) {
 				$(".added-users").prepend(newUserRow(username));
@@ -138,7 +133,7 @@ function onRequestPageLoad(): void {
 				const added = $("div.user-row[data-user='"+ui.item.label+"']");
 
 				if(added.length == 0) {
-					const username = getUsername();
+					const username = await CookieUtil.getUsername();
 					
 					if(ui.item.label == username) {
 						$("#includeCheck").prop("checked",true);

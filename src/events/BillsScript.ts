@@ -1,18 +1,10 @@
 import { Bill } from "../models/Bill";
 import { XRPUtil } from "../util/XRPUtil";
+import { CookieUtil } from "../util/CookieUtil";
 
-function getUsername(): string {
-
-	const cookie = "; " + document.cookie;
-	const bearerStr = cookie.split("; ")[1];
-	const bearer = window.atob(bearerStr.replace("bearer=",""));
-	const username = bearer.split(":")[0];
-
-	return username;
-}
 
 let bills: Bill[] = [];
-const currentUserName = getUsername();
+let currentUserName: string;
 
 async function getBills(): Promise<Bill[]> {
 
@@ -35,9 +27,10 @@ function onBillsPageLoad(): void {
 		$(document).ready(async function() {
 			$();
 			bills = await getBills();
+			currentUserName = await CookieUtil.getUsername();
 			
 			if(bills.length === 0) {
-				document.getElementById("loading").innerHTML =  "No bills where found";
+				document.getElementById("loading").innerHTML =  "No bills were found";
 			} else {
 				$("#loading").hide();
 				bills.sort((a, b) => a.dateCreated > b.dateCreated ? - 1 : Number(a.dateCreated < b.dateCreated));
@@ -61,7 +54,7 @@ function onBillsPageLoad(): void {
 	
 					let allPaid = true;
 					bill.transactionRequests.forEach(function(tr) {
-						if(!tr.paid) {
+						if(!tr.paid && allPaid) {
 							allPaid =  false;
 						}
 						const debtor = tr.debtor.username;
