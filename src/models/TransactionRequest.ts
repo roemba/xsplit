@@ -1,6 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, BeforeInsert, AfterLoad } from 'typeorm';
 import { User } from './User';
 import { Bill } from './Bill';
+import { bigIntToNumber } from '../util/PostGresUtil';
 
 @Entity({ name: "transaction_requests" })
 export class TransactionRequest {
@@ -39,6 +40,6 @@ export class TransactionRequest {
 
     @AfterLoad()
     convertXrpToNumber(): void {
-        this.totalXrpDrops = parseInt(this.totalXrpDrops as unknown as string);
+        this.totalXrpDrops = bigIntToNumber(this.totalXrpDrops);
     }
 }

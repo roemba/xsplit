@@ -3,6 +3,7 @@ import { User } from './User';
 import { TransactionRequest } from './TransactionRequest';
 import { BillWeight } from './BillWeight';
 import { Group } from './Group';
+import { bigIntToNumber } from '../util/PostGresUtil';
 
 @Entity({ name: "bills" })
 export class Bill {
@@ -50,6 +51,6 @@ export class Bill {
 
     @AfterLoad()
     convertBalanceToNumber(): void {
-        this.totalXrpDrops = parseInt(this.totalXrpDrops as unknown as string);
+        this.totalXrpDrops = bigIntToNumber(this.totalXrpDrops);
     }
 }

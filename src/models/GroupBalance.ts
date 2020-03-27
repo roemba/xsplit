@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, ManyToOne, Column, AfterLoad } from 'typeorm';
 import { User } from './User';
 import { Group } from './Group';
+import { bigIntToNumber } from '../util/PostGresUtil';
 
 @Entity({ name: "group_balances" })
 export class GroupBalance {
@@ -21,6 +22,6 @@ export class GroupBalance {
 
     @AfterLoad()
     convertBalanceToNumber(): void {
-        this.balance = parseInt(this.balance as unknown as string);
+        this.balance = bigIntToNumber(this.balance);
     }
 }
