@@ -12,12 +12,14 @@ import {
     Put
 } from "routing-controllers";
 import {UserService} from "../services/UserService";
+import {RippleLibService} from "../services/RippleLibService";
 import {User} from '../models/User';
 import {LoggerService} from "../services/LoggerService";
 import 'babel-polyfill';
 import * as brandedQRCode from 'branded-qr-code';
 import path from "path";
 import {IsBoolean, IsEmail, IsNotEmpty, IsString, MaxLength} from "class-validator";
+import fetch from "node-fetch";
 
 class CreateUserRequest {
     @IsString()
@@ -119,5 +121,24 @@ export class UserController {
       });
 
       return {qr: qr};
+    }
+
+    @Get("/ticker")
+    async getBalance(): Promise<object> {
+      const url = "https://cex.io/api/ticker/XRP/EUR/";
+      const params = {
+        headers: {
+          "content-type": "application/json; charset=UTF-8"
+        },
+        method: "GET"
+      };
+      const res = await (await fetch(url, params)).json();
+      return res;
+    }
+
+    @Get("/info")
+    @Authorized()
+    async getAccountInfo(@CurrentUser() user: User): Promise<object> {
+      return Container.get(RippleLibService).getAccountInfo(user);
     }
 }

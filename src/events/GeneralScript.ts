@@ -1,12 +1,16 @@
-function getBalances(): number[] {
+import {Container} from "typedi";
+import {LoggerService} from "../services/LoggerService";
 
-	const balances: number[] = [];
+async function getBalances(): Promise<string[]> {
 
-	balances.push(8000);
-	balances.push(1200);
-
+	const balances = [];
+	const ticker = await (await fetch("/api/users/ticker")).json();
+	const info = await (await fetch("/api/users/info")).json();
+	const xrp = parseFloat(info.xrpBalance);
+	const rate = parseFloat(ticker.last);
+	balances[0] = xrp.toFixed(2);
+	balances[1] = (xrp * rate).toFixed(2);
 	return balances;
-
 } 
 
 function onGeneralPageLoad(): void {
@@ -17,12 +21,16 @@ function onGeneralPageLoad(): void {
 		});
 
 		$(document).on("click", ".nav-balance", function() {
-			const balances = getBalances();
-
-			if(balances.length === 2) {
-				$(".balance-xrp").html(String(balances[0].toFixed(2)));
-				$(".balance-euro").html(String(balances[1].toFixed(2)));
-			}
+			const log = Container.get(LoggerService);
+			getBalances().then((balances) => {
+				if(balances.length === 2) {
+					$(".balance-xrp").html(balances[0]);
+					$(".balance-euro").html(balances[1]);
+				}
+			}).catch((e) => {
+				log.error("Error while fetching balance!");
+				console.log(e);
+			});
 		});
 
 	});

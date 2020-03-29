@@ -4,7 +4,9 @@ import { RippleAPI, FormattedTransactionType } from "ripple-lib";
 import { GetServerInfoResponse } from 'ripple-lib/dist/npm/common/serverinfo';
 import { LoggerService } from "../services/LoggerService";
 import { BadRequestError } from "routing-controllers";
+import { User } from "../models/User";
 import sleep from "../util/SleepUtil";
+import { deriveAddress } from 'ripple-keypairs';
 @Service()
 export class RippleLibService {
 
@@ -35,5 +37,9 @@ export class RippleLibService {
                 throw new BadRequestError("Payment could not be found");
             }
         }
+    }
+    
+    public async getAccountInfo(user: User): Promise<object> {
+        return this.rippleAPI.getAccountInfo(deriveAddress(user.publickey));
     }
 }
