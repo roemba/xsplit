@@ -5,7 +5,6 @@ import { OrmRepository } from 'typeorm-typedi-extensions';
 import { TransactionRequest } from '../models/TransactionRequest';
 import { User } from '../models/User';
 import { FindOneOptions } from 'typeorm';
-import { NotificationService } from '../services/NotificationService';
 import { LoggerService } from "../services/LoggerService";
 import { RippleLibService } from "./RippleLibService";
 import { XRPUtil } from "../util/XRPUtil";
