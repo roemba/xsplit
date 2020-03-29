@@ -4,6 +4,7 @@ import { User } from "../models/User";
 import { TransactionRequestService } from "../services/TransactionRequestService";
 import { TransactionRequest } from "../models/TransactionRequest";
 import { LoggerService } from "../services/LoggerService";
+import { NotificationService } from '../services/NotificationService';
 import {IsNotEmpty, IsString, MaxLength} from "class-validator";
 
 class PayTransactionRequestRequest {
@@ -65,6 +66,7 @@ export class TransactionRequestController {
         tr = await trService.findOne(tr.id, {relations: ["bill"]});
         if (await trService.validatePayment(tr)) {
             tr.paid = true;
+            Container.get(NotificationService).sendPaymentReceivedNotification(tr.bill.creditor);
             return Container.get(TransactionRequestService).update(body.id, tr);
         } else {
             throw new BadRequestError("Payment validation failed");

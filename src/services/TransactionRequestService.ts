@@ -69,7 +69,6 @@ export class TransactionRequestService {
         const tr = await this.transactionRepository.findOne(id, {relations: ["bill"]});
         if (tr.bill.creditor.username === requester.username) {
             await this.transactionRepository.update(tr.id, {paid: true});
-            Container.get(NotificationService).sendPaymentReceivedNotification(requester);
             return this.transactionRepository.findOne(id);
         } else {
             return undefined;
