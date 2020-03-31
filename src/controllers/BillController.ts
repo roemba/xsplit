@@ -1,5 +1,5 @@
 import Container from "typedi";
-import {JsonController, Get, CurrentUser, Authorized, Post, Body, Delete, BadRequestError} from "routing-controllers";
+import {JsonController, Get, CurrentUser, Authorized, Post, Body, Delete, BadRequestError, Param} from "routing-controllers";
 import { Bill } from "../models/Bill";
 import { User } from "../models/User";
 import { BillService } from "../services/BillService";
@@ -7,7 +7,7 @@ import { LoggerService } from "../services/LoggerService";
 import { BillWeight } from "../models/BillWeight";
 import {MaxLength, IsNotEmpty, IsInt, IsPositive, ArrayNotEmpty, IsString} from "class-validator";
 
-class AddBillRequest {
+export class AddBillRequest {
     @IsString()
     @IsNotEmpty()
     @MaxLength(1000)
@@ -40,9 +40,22 @@ export class BillController {
     }
 
     @Authorized()
+    @Get("/:id")
+    getMyBill(@CurrentUser() user: User, @Param("id") id: string): Promise<Bill> {
+        return Container.get(BillService).findUserBill(user, id);
+    }
+
+    @Authorized()
     @Delete("/")
     async deleteMyBills(@CurrentUser() user: User): Promise<string> {
         await Container.get(BillService).deleteUserBills(user);
+        return "Success";
+    }
+
+    @Authorized()
+    @Delete("/:id")
+    async deleteBill(@CurrentUser() user: User, @Param("id") id: string): Promise<string> {
+        await Container.get(BillService).deleteUserBill(user, id);
         return "Success";
     }
 
@@ -71,7 +84,6 @@ export class BillController {
             bill.weights.push(weight);
           }
         const newBill = await Container.get(BillService).create(bill);
-        return `Bill ${newBill.id} created`;
+        return newBill.id;
     }
 }
-

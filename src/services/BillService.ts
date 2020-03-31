@@ -8,6 +8,7 @@ import { TransactionRequestService } from './TransactionRequestService';
 import { TransactionRequest } from '../models/TransactionRequest';
 import { LoggerService } from "../services/LoggerService";
 import { BillWeightRepository } from '../repositories/BillWeightRepository';
+import { UnauthorizedError } from 'routing-controllers';
 
 @Service()
 export class BillService {
@@ -26,15 +27,34 @@ export class BillService {
         return this.billRepository.find({where: {bill: {creditor:{ username: user.username }}}});
     }
 
+    public async findUserBill(user: User, id: string): Promise<Bill> {
+        const bill = await this.billRepository.findOne(id);
+        if (bill.creditor.username === user.username) {
+            return bill;
+        } else {
+            throw new UnauthorizedError("Bill does not belong to user");
+        }
+    }
+
     public async deleteUserBills(user: User): Promise<void> {
-        this.log.info('Delete a bill');
+        this.log.info('Delete all user bills');
         const bills = await this.findUserBills(user);
         await this.billRepository.remove(bills);
         return;
     }
 
+    public async deleteUserBill(user: User, id: string): Promise<void> {
+        this.log.info(`Delete a bill from ${user.username} => ${id}`);
+        const bill = await this.billRepository.findOne(id);
+        if (bill.creditor.username === user.username) {
+            await this.billRepository.remove(bill);
+        } else {
+            throw new UnauthorizedError("Bill does not belong to user");
+        }
+    }
+
     public findOne(id: string): Promise<Bill | undefined> {
-        this.log.info('Find one user');
+        this.log.info('Find one bill');
         return this.billRepository.findOne({ id });
     }
 
