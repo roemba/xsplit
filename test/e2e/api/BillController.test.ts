@@ -105,7 +105,6 @@ test('get bills, then remove first bill', async () => {
             cookie: bearer
         },
     });
-    console.log(await deleteRequest.json());
     expect(deleteRequest.status).toBe(200);
 
     const afterDelete = await fetch('http://localhost:' + process.env.PORT + '/api/bills', {
