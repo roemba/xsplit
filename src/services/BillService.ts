@@ -3,7 +3,6 @@ import { OrmRepository } from 'typeorm-typedi-extensions';
 import { BillRepository } from '../repositories/BillRepository';
 import { Bill } from '../models/Bill';
 import { User } from '../models/User';
-import { NotificationService } from '../services/NotificationService';
 import { TransactionRequestService } from './TransactionRequestService';
 import { TransactionRequest } from '../models/TransactionRequest';
 import { LoggerService } from "../services/LoggerService";
@@ -23,7 +22,7 @@ export class BillService {
     }
 
     public findUserBills(user: User): Promise<Bill[]> {
-        return this.billRepository.find({where: {bill: {creditor:{ username: user.username }}}});
+        return this.billRepository.find({where: {creditor: {username: user.username }}});
     }
 
     public async deleteUserBills(user: User): Promise<void> {
@@ -63,7 +62,6 @@ export class BillService {
             }
             await transactionService.create(tr);
         }
-        Container.get(NotificationService).sendPaymentRequestNotification(bill.participants);
         return Container.get(BillService).findOne(bill.id);
     }
 

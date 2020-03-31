@@ -24,7 +24,7 @@ async function sendPaymentRequest(requestId: string, rippleServer: string): Prom
     const transaction = {
         Account: rippleKey.deriveAddress(rippleKey.deriveKeypair(secret).publicKey),
         TransactionType: "Payment",
-        Amount: transactionRequest.totalXrpDrops,
+        Amount: transactionRequest.totalXrpDrops + "",
         Destination: rippleKey.deriveAddress(transactionRequest.bill.creditor.publickey)
     };
     try {
