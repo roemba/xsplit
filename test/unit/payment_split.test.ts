@@ -112,3 +112,25 @@ test('102 drops, 4 people, equal weights', () => {
     expect(res[3].paid).toBe(false);
     expect(res[0].totalXrpDrops + res[1].totalXrpDrops + res[2].totalXrpDrops + res[3].totalXrpDrops).toBe(bill.totalXrpDrops);
 });
+
+test('102 drops, 4 people, 1:2:3:4', () => {
+    const bill = new Bill();
+    bill.creditor = user1;
+    bill.participants = [user1, user2, user3, user4];
+    bill.totalXrpDrops = 102;
+    weight2.weight = 2;
+    weight3.weight = 3;
+    weight4.weight = 4;
+    bill.weights = [weight1, weight2, weight3, weight4];
+    const res = billService.createTransactionRequests(bill);
+    expect(res.length).toBe(4);
+    expect(res[0].totalXrpDrops).toBeGreaterThanOrEqual(10);
+    expect(res[0].paid).toBe(true);
+    expect(res[1].totalXrpDrops).toBeGreaterThanOrEqual(20);
+    expect(res[1].paid).toBe(false);
+    expect(res[2].totalXrpDrops).toBeGreaterThanOrEqual(30);
+    expect(res[2].paid).toBe(false);
+    expect(res[3].totalXrpDrops).toBeGreaterThanOrEqual(40);
+    expect(res[3].paid).toBe(false);
+    expect(res[0].totalXrpDrops + res[1].totalXrpDrops + res[2].totalXrpDrops + res[3].totalXrpDrops).toBe(bill.totalXrpDrops);
+});
