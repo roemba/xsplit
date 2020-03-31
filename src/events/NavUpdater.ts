@@ -1,6 +1,3 @@
-import {Container} from "typedi";
-import {LoggerService} from "../services/LoggerService";
-
 const originalFetch = window.fetch;
 
 window.fetch = async (input: RequestInfo, init?: RequestInit): Promise<Response> => {
@@ -41,7 +38,6 @@ function onGenericPageLoad(): void {
 		});
 
 		$(document).on("click", ".nav-balance", function() {
-			const log = Container.get(LoggerService);
 			if (sessionStorage.getItem("secret")) {
 				getBalances().then((balances) => {
 					if(balances.length === 2) {
@@ -49,8 +45,7 @@ function onGenericPageLoad(): void {
 						$(".balance-euro").html(balances[1]);
 					}
 				}).catch((e) => {
-					log.error("Error while fetching balance!");
-					console.log(e);
+					console.log("Error while fetching balance!" + e);
 				});
 			}
 		});
