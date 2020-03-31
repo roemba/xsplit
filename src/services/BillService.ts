@@ -44,25 +44,39 @@ export class BillService {
             await this.billWeightRepository.save(weight);
         }
         newBill = await this.findOne(newBill.id);
-        newBill = await this.createTransactionRequests(newBill);
+        const createdRequests = this.createTransactionRequests(newBill);
+        for (const tr of createdRequests) {
+            Container.get(TransactionRequestService).create(tr);
+        }
         return newBill;
     }
 
-    public async createTransactionRequests(bill: Bill): Promise<Bill> {
-        const transactionService = Container.get(TransactionRequestService);
+    public createTransactionRequests(bill: Bill): TransactionRequest[] {
+        const res: TransactionRequest[] = [];
         let totalWeight = 0;
+        let totalDistributed = 0;
         bill.weights.forEach(w => totalWeight += w.weight);
         for (let i = 0; i < bill.participants.length; i++) {
             const tr = new TransactionRequest();
             tr.bill = bill;
             tr.debtor = bill.participants[i];
-            tr.totalXrpDrops = Math.round(bill.totalXrpDrops / totalWeight * bill.weights[i].weight);
+            const dropShare = Math.floor(bill.totalXrpDrops / totalWeight * bill.weights[i].weight);
+            totalDistributed += dropShare;
+            tr.totalXrpDrops = dropShare;
             if(tr.debtor.username === bill.creditor.username) {
                 tr.paid = true;
+            } else {
+                tr.paid = false;
             }
-            await transactionService.create(tr);
+            res.push(tr);
         }
-        return Container.get(BillService).findOne(bill.id);
+
+        // Randomly distribute missing drops
+        for (let i = 0; i < bill.totalXrpDrops - totalDistributed; i++) {
+            res[Math.floor(Math.random() * res.length)].totalXrpDrops += 1;
+        }
+
+        return res;
     }
 
     public update(id: string, bill: Bill): Promise<Bill> {
