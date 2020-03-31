@@ -1,3 +1,6 @@
+import {Container} from "typedi";
+import {LoggerService} from "../services/LoggerService";
+
 const originalFetch = window.fetch;
 
 window.fetch = async (input: RequestInfo, init?: RequestInit): Promise<Response> => {
@@ -12,6 +15,18 @@ window.fetch = async (input: RequestInfo, init?: RequestInit): Promise<Response>
 	return resp;
 };
 
+async function getBalances(): Promise<string[]> {
+
+	const balances = [];
+	const ticker = await (await fetch("/api/users/ticker")).json();
+	const info = await (await fetch("/api/users/info")).json();
+	const xrp = parseFloat(info.xrpBalance);
+	const rate = parseFloat(ticker.last);
+	balances[0] = xrp.toFixed(2);
+	balances[1] = (xrp * rate).toFixed(2);
+	return balances;
+} 
+
 function logOut(): void {
 	sessionStorage.clear();
 	document.cookie = 'bearer=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
@@ -20,6 +35,26 @@ function logOut(): void {
 
 function onGenericPageLoad(): void {
 	jQuery(($) => {
+
+		$(document).ready(function() {
+			$(".nav-balance").trigger("click");
+		});
+
+		$(document).on("click", ".nav-balance", function() {
+			const log = Container.get(LoggerService);
+			if (sessionStorage.getItem("secret")) {
+				getBalances().then((balances) => {
+					if(balances.length === 2) {
+						$(".balance-xrp").html(balances[0]);
+						$(".balance-euro").html(balances[1]);
+					}
+				}).catch((e) => {
+					log.error("Error while fetching balance!");
+					console.log(e);
+				});
+			}
+		});
+
 		$("#logOutButton").on("click", logOut);
 
 		if (sessionStorage.getItem("secret")) {

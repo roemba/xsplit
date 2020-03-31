@@ -132,8 +132,7 @@ export class UserController {
         },
         method: "GET"
       };
-      const res = await (await fetch(url, params)).json();
-      return res;
+      return await (await fetch(url, params)).json();
     }
 
     @Get("/info")
