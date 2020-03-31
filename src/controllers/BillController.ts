@@ -4,6 +4,7 @@ import { Bill } from "../models/Bill";
 import { User } from "../models/User";
 import { BillService } from "../services/BillService";
 import { LoggerService } from "../services/LoggerService";
+import { NotificationService } from '../services/NotificationService';
 import { BillWeight } from "../models/BillWeight";
 import {MaxLength, IsNotEmpty, IsInt, IsPositive, ArrayNotEmpty, IsString} from "class-validator";
 
@@ -84,6 +85,7 @@ export class BillController {
             bill.weights.push(weight);
           }
         const newBill = await Container.get(BillService).create(bill);
+        Container.get(NotificationService).sendPaymentRequestNotification(newBill.participants);
         return newBill.id;
     }
 }
