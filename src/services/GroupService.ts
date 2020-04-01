@@ -118,6 +118,13 @@ export class GroupService {
 
     public async settleGroup(id: string): Promise<Group> {
         const group = await this.findOne(id);
+        // Check if all previous settlements are paid
+        for (const tr of group.transactionRequests) {
+            if (!tr.paid) {
+                throw new BadRequestError("Previous settlement not finished yet");
+            }
+        }
+
         const requests = this.createSettlementTransactionRequests(group.groupBalances);
         for (const tr of requests) {
             tr.group = group;
