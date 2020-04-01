@@ -6,6 +6,9 @@ import { AddGroupRequest } from "../../../src/controllers/GroupController";
 import { deriveKeypair, sign } from "ripple-keypairs";
 import { Group } from "../../../src/models/Group";
 import { AddBillRequest } from "../../../src/controllers/BillController";
+import { TransactionRequest } from "../../../src/models/TransactionRequest";
+import { RippleAPI } from "ripple-lib";
+import rippleKey from "ripple-keypairs";
 
 let child: ChildProcess;
 
@@ -15,7 +18,7 @@ function sleep(ms: number): Promise<void> {
     });
 }
 
-let bearer: string, createdGroup: Group, smallerGroup: Group;
+let bearer: string, createdGroup: Group, smallerGroup: Group, createdTr: TransactionRequest, derivationResult: {publicKey: string; privateKey: string;} = null;
 
 beforeAll(async () => {
     dotenv.config();
@@ -25,7 +28,6 @@ beforeAll(async () => {
     await sleep(4000);
 
     // Get authentication
-    let derivationResult = null;
     derivationResult = deriveKeypair(process.env.ALICE_SECRET);
 
     const resp = await fetch("http://localhost:8080/api/login/challenge?username=alice");
@@ -134,6 +136,51 @@ test('add two bills and check balances', async () => {
         }
     });
 });
+
+test('settle bill', async () => {
+    const res = await fetch('http://localhost:' + process.env.PORT + '/api/groups/' + createdGroup.id + '/settle', {
+        method: 'put',
+         headers: {
+            cookie: bearer
+        }
+    });
+    expect(res.status).toBe(200);
+    const updatedGroup = plainToClass(Group, await res.json());
+    expect(updatedGroup.transactionRequests.length).toBe(1);
+    createdTr = updatedGroup.transactionRequests[0];
+    expect(createdTr.creditor.username).toBe("alice");
+    expect(createdTr.debtor.username).toBe("bob");
+    expect(createdTr.totalXrpDrops).toBe(100);
+});
+
+// // WIP This test depends on the XRP account of bob having enough balance
+// test('pay settlement request', async () => {
+//     const transaction = {
+//         Account: rippleKey.deriveAddress(derivationResult.publicKey),
+//         TransactionType: "Payment",
+//         Amount: createdTr.totalXrpDrops + "",
+//         Destination: rippleKey.deriveAddress(createdTr.bill.creditor.publickey)
+//     };
+//     try {
+//         const preparedTransaction = await api.prepareTransaction(transaction);
+//         signedTransaction = api.sign(preparedTransaction.txJSON, secret);
+//         await api.submit(signedTransaction.signedTransaction);
+//     } catch(e) {
+//         setError("Submitting transaction failed", requestId);
+//         return;
+//     }
+
+//     const response = await fetch("/api/transactions/pay", {
+// 		method: "PUT",
+// 		headers: {
+// 			"Content-Type": "application/json"
+// 		},
+// 		body: JSON.stringify({
+//             id: requestId,
+//             transactionHash: signedTransaction.id
+// 		})
+// 	});
+// });
 
 test('update group description and get the group', async () => {
     const group = new Group();

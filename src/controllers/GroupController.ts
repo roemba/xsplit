@@ -143,4 +143,18 @@ export class GroupController {
         }
         return Container.get(GroupService).addParticipant(id, userId);
     }
+
+    @Authorized()
+    @Put("/:id/settle")
+    async settleGroup(@CurrentUser() user: User, @Param("id") id: string): Promise<Group> {
+        const groupService = Container.get(GroupService);
+        const group = await groupService.findOne(id);
+        
+        // Check if person trying to settle is member of group
+        const index = group.participants.findIndex(participant => participant.username === user.username);
+        if (index === -1) {
+            throw new UnauthorizedError("You are not a participant of this group");
+        }
+        return Container.get(GroupService).settleGroup(id);
+    }
 }

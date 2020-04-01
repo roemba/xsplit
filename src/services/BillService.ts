@@ -81,6 +81,7 @@ export class BillService {
         for (let i = 0; i < bill.participants.length; i++) {
             const tr = new TransactionRequest();
             tr.bill = bill;
+            tr.creditor = bill.creditor;
             tr.debtor = bill.participants[i];
             const dropShare = Math.floor(bill.totalXrpDrops / totalWeight * bill.weights[i].weight);
             totalDistributed += dropShare;

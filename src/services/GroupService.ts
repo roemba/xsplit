@@ -10,6 +10,8 @@ import { UserService } from './UserService';
 import { Bill } from '../models/Bill';
 import { BadRequestError } from 'routing-controllers';
 import { BillService } from './BillService';
+import { TransactionRequest } from '../models/TransactionRequest';
+import { TransactionRequestService } from './TransactionRequestService';
 
 @Service()
 export class GroupService {
@@ -112,6 +114,60 @@ export class GroupService {
             group.groupBalances.find(balance => balance.user.username === randomParticipant).balance -= 1;
         }
         return group;
+    }
+
+    public async settleGroup(id: string): Promise<Group> {
+        const group = await this.findOne(id);
+        const requests = this.createSettlementTransactionRequests(group.groupBalances);
+        for (const tr of requests) {
+            tr.group = group;
+            await Container.get(TransactionRequestService).create(tr);
+        }
+        return this.findOne(id);
+    }
+
+    public createSettlementTransactionRequests(balances: GroupBalance[]): TransactionRequest[] {
+        // Get positive balances and sort desc, get negative and sort asc
+        const positiveBalances = balances.filter(b => b.balance > 0).sort((a, b) => b.balance - a.balance);
+        const negativeBalances = balances.filter(b => b.balance < 0).sort((a, b) => a.balance - b.balance);
+        let currentPositive = 0;
+        const result: TransactionRequest[] = [];
+        for (const negativeBalance of negativeBalances) {
+            let balance = negativeBalance.balance;
+            if (balance === 0) {
+                break;
+            }
+            while (balance < 0) {
+                if (positiveBalances[currentPositive].balance >= Math.abs(balance)) {
+                    const tr = new TransactionRequest();
+                    tr.creditor = positiveBalances[currentPositive].user;
+                    tr.debtor = negativeBalance.user;
+                    tr.totalXrpDrops = Math.abs(balance);
+                    positiveBalances[currentPositive].balance += balance;
+                    balance = 0;
+                    result.push(tr);
+                } else if (positiveBalances[currentPositive].balance < Math.abs(balance)) {
+                    const tr = new TransactionRequest();
+                    tr.creditor = positiveBalances[currentPositive].user;
+                    tr.debtor = negativeBalance.user;
+                    tr.totalXrpDrops = positiveBalances[currentPositive].balance;
+                    balance += positiveBalances[currentPositive].balance;
+                    currentPositive++;
+                    result.push(tr);
+                }
+            }
+        }
+        return result;
+    }
+
+    public async settlementPaid(tr: TransactionRequest): Promise<void> {
+        const group = await this.findOne(tr.group.id);
+        const creditorBalance = group.groupBalances.find(b => b.user.username === tr.creditor.username);
+        const debtorBalance = group.groupBalances.find(b => b.user.username === tr.debtor.username);
+        creditorBalance.balance -= tr.totalXrpDrops;
+        debtorBalance.balance += tr.totalXrpDrops;
+        await Container.get(GroupBalanceService).update(creditorBalance.id, creditorBalance);
+        await Container.get(GroupBalanceService).update(debtorBalance.id, debtorBalance);
     }
 
     public async delete(id: string): Promise<void> {

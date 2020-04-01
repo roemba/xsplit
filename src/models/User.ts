@@ -34,6 +34,9 @@ export class User {
     @OneToMany(() => GroupBalance, balance => balance.user)
     public groupBalances: GroupBalance[];
 
+    @OneToMany(() => TransactionRequest, tr => tr.creditor)
+    public creditorOfRequests: TransactionRequest[];
+
     @OneToMany(() => TransactionRequest, tr => tr.debtor)
     public transactionRequests: TransactionRequest[];
 
