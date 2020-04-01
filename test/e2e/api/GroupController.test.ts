@@ -2,10 +2,10 @@ import dotenv from "dotenv";
 import { fork, ChildProcess } from "child_process";
 import fetch from "node-fetch";
 import { plainToClass } from "class-transformer";
-import { AddGroupRequest } from "../../../src/controllers/GroupController";
 import { deriveKeypair, sign } from "ripple-keypairs";
 import { Group } from "../../../src/models/Group";
 import { AddBillRequest } from "../../../src/controllers/BillController";
+import { AddGroupRequest } from "../../../src/controllers/GroupController";
 import { TransactionRequest } from "../../../src/models/TransactionRequest";
 import { RippleAPI } from "ripple-lib";
 import rippleKey from "ripple-keypairs";
@@ -18,7 +18,7 @@ function sleep(ms: number): Promise<void> {
     });
 }
 
-let bearer: string, createdGroup: Group, smallerGroup: Group, createdTr: TransactionRequest, derivationResult: {publicKey: string; privateKey: string;} = null;
+let bearer: string, createdGroup: Group, smallerGroup: Group, createdTr: TransactionRequest, derivationResult: {publicKey: string; privateKey: string};
 
 beforeAll(async () => {
     dotenv.config();
@@ -153,34 +153,65 @@ test('settle bill', async () => {
     expect(createdTr.totalXrpDrops).toBe(100);
 });
 
-// // WIP This test depends on the XRP account of bob having enough balance
-// test('pay settlement request', async () => {
-//     const transaction = {
-//         Account: rippleKey.deriveAddress(derivationResult.publicKey),
-//         TransactionType: "Payment",
-//         Amount: createdTr.totalXrpDrops + "",
-//         Destination: rippleKey.deriveAddress(createdTr.bill.creditor.publickey)
-//     };
-//     try {
-//         const preparedTransaction = await api.prepareTransaction(transaction);
-//         signedTransaction = api.sign(preparedTransaction.txJSON, secret);
-//         await api.submit(signedTransaction.signedTransaction);
-//     } catch(e) {
-//         setError("Submitting transaction failed", requestId);
-//         return;
-//     }
+// This test depends on the XRP account of bob having enough balance and on the ledger
+test('pay settlement request', async () => {
+    const bobDerivation = deriveKeypair(process.env.BOB_SECRET);
 
-//     const response = await fetch("/api/transactions/pay", {
-// 		method: "PUT",
-// 		headers: {
-// 			"Content-Type": "application/json"
-// 		},
-// 		body: JSON.stringify({
-//             id: requestId,
-//             transactionHash: signedTransaction.id
-// 		})
-// 	});
-// });
+    const resp = await fetch("http://localhost:8080/api/login/challenge?username=bob");
+    const challenge = await resp.json();
+
+    const result = sign(challenge.challenge, bobDerivation.privateKey);
+
+    const bearerStr = Buffer.from("bob" + ":" + result).toString('base64');
+    const bobBearer = `bearer=${bearerStr};path=/;max-age=840;samesite=strict`;
+
+    const transaction = {
+        Account: rippleKey.deriveAddress(bobDerivation.publicKey),
+        TransactionType: "Payment",
+        Amount: createdTr.totalXrpDrops + "",
+        Destination: rippleKey.deriveAddress(createdTr.creditor.publickey)
+    };
+    let signedTransaction;
+    try {
+        const api = new RippleAPI({server: process.env.RIPPLE_SERVER});
+        await api.connect();
+        const preparedTransaction = await api.prepareTransaction(transaction);
+        signedTransaction = api.sign(preparedTransaction.txJSON, process.env.BOB_SECRET);
+        await api.submit(signedTransaction.signedTransaction);
+        api.disconnect();
+    } catch (e) {
+        console.log(e);
+    }
+
+    const response = await fetch("http://localhost:" + process.env.PORT + "/api/transactions/pay", {
+		method: "PUT",
+		headers: {
+            "Content-Type": "application/json",
+            cookie: bobBearer
+        },
+		body: JSON.stringify({
+            id: createdTr.id,
+            transactionHash: signedTransaction.id
+		})
+    });
+    expect(response.status).toBe(200);
+
+    const res = await fetch('http://localhost:' + process.env.PORT + '/api/groups/' + createdGroup.id, {
+        method: 'get',
+         headers: {
+            cookie: bearer
+        }
+    });
+    expect(res.status).toBe(200);
+    const updatedGroup = plainToClass(Group, await res.json());
+    expect(updatedGroup.bills.length).toBe(2);
+    expect(updatedGroup.name).toBe(createdGroup.name);
+    expect(updatedGroup.groupBalances.length).toBe(2);
+    expect(updatedGroup.participants.length).toBe(2);
+    updatedGroup.groupBalances.forEach(b => {
+        expect(b.balance).toBe(0);
+    });
+}, 10000);
 
 test('update group description and get the group', async () => {
     const group = new Group();

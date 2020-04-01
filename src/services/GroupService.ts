@@ -160,7 +160,9 @@ export class GroupService {
         return result;
     }
 
-    public async settlementPaid(tr: TransactionRequest): Promise<void> {
+    public async settlementPaid(transaction: TransactionRequest): Promise<void> {
+        this.log.info("Received payment for group settlement");
+        const tr = await Container.get(TransactionRequestService).findOne(transaction.id, {relations: ["group"]});
         const group = await this.findOne(tr.group.id);
         const creditorBalance = group.groupBalances.find(b => b.user.username === tr.creditor.username);
         const debtorBalance = group.groupBalances.find(b => b.user.username === tr.debtor.username);
