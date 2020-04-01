@@ -18,7 +18,7 @@ beforeAll(async () => {
     dotenv.config();
     // Run the server as a child process
     child = fork("./dist/index.js");
-    browser = await puppeteer.launch();
+    browser = await puppeteer.launch({headless: false});
     // Sleep to wait for child process to start up
     await sleep(4000);
 });
@@ -48,6 +48,12 @@ test('register', async () => {
     await page.focus("#username");
     await sleep(50);
     await page.keyboard.type(genUsername);
+    await page.focus("#fullName");
+    await sleep(50);
+    await page.keyboard.type("firstname lastname");
+    await page.focus("#email");
+    await sleep(50);
+    await page.keyboard.type("xplit20@yahoo.com");
     const secret = generateSeed();
     await page.focus("#secret");
     await sleep(50);

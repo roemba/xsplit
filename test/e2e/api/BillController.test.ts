@@ -66,7 +66,7 @@ test('create bill', async () => {
         },
     });
     const createdBill = plainToClass(Bill, await getBill.json());
-    expect(createdBill.totalXrpDrops).toBe("100");
+    expect(createdBill.totalXrpDrops).toBe(100);
     expect(createdBill.description).toBe("test bill");
     expect(createdBill.participants.length).toBe(2);
     expect(createdBill.transactionRequests.length).toBe(2);
