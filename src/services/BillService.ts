@@ -57,16 +57,18 @@ export class BillService {
         return this.billRepository.findOne({ id });
     }
 
-    public async create(bill: Bill): Promise<Bill> {
+    public async create(bill: Bill, createTransactionRequests = true): Promise<Bill> {
         this.log.info('Create a new bill => ', bill.toString());
         let newBill = await this.billRepository.save(bill);
         for (const weight of newBill.weights) {
             await this.billWeightRepository.save(weight);
         }
         newBill = await this.findOne(newBill.id);
-        const createdRequests = this.createTransactionRequests(newBill);
-        for (const tr of createdRequests) {
-            Container.get(TransactionRequestService).create(tr);
+        if (createTransactionRequests) {
+            const createdRequests = this.createTransactionRequests(newBill);
+            for (const tr of createdRequests) {
+                await Container.get(TransactionRequestService).create(tr);
+            }
         }
         return newBill;
     }
