@@ -7,6 +7,7 @@ import { BadRequestError } from "routing-controllers";
 import { User } from "../models/User";
 import sleep from "../util/SleepUtil";
 import { deriveAddress } from 'ripple-keypairs';
+import { FormattedGetAccountInfoResponse } from "ripple-lib/dist/npm/ledger/accountinfo";
 @Service()
 export class RippleLibService {
 
@@ -39,7 +40,7 @@ export class RippleLibService {
         }
     }
     
-    public async getAccountInfo(user: User): Promise<object> {
-        return this.rippleAPI.getAccountInfo(deriveAddress(user.publickey));
+    public async getAccountInfo(user: User): Promise<FormattedGetAccountInfoResponse> {
+        return this.rippleAPI.getAccountInfo(deriveAddress(user.private.publickey));
     }
 }

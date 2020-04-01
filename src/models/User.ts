@@ -1,26 +1,20 @@
-import { Column, Entity, PrimaryColumn, OneToMany, ManyToMany } from 'typeorm';
+import { Entity, PrimaryColumn, OneToMany, ManyToMany, OneToOne } from 'typeorm';
 import { Bill } from './Bill';
 import { TransactionRequest } from './TransactionRequest';
 import { GroupBalance } from './GroupBalance';
 import { Group } from './Group';
 import { BillWeight } from './BillWeight';
+import { PrivateInformation } from './PrivateInformation';
 
 @Entity({name: "users"})
 export class User {
     @PrimaryColumn()
     public username: string;
 
-    @Column({name: "publickey", unique: true})
-    public publickey: string;
-
-    @Column({name: "email", nullable: false})
-    public email: string | undefined;
-
-    @Column({name: "fullName", nullable: true})
-    public fullName: string | undefined;
-
-    @Column({name: "notifications", default: false})
-    public notifications: boolean | undefined;
+    @OneToOne(() => PrivateInformation, pi => pi.user, {
+        eager: false
+    })
+    public private: PrivateInformation;
 
     @OneToMany(() => Bill, bill => bill.creditor)
     public ownedBills: Bill[];

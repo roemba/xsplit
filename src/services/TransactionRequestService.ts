@@ -10,6 +10,7 @@ import { RippleLibService } from "./RippleLibService";
 import { XRPUtil } from "../util/XRPUtil";
 import { BadRequestError } from "routing-controllers";
 import rippleKey from "ripple-keypairs";
+import { UserService } from "./UserService";
 
 @Service()
 export class TransactionRequestService {
@@ -33,7 +34,7 @@ export class TransactionRequestService {
         }
 
         // Get the bill that corresponds to this payment, the bills is not eagerly loaded so this line ensures that the bill field is loaded
-        const bill = (await this.findOne(tr.id, {relations: ["bill", "bill.creditor"]})).bill;
+        const bill = (await this.findOne(tr.id, {relations: ["bill", "bill.creditor", "bill.creditor.private"]})).bill;
         let payment;
         try {
             payment = await Container.get(RippleLibService).getPayment(tr.transactionHash);
@@ -43,7 +44,7 @@ export class TransactionRequestService {
         const balanceChanges = payment.outcome.balanceChanges;
         let foundPayment = false;
 
-        const creditorAddress = rippleKey.deriveAddress(bill.creditor.publickey);
+        const creditorAddress = rippleKey.deriveAddress(bill.creditor.private.publickey);
         // Loop through all addresses that had their balance changed
         for (const addr in balanceChanges) {
             // If address corresponds to the creditor's address, loop through the currencies and find XRP, validate if the value is equal to the totalXrp value
@@ -58,9 +59,11 @@ export class TransactionRequestService {
             }
         }
 
+        const debtor = await Container.get(UserService).findOne(tr.debtor.username, {relations: ["private"]});
+
         return payment.outcome.result === "tesSUCCESS"
             && payment.type === "payment"
-            && payment.address === rippleKey.deriveAddress(tr.debtor.publickey)
+            && payment.address === rippleKey.deriveAddress(debtor.private.publickey)
             && foundPayment;
     }
 

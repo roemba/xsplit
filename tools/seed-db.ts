@@ -4,6 +4,7 @@ import { User } from "../src/models/User";
 import { UserService } from "../src/services/UserService";
 import { LoggerService } from "../src/services/LoggerService";
 import { getConnectionOptions, createConnection, useContainer } from "typeorm";
+import { PrivateInformation } from "../src/models/PrivateInformation";
 
 
 const logger = Container.get(LoggerService);
@@ -14,14 +15,15 @@ dotenv.config();
 async function addUser(username: string, publickey: string, email: string, fullName: string): Promise<void> {
     const user = new User();
     user.username = username;
-    user.publickey = publickey;
-    user.email = email;
-    user.fullName = fullName;
+    user.private = new PrivateInformation();
+    user.private.publickey = publickey;
+    user.private.email = email;
+    user.private.fullName = fullName;
     try {
         await Container.get(UserService).create(user);
         logger.info("Added new user to db!");
     } catch(e) {
-        if (e.name == "BadRequestError" && e.message.includes("already exists a user")) {
+        if (e.name === "QueryFailedError" && e.detail.includes("already exists")) {
             logger.info("User already exists in the db!");
         } else {
             logger.error("Error occurred!");

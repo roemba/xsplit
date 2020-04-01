@@ -12,13 +12,15 @@ function sleep(ms: number): Promise<void> {
     return new Promise((resolve) => {
         setTimeout(resolve, ms);
     });
-}   
+}
+
+let genUsername: string, secret: string;
 
 beforeAll(async () => {
     dotenv.config();
     // Run the server as a child process
     child = fork("./dist/index.js");
-    browser = await puppeteer.launch();
+    browser = await puppeteer.launch({headless: false});
     // Sleep to wait for child process to start up
     await sleep(4000);
 });
@@ -44,7 +46,7 @@ test('register', async () => {
         return el.innerHTML;
     });
     expect(registerHeader).toBe("Register");
-    const genUsername = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5);
+    genUsername = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5);
     await page.focus("#username");
     await sleep(50);
     await page.keyboard.type(genUsername);
@@ -54,7 +56,7 @@ test('register', async () => {
     await page.focus("#email");
     await sleep(50);
     await page.keyboard.type("xplit20@yahoo.com");
-    const secret = generateSeed();
+    secret = generateSeed();
     await page.focus("#secret");
     await sleep(50);
     await page.keyboard.type(secret);
@@ -81,8 +83,10 @@ test('login', async () => {
     expect(loginHeader).toBe("Login");
     await page.focus("#userName");
     await sleep(50);
-    await page.keyboard.type("alice");
-    await (await page.$("#secret")).type(process.env.ALICE_SECRET);
+    await page.keyboard.type(genUsername);
+    await page.focus("#secret");
+    await sleep(50);
+    await page.keyboard.type(secret);
     await page.click('#login');
     await sleep(500);
     const headerHome = await page.$eval("h1", (el) => {

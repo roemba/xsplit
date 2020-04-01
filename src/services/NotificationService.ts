@@ -16,9 +16,9 @@ export class NotificationService {
 
     public async sendPaymentReceivedNotification(user: User): Promise<void> {
         this.log.info("Creating payment received notification");
-        user = await Container.get(UserService).findOne(user.username);
-        if (user.notifications) {
-            const addresses = [user.email];
+        user = await Container.get(UserService).findOne(user.username, {relations: ["private"]});
+        if (user.private.notifications) {
+            const addresses = [user.private.email];
             const subject = "XPLIT: payment received";
             const message = `Hello, &#x1F44B; <br><br>
                 You have received a new payment! &#x26A1;&#x1F447;  <br>
@@ -46,9 +46,9 @@ export class NotificationService {
             Please check the current bill status in your account: <a href='http://xsplit.ewi.tudelft.nl/home' target='_blank'>xsplit.ewi.tudelft.nl</a>`
         ;
         for (const name of users) {
-            const user = await Container.get(UserService).findOne(name.username);
-            if (user.notifications) {
-                addresses.push(user.email);
+            const user = await Container.get(UserService).findOne(name.username, {relations: ["private"]});
+            if (user.private.notifications) {
+                addresses.push(user.private.email);
             }
         }
         if (addresses.length > 0) {

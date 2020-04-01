@@ -6,22 +6,19 @@ import { UserRepository } from '../repositories/UserRepository';
 import { BadRequestError } from "routing-controllers";
 import { LoggerService } from "../services/LoggerService";
 import * as levenshtein from 'fast-levenshtein';
+import { FindOneOptions } from "typeorm";
+import { PrivateInformationRepository } from "../repositories/PrivateInformationRepository";
 
 @Service()
 export class UserService {
 
     log = Container.get(LoggerService);
 
-    constructor(@OrmRepository() private userRepository: UserRepository) {}
+    constructor(@OrmRepository() private userRepository: UserRepository,
+                @OrmRepository() private privateRepository: PrivateInformationRepository) {}
 
     public findMe(user: User): Promise<User> {
-        return this.userRepository.findOne({where: {username: user.username }});
-    }
-
-    public findAll(): Promise<User[]> {
-        this.log.info('Find all users');
-        
-        return this.userRepository.find();
+        return this.userRepository.findOne({where: {username: user.username }, relations: ["private"]});
     }
 
     public async findUsers(search: string): Promise<string[]> {
@@ -46,14 +43,15 @@ export class UserService {
             throw new BadRequestError("Empty username!");
         }
 
-        return this.userRepository.getPublicKey(username);
+        return (await this.userRepository.findOne(username, {relations: ["private"]})).private.publickey;
     }
 
-    public findOne(username: string): Promise<User | undefined> {
-        return this.userRepository.findOne({username});
+    public findOne(username: string, options?: FindOneOptions): Promise<User | undefined> {
+        return this.userRepository.findOne({username}, options);
     }
 
     public async create(user: User): Promise<User> {
+        await this.privateRepository.save(user.private);
         return this.userRepository.save(user);
     }
 

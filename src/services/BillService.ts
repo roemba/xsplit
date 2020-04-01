@@ -66,7 +66,7 @@ export class BillService {
         newBill = await this.findOne(newBill.id);
         const createdRequests = this.createTransactionRequests(newBill);
         for (const tr of createdRequests) {
-            Container.get(TransactionRequestService).create(tr);
+            await Container.get(TransactionRequestService).create(tr);
         }
         return newBill;
     }
