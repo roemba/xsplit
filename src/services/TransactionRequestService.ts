@@ -34,7 +34,7 @@ export class TransactionRequestService {
         }
 
         // Get the bill that corresponds to this payment, the bills is not eagerly loaded so this line ensures that the bill field is loaded
-        const bill = (await this.findOne(tr.id, {relations: ["bill", "bill.creditor", "bill.creditor.private"]})).bill;
+        const bill = (await this.findOne(tr.id, {relations: ["bill", "bill.creditor"]})).bill;
         let payment;
         try {
             payment = await Container.get(RippleLibService).getPayment(tr.transactionHash);
@@ -44,7 +44,7 @@ export class TransactionRequestService {
         const balanceChanges = payment.outcome.balanceChanges;
         let foundPayment = false;
 
-        const creditorAddress = rippleKey.deriveAddress(bill.creditor.private.publickey);
+        const creditorAddress = rippleKey.deriveAddress(bill.creditor.publickey);
         // Loop through all addresses that had their balance changed
         for (const addr in balanceChanges) {
             // If address corresponds to the creditor's address, loop through the currencies and find XRP, validate if the value is equal to the totalXrp value
@@ -59,11 +59,11 @@ export class TransactionRequestService {
             }
         }
 
-        const debtor = await Container.get(UserService).findOne(tr.debtor.username, {relations: ["private"]});
+        const debtor = await Container.get(UserService).findOne(tr.debtor.username);
 
         return payment.outcome.result === "tesSUCCESS"
             && payment.type === "payment"
-            && payment.address === rippleKey.deriveAddress(debtor.private.publickey)
+            && payment.address === rippleKey.deriveAddress(debtor.publickey)
             && foundPayment;
     }
 

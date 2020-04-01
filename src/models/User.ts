@@ -1,4 +1,4 @@
-import { Entity, PrimaryColumn, OneToMany, ManyToMany, OneToOne } from 'typeorm';
+import { Entity, PrimaryColumn, OneToMany, ManyToMany, OneToOne, Column } from 'typeorm';
 import { Bill } from './Bill';
 import { TransactionRequest } from './TransactionRequest';
 import { GroupBalance } from './GroupBalance';
@@ -15,6 +15,9 @@ export class User {
         eager: false
     })
     public private: PrivateInformation;
+
+    @Column({name: "publickey", unique: true})
+    public publickey: string;
 
     @OneToMany(() => Bill, bill => bill.creditor)
     public ownedBills: Bill[];

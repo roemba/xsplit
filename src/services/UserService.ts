@@ -43,7 +43,7 @@ export class UserService {
             throw new BadRequestError("Empty username!");
         }
 
-        return (await this.userRepository.findOne(username, {relations: ["private"]})).private.publickey;
+        return (await this.userRepository.findOne(username, {relations: ["private"]})).publickey;
     }
 
     public findOne(username: string, options?: FindOneOptions): Promise<User | undefined> {

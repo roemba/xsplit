@@ -14,7 +14,7 @@ function onAccountPageLoad(): void {
 		$(document).ready(function() {
 			getUserInfo().then((data: User) => {
 				$("#userName").html(data.username);
-				$("#publicKey").html(deriveAddress(data.private.publickey));
+				$("#publicKey").html(deriveAddress(data.publickey));
 				$("#emailAddress").val(data.private.email);
 				$("#fullName").val(data.private.fullName);
 				$("#notificationsCheck").prop("checked",data.private.notifications);

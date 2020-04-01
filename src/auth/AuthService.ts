@@ -34,7 +34,7 @@ export class AuthService {
     }
 
     public async validateUser(request: Request, username: string, signature: string): Promise<User> {
-        const user = await Container.get(UserService).findOne(username, {relations: ["private"]});
+        const user = await Container.get(UserService).findOne(username);
 
         if (user == null) {
             return undefined;
@@ -43,7 +43,7 @@ export class AuthService {
         const challenges = await Container.get(ChallengeRepository).getChallenges(user);
         for (const challengeObj of challenges) {
             try {
-                if (verify(challengeObj.challenge, signature, user.private.publickey)) {
+                if (verify(challengeObj.challenge, signature, user.publickey)) {
                     return user;
                 }
             } catch (e) {

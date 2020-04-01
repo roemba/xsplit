@@ -20,7 +20,7 @@ beforeAll(async () => {
     dotenv.config();
     // Run the server as a child process
     child = fork("./dist/index.js");
-    browser = await puppeteer.launch({headless: false});
+    browser = await puppeteer.launch();
     // Sleep to wait for child process to start up
     await sleep(4000);
 });

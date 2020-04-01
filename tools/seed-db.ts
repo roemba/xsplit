@@ -15,8 +15,8 @@ dotenv.config();
 async function addUser(username: string, publickey: string, email: string, fullName: string): Promise<void> {
     const user = new User();
     user.username = username;
+    user.publickey = publickey;
     user.private = new PrivateInformation();
-    user.private.publickey = publickey;
     user.private.email = email;
     user.private.fullName = fullName;
     try {

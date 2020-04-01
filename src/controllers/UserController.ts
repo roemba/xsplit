@@ -98,9 +98,9 @@ export class UserController {
     async post(@Body() body: CreateUserRequest): Promise<User> {
         const user = new User();
         user.username = body.username;
+        user.publickey = body.publickey;
         user.private = new PrivateInformation();
         user.private.email = body.email;
-        user.private.publickey = body.publickey;
         user.private.fullName = body.fullName;
 
         const newUser = await Container.get(UserService).create(user);

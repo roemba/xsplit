@@ -41,6 +41,6 @@ export class RippleLibService {
     }
     
     public async getAccountInfo(user: User): Promise<FormattedGetAccountInfoResponse> {
-        return this.rippleAPI.getAccountInfo(deriveAddress(user.private.publickey));
+        return this.rippleAPI.getAccountInfo(deriveAddress(user.publickey));
     }
 }

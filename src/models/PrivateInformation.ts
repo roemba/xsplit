@@ -6,9 +6,6 @@ export class PrivateInformation {
     @PrimaryGeneratedColumn("uuid")
     public id: string;
 
-    @Column({name: "publickey", unique: true})
-    public publickey: string;
-
     @Column({name: "email", nullable: false})
     public email: string;
 
