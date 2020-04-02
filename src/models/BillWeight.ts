@@ -8,11 +8,14 @@ export class BillWeight {
     public id: string;
 
     @ManyToOne(() => User, user => user.billWeights, {
-        eager: true
+        eager: true,
+        onDelete: 'CASCADE'
     })
     public user: User;
 
-    @ManyToOne(() => Bill, bill => bill.weights)
+    @ManyToOne(() => Bill, bill => bill.weights, {
+        onDelete: 'CASCADE'
+    })
     public bill: Bill;
 
     // weight for a certain bill

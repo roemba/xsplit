@@ -48,6 +48,12 @@ test('register', async () => {
     await page.focus("#username");
     await sleep(50);
     await page.keyboard.type(genUsername);
+    await page.focus("#fullName");
+    await sleep(50);
+    await page.keyboard.type("firstname lastname");
+    await page.focus("#email");
+    await sleep(50);
+    await page.keyboard.type("xplit20@yahoo.com");
     const secret = generateSeed();
     await page.focus("#secret");
     await sleep(50);
