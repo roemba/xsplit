@@ -23,6 +23,10 @@ function onAccountPageLoad(): void {
 			});
 		});
 
+		$(document).on("focus click", "input", function() {
+			$("#success-save").hide().empty();
+		});
+
 		$(document).on("click", "#submitDetailsButton", async function(event: Event) {
 			event.preventDefault();
 
@@ -42,12 +46,14 @@ function onAccountPageLoad(): void {
 				})
 			});
 			if (resp.status !== 200) {
-				$("#error-save").removeClass("d-none");
+				$("#success-save").hide().empty();
+				$("#error-save").fadeIn();
+				$("#error-save").html('An error occurred, please try again.');
 				return;
 			}
 
-			$("#error-save").addClass("d-none");
-			$("#success-save").removeClass("d-none").delay(5000).fadeOut();
+			$("#error-save").hide().empty();
+			$("#success-save").fadeIn().html('Account details are successfully saved!');
 
 		});
 	});
