@@ -25,6 +25,7 @@ function onAccountPageLoad(): void {
 
 		$(document).on("focus click", "input", function() {
 			$("#success-save").hide().empty();
+			$("#error-save").hide().empty();
 		});
 
 		$(document).on("click", "#submitDetailsButton", async function(event: Event) {
