@@ -3,13 +3,12 @@ import {CookieUtil} from "../util/CookieUtil";
 
 let participants: string[] = [];
 
-
 function newUserRow(username: string): string {
 	let element = "<div class='form-row user-row mb-2' data-user='"+username+"'>";
 		element += "<div class='col-6 col-lg-7 line-height'>"+username+"<img src='/assets/img/remove.svg' class='remove-user ml-2' width='15' height='15' /></div>";
 		element += "<div class='col-3 col-lg-3 line-height user-amount text-right'></div>";
 		element += "<div class='col-3 col-lg-2'>";
-		element += "<select class='form-group form-control selectpicker border-0' data-id='"+username+"'>";
+		element += "<select class='form-group form-control selectpicker border-0' data-id='"+username+"' id='select-"+username+"'>";
 		for (let i = 1; i <= 10; i++) {
 			element += "<option value='"+i+"'>"+i+"x</option>";
 		}
@@ -36,12 +35,17 @@ async function sendBill(subject: string, amount: number, weights: number[]): Pro
 	});
 	if (response.status !== 200) {
 		console.error(response.status);
+		$("#bill-success").hide().empty();
+		$("#bill-error").fadeIn();
+		$("#bill-error").html("Bill couldn't be created, try again.");
 		return;
 	}
 
 	$("#submitBill").text("Send");
 
-	$("#bill-success").removeClass("d-none").delay(5000).fadeOut();
+	$("#bill-error").hide().empty();
+	$("#bill-success").fadeIn().html('Bill created and sent to users!');
+
 	$("#request-form").trigger('reset');
 	$(".added-users").empty();
 	$("#subject").trigger("change");
@@ -51,6 +55,11 @@ async function sendBill(subject: string, amount: number, weights: number[]): Pro
 function onRequestPageLoad(): void {
 
 	jQuery(($) => {
+
+		$(document).on("focus click", "input", function() {
+			$("#bill-success").hide().empty();
+			$("#bill-error").hide().empty();
+		});
 
 		$(document).on("click", ".remove-user", async function() {
 			const userRow = $(this).closest(".user-row");
