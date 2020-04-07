@@ -75,7 +75,7 @@ function onBillsPageLoad(): void {
 							if(tr.paid) {
 								parts += debtor+" ("+weight+"x) <img src='/assets/img/check.svg' class='mb-1' style='width: 20px; height: 20px;' />";
 							}else{
-								parts += debtor+" ("+weight+"x) <img src='/assets/img/cross.svg' class='mb-1' style='width: 20px; height: 20px;' />";
+								parts += debtor+" ("+weight+"x) <img src='/assets/img/cross.svg' class='mb-1' style='width: 20px; height: 20px;' /> <button class='btn btn-secondary submit-request set-paid-button' id='setPaid_"+tr.id+"'>Set paid</button>";
 							}
 						}else{
 							if(tr.paid) {
@@ -101,6 +101,18 @@ function onBillsPageLoad(): void {
 			}
 
 			console.log("Bills loaded");
+			$(document).on("click", ".set-paid-button", async function(e) {
+				e.preventDefault();
+				const trId = e.currentTarget.id.split("_")[1];
+				const response = await fetch("/api/transactions/paid/" + trId, {
+					method: "PUT",
+				});
+				if (response.status === 200) {
+					document.location.href="/bills";
+				} else {
+					console.log(response.statusText);
+				}
+			});
 		});
 	});
 }
