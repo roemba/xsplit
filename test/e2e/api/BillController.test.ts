@@ -3,7 +3,6 @@ import { fork, ChildProcess } from "child_process";
 import fetch from "node-fetch";
 import { plainToClass } from "class-transformer";
 import { AddBillRequest } from "../../../src/controllers/BillController";
-import { User } from "../../../src/models/User";
 import { deriveKeypair, sign } from "ripple-keypairs";
 import { Bill } from "../../../src/models/Bill";
 
@@ -41,10 +40,6 @@ test('create bill', async () => {
     const bill = new AddBillRequest();
     bill.description = "test bill";
     bill.totalXrpDrops = 100;
-    const alice = new User();
-    alice.username = "alice";
-    const bob = new User();
-    bob.username = "bob";
     bill.participants = ["alice", "bob"];
     // eslint-disable-next-line
     bill.weights = [1, 1];

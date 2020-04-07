@@ -2,6 +2,7 @@ import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, BeforeInsert, AfterL
 import { User } from './User';
 import { Bill } from './Bill';
 import { bigIntToNumber } from '../util/PostGresUtil';
+import { Group } from './Group';
 
 @Entity({ name: "transaction_requests" })
 export class TransactionRequest {
@@ -19,6 +20,16 @@ export class TransactionRequest {
         onDelete: "CASCADE"
     })
     public bill: Bill;
+
+    @ManyToOne(() => Group, group => group.transactionRequests, {
+        onDelete: "CASCADE"
+    })
+    public group: Group;
+
+    @ManyToOne(() => User, user => user.creditorOfRequests, {
+        eager: true
+    })
+    public creditor: User;
 
     @ManyToOne(() => User, user => user.transactionRequests, {
         eager: true
