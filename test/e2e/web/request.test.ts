@@ -4,6 +4,8 @@ import { fork, ChildProcess } from "child_process";
 import { deriveKeypair, sign } from "ripple-keypairs";
 import fetch from "node-fetch";
 import { Bill } from "../../../src/models/Bill";
+import { AddBillRequest } from "../../../src/controllers/BillController";
+import { plainToClass } from "class-transformer";
 
 let browser: puppeteer.Browser;
 let context: puppeteer.BrowserContext;
@@ -248,6 +250,89 @@ test('view all bills, count settled and unsettled', async () => {
     
     expect(settledCount).toBe(settledBillsOnPage.length);
     expect(bills.length-settledCount).toBe(unsettledBillsOnPage.length);
+
+});
+
+test('set transactionRequests for all participants to paid', async () => {
+
+    await login();
+
+    // First create a new bill
+    const bill = new AddBillRequest();
+    bill.description = "Bill for testing";
+    bill.totalXrpDrops = 123456;
+    bill.participants = ["alice", "bob"];
+    // eslint-disable-next-line
+    bill.weights = [1, 1];
+
+    let response = await fetch('http://localhost:' + process.env.PORT + '/api/bills', {
+        method: 'POST',
+        headers: {
+            cookie: bearer,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(bill)
+    });
+
+    expect(response.status).toBe(200);
+
+    const billID = (await response.text()).replace(/"/g, "");
+
+    // Get bill from API
+    response = await fetch('http://localhost:' + process.env.PORT + '/api/bills/' + billID, {
+        headers: {
+            cookie: bearer
+        }
+    });
+
+    const createdBill = plainToClass(Bill, await response.json());
+
+    const tr = createdBill.transactionRequests;
+    const trBob = tr.filter(t => t.debtor.username === "bob")[0];
+
+    expect(trBob.paid).toBe(false);
+
+    const trIDBob = trBob.id;
+
+    // Click set paid button for Bob on page
+    await page.click("#bills-nav");
+    await sleep(4000);
+
+    await page.screenshot({path: billID+'-false.png'});
+
+    let unsettledCount = await page.$$('.unsettled-bills .bill-item[bill-id="'+billID+'"]');
+    let settledCount = await page.$$('.settled-bills .bill-item[bill-id="'+billID+'"]');
+    
+    expect(unsettledCount.length).toBe(1);
+    expect(settledCount.length).toBe(0);
+
+    await page.click("button#setPaid_"+trIDBob);
+
+    await sleep(4000);
+
+    await page.screenshot({path: billID+'-true.png'});
+
+    // Check if bill moved from unsettled to settled
+    unsettledCount = await page.$$('.unsettled-bills .bill-item[bill-id="'+billID+'"]');
+    settledCount = await page.$$('.settled-bills .bill-item[bill-id="'+billID+'"]');
+    
+    expect(unsettledCount.length).toBe(0);
+    expect(settledCount.length).toBe(1);
+
+    // Check current bill in API
+    response = await fetch('http://localhost:' + process.env.PORT + '/api/bills/' + billID, {
+        headers: {
+            cookie: bearer
+        }
+    });
+
+    expect(response.status).toBe(200);
+
+    const receivedBill = plainToClass(Bill, await response.json());    
+    
+    const paidStatus = receivedBill.transactionRequests.filter(t => t.debtor.username === "bob")[0];
+
+    expect(paidStatus.paid).toBe(true);
 
 });
 
