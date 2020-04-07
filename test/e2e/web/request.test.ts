@@ -298,8 +298,6 @@ test('set transactionRequests for all participants to paid', async () => {
     await page.click("#bills-nav");
     await sleep(4000);
 
-    await page.screenshot({path: billID+'-false.png'});
-
     let unsettledCount = await page.$$('.unsettled-bills .bill-item[bill-id="'+billID+'"]');
     let settledCount = await page.$$('.settled-bills .bill-item[bill-id="'+billID+'"]');
     
@@ -309,8 +307,6 @@ test('set transactionRequests for all participants to paid', async () => {
     await page.click("button#setPaid_"+trIDBob);
 
     await sleep(4000);
-
-    await page.screenshot({path: billID+'-true.png'});
 
     // Check if bill moved from unsettled to settled
     unsettledCount = await page.$$('.unsettled-bills .bill-item[bill-id="'+billID+'"]');
