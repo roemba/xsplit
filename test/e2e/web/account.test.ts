@@ -39,7 +39,7 @@ async function loginAndAccount(): Promise<void> {
     await sleep(2000);
 
     await page.click("#account-nav");
-    await sleep(1000);
+    await sleep(4000);
     
     return;
 }
@@ -81,7 +81,7 @@ test('account update full name', async () => {
     await sleep(50);
 
     await page.click('#submitDetailsButton');
-    await sleep(1000);
+    await sleep(3000);
 
     let successMessage = await page.$eval("#success-save", (el) => {
         return el.innerHTML;
@@ -111,7 +111,7 @@ test('account update full name', async () => {
     await sleep(50);
 
     await page.click('#submitDetailsButton');
-    await sleep(1000);
+    await sleep(3000);
 
     successMessage = await page.$eval("#success-save", (el) => {
         return el.innerHTML;
@@ -147,7 +147,7 @@ test('account update emailaddress', async () => {
     await sleep(50);
 
     await page.click('#submitDetailsButton');
-    await sleep(1000);
+    await sleep(3000);
 
     let successMessage = await page.$eval("#success-save", (el) => {
         return el.innerHTML;
@@ -177,7 +177,7 @@ test('account update emailaddress', async () => {
     await sleep(50);
 
     await page.click('#submitDetailsButton');
-    await sleep(1000);
+    await sleep(3000);
 
     successMessage = await page.$eval("#success-save", (el) => {
         return el.innerHTML;
@@ -215,7 +215,7 @@ test('account update notification invert', async () => {
     expect(checkStatus).toBe(!clickedCheckStatus);
 
     await page.click('#submitDetailsButton');
-    await sleep(1000);
+    await sleep(3000);
 
     const successMessage = await page.$eval("#success-save", (el) => {
         return el.innerHTML;
@@ -251,7 +251,7 @@ test('account update empty full name', async () => {
     expect(fullNameInput).toBe("");
 
     await page.click('#submitDetailsButton');
-    await sleep(1000);
+    await sleep(3000);
 
     const errorMessage = await page.$eval("#error-save", (el) => {
         return el.innerHTML;
@@ -275,7 +275,7 @@ test('account update empty email', async () => {
     expect(emailAddressInput).toBe("");
 
     await page.click('#submitDetailsButton');
-    await sleep(1000);
+    await sleep(3000);
 
     const errorMessage = await page.$eval("#error-save", (el) => {
         return el.innerHTML;
@@ -307,7 +307,7 @@ test('account update empty full name and email', async () => {
     expect(emailAddressInput).toBe("");
 
     await page.click('#submitDetailsButton');
-    await sleep(1000);
+    await sleep(3000);
 
     const errorMessage = await page.$eval("#error-save", (el) => {
         return el.innerHTML;
@@ -331,7 +331,7 @@ test('account update not an emailaddress error', async () => {
     expect(emailAddressInput).toBe("");
 
     await page.click('#submitDetailsButton');
-    await sleep(1000);
+    await sleep(3000);
 
     const errorMessage = await page.$eval("#error-save", (el) => {
         return el.innerHTML;
