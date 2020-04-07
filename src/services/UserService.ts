@@ -55,8 +55,11 @@ export class UserService {
         return this.userRepository.save(user);
     }
 
-    public update(user: User): Promise<User> {
+    public async update(user: User): Promise<User> {
         this.log.info('Update a user');
+        if (user.private !== undefined) {
+            user.private = await this.privateRepository.save(user.private);
+        }
         return this.userRepository.save(user);
     }
 

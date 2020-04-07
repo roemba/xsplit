@@ -34,7 +34,7 @@ export class AuthService {
     }
 
     public async validateUser(request: Request, username: string, signature: string): Promise<User> {
-        const user = await Container.get(UserService).findOne(username);
+        const user = await Container.get(UserService).findOne(username, {"relations": ["private"]});
 
         if (user == null) {
             return undefined;
