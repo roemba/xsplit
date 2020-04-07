@@ -73,7 +73,6 @@ export class UserController {
     @Put("")
     @Authorized()
     async putMe(@CurrentUser() user: User, @Body() body: UpdateUserRequest): Promise<string> {
-      user.private = new PrivateInformation();
       user.private.email = body.email;
       user.private.fullName = body.fullName;
       user.private.notifications = body.notifications;

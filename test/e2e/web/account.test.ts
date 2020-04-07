@@ -39,7 +39,7 @@ async function loginAndAccount(): Promise<void> {
     await sleep(2000);
 
     await page.click("#account-nav");
-    await sleep(4000);
+    await sleep(1000);
     
     return;
 }
@@ -81,7 +81,7 @@ test('account update full name', async () => {
     await sleep(50);
 
     await page.click('#submitDetailsButton');
-    await sleep(3000);
+    await sleep(1000);
 
     let successMessage = await page.$eval("#success-save", (el) => {
         return el.innerHTML;
@@ -99,7 +99,7 @@ test('account update full name', async () => {
 
     let user = await response.json();
 
-    expect(user.fullName).toBe("Full Name");
+    expect(user.private.fullName).toBe("Full Name");
 
     // Change full name to "First Last" and see if it has changed
     fullName = await page.$("#fullName");
@@ -111,7 +111,7 @@ test('account update full name', async () => {
     await sleep(50);
 
     await page.click('#submitDetailsButton');
-    await sleep(3000);
+    await sleep(1000);
 
     successMessage = await page.$eval("#success-save", (el) => {
         return el.innerHTML;
@@ -129,7 +129,7 @@ test('account update full name', async () => {
 
     user = await response.json();
 
-    expect(user.fullName).toBe("First Last");
+    expect(user.private.fullName).toBe("First Last");
 
 });
 
@@ -147,7 +147,7 @@ test('account update emailaddress', async () => {
     await sleep(50);
 
     await page.click('#submitDetailsButton');
-    await sleep(3000);
+    await sleep(1000);
 
     let successMessage = await page.$eval("#success-save", (el) => {
         return el.innerHTML;
@@ -165,7 +165,7 @@ test('account update emailaddress', async () => {
 
     let user = await response.json();
 
-    expect(user.email).toBe("fullname@testmail.com");
+    expect(user.private.email).toBe("fullname@testmail.com");
 
     // Change email to "alice@testmail.com" and see if it has changed
     emailAddress = await page.$("#emailAddress");
@@ -177,7 +177,7 @@ test('account update emailaddress', async () => {
     await sleep(50);
 
     await page.click('#submitDetailsButton');
-    await sleep(3000);
+    await sleep(1000);
 
     successMessage = await page.$eval("#success-save", (el) => {
         return el.innerHTML;
@@ -195,7 +195,7 @@ test('account update emailaddress', async () => {
 
     user = await response.json();
 
-    expect(user.email).toBe("alice@testmail.com");
+    expect(user.private.email).toBe("alice@testmail.com");
 
 });
 
@@ -215,7 +215,7 @@ test('account update notification invert', async () => {
     expect(checkStatus).toBe(!clickedCheckStatus);
 
     await page.click('#submitDetailsButton');
-    await sleep(3000);
+    await sleep(1000);
 
     const successMessage = await page.$eval("#success-save", (el) => {
         return el.innerHTML;
@@ -233,7 +233,7 @@ test('account update notification invert', async () => {
 
     const user = await response.json();
 
-    expect(user.notifications).toBe(clickedCheckStatus);
+    expect(user.private.notifications).toBe(clickedCheckStatus);
 
 });
 
@@ -251,7 +251,7 @@ test('account update empty full name', async () => {
     expect(fullNameInput).toBe("");
 
     await page.click('#submitDetailsButton');
-    await sleep(3000);
+    await sleep(1000);
 
     const errorMessage = await page.$eval("#error-save", (el) => {
         return el.innerHTML;
@@ -275,7 +275,7 @@ test('account update empty email', async () => {
     expect(emailAddressInput).toBe("");
 
     await page.click('#submitDetailsButton');
-    await sleep(3000);
+    await sleep(1000);
 
     const errorMessage = await page.$eval("#error-save", (el) => {
         return el.innerHTML;
@@ -307,7 +307,7 @@ test('account update empty full name and email', async () => {
     expect(emailAddressInput).toBe("");
 
     await page.click('#submitDetailsButton');
-    await sleep(3000);
+    await sleep(1000);
 
     const errorMessage = await page.$eval("#error-save", (el) => {
         return el.innerHTML;
@@ -331,7 +331,7 @@ test('account update not an emailaddress error', async () => {
     expect(emailAddressInput).toBe("");
 
     await page.click('#submitDetailsButton');
-    await sleep(3000);
+    await sleep(1000);
 
     const errorMessage = await page.$eval("#error-save", (el) => {
         return el.innerHTML;
