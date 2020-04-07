@@ -1,26 +1,23 @@
-import { Column, Entity, PrimaryColumn, OneToMany, ManyToMany } from 'typeorm';
+import { Entity, PrimaryColumn, OneToMany, ManyToMany, OneToOne, Column } from 'typeorm';
 import { Bill } from './Bill';
 import { TransactionRequest } from './TransactionRequest';
 import { GroupBalance } from './GroupBalance';
 import { Group } from './Group';
 import { BillWeight } from './BillWeight';
+import { PrivateInformation } from './PrivateInformation';
 
 @Entity({name: "users"})
 export class User {
     @PrimaryColumn()
     public username: string;
 
+    @OneToOne(() => PrivateInformation, pi => pi.user, {
+        eager: false
+    })
+    public private: PrivateInformation;
+
     @Column({name: "publickey", unique: true})
     public publickey: string;
-
-    @Column({name: "email", nullable: false})
-    public email: string | undefined;
-
-    @Column({name: "fullName", nullable: true})
-    public fullName: string | undefined;
-
-    @Column({name: "notifications", default: false})
-    public notifications: boolean | undefined;
 
     @OneToMany(() => Bill, bill => bill.creditor)
     public ownedBills: Bill[];
@@ -33,6 +30,9 @@ export class User {
 
     @OneToMany(() => GroupBalance, balance => balance.user)
     public groupBalances: GroupBalance[];
+
+    @OneToMany(() => TransactionRequest, tr => tr.creditor)
+    public creditorOfRequests: TransactionRequest[];
 
     @OneToMany(() => TransactionRequest, tr => tr.debtor)
     public transactionRequests: TransactionRequest[];

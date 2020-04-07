@@ -20,6 +20,7 @@ import * as brandedQRCode from 'branded-qr-code';
 import path from "path";
 import {IsBoolean, IsEmail, IsNotEmpty, IsString, MaxLength} from "class-validator";
 import fetch from "node-fetch";
+import { PrivateInformation } from "../models/PrivateInformation";
 
 class CreateUserRequest {
     @IsString()
@@ -72,9 +73,9 @@ export class UserController {
     @Put("")
     @Authorized()
     async putMe(@CurrentUser() user: User, @Body() body: UpdateUserRequest): Promise<string> {
-      user.email = body.email;
-      user.fullName = body.fullName;
-      user.notifications = body.notifications;
+      user.private.email = body.email;
+      user.private.fullName = body.fullName;
+      user.private.notifications = body.notifications;
 
       await Container.get(UserService).update(user);
       return "User updated";
@@ -96,9 +97,10 @@ export class UserController {
     async post(@Body() body: CreateUserRequest): Promise<User> {
         const user = new User();
         user.username = body.username;
-        user.email = body.email;
         user.publickey = body.publickey;
-        user.fullName = body.fullName;
+        user.private = new PrivateInformation();
+        user.private.email = body.email;
+        user.private.fullName = body.fullName;
 
         const newUser = await Container.get(UserService).create(user);
         if (newUser.username !== undefined) {

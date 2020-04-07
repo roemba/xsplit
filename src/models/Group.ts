@@ -2,6 +2,7 @@ import { Column, Entity, PrimaryGeneratedColumn, ManyToMany, JoinTable, OneToMan
 import { User } from './User';
 import { GroupBalance } from './GroupBalance';
 import { Bill } from './Bill';
+import { TransactionRequest } from './TransactionRequest';
 
 @Entity({ name: "groups" })
 export class Group {
@@ -18,6 +19,11 @@ export class Group {
         eager: true
     })
     public groupBalances: GroupBalance[];
+
+    @OneToMany(() => TransactionRequest, tr => tr.group, {
+        eager: true
+    })
+    public transactionRequests: TransactionRequest[];
 
     @ManyToMany(() => User, {
         eager: true
