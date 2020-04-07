@@ -8,7 +8,7 @@ import { FindOneOptions } from 'typeorm';
 import { LoggerService } from "../services/LoggerService";
 import { RippleLibService } from "./RippleLibService";
 import { XRPUtil } from "../util/XRPUtil";
-import { BadRequestError } from "routing-controllers";
+import { BadRequestError, UnauthorizedError } from "routing-controllers";
 import rippleKey from "ripple-keypairs";
 import { UserService } from "./UserService";
 
@@ -73,7 +73,7 @@ export class TransactionRequestService {
             await this.transactionRepository.update(tr.id, {paid: true});
             return this.transactionRepository.findOne(id);
         } else {
-            return undefined;
+            throw new UnauthorizedError("This transaction request is not to you");
         }
     }
 
