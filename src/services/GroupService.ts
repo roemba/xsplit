@@ -8,7 +8,7 @@ import { GroupBalanceService } from './GroupBalanceService';
 import { GroupBalance } from '../models/GroupBalance';
 import { UserService } from './UserService';
 import { Bill } from '../models/Bill';
-import { BadRequestError } from 'routing-controllers';
+import { BadRequestError, UnauthorizedError } from 'routing-controllers';
 import { BillService } from './BillService';
 import { TransactionRequest } from '../models/TransactionRequest';
 import { TransactionRequestService } from './TransactionRequestService';
@@ -31,9 +31,13 @@ export class GroupService {
         return balances.map(e => e.group);
     }
 
-    public findOne(id: string): Promise<Group | undefined> {
+    public async findOne(id: string, user?: User): Promise<Group | undefined> {
         this.log.info('Find one group');
-        return this.groupRepository.findOne({id});
+        const group = await this.groupRepository.findOne({id});
+        if (user !== undefined && group.participants.findIndex(u => u.username === user.username) === -1) {
+            throw new UnauthorizedError("User is not a participant of this group");
+        }
+        return group;
     }
 
     public async create(grp: Group): Promise<Group> {
