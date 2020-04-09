@@ -16,7 +16,7 @@ async function sendPaymentRequest(requestId: string, totalXrp: string, pubKey: s
             api = new RippleAPI({server: rippleServer});
             await api.connect();
         } catch {
-            setError("Connecting to ripple failed", requestId);
+            setError("Connecting to ripple failed", `${requestId}_${totalXrp}_${pubKey}`);
             return;
         }
     }
@@ -32,7 +32,7 @@ async function sendPaymentRequest(requestId: string, totalXrp: string, pubKey: s
         signedTransaction = api.sign(preparedTransaction.txJSON, secret);
         await api.submit(signedTransaction.signedTransaction);
     } catch(e) {
-        setError("Submitting transaction failed", requestId);
+        setError("Submitting transaction failed", `${requestId}_${totalXrp}_${pubKey}`);
         return;
     }
 
@@ -47,7 +47,7 @@ async function sendPaymentRequest(requestId: string, totalXrp: string, pubKey: s
 		})
 	});
 	if (response.status !== 200) {
-        setError(response.statusText.toString(), requestId);
+        setError(response.statusText.toString(), `${requestId}_${totalXrp}_${pubKey}`);
 		return;
     }
 
@@ -71,6 +71,9 @@ function onRequestPageLoad(): void {
             sendPaymentRequest(id, xrp, pubKey, rippleServer);
         });
     });
+    const rippleServer = $("#rippleServer").html();
+    api = new RippleAPI({server: rippleServer});
+    api.connect();
 }
 
 
