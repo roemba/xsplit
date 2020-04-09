@@ -6,7 +6,7 @@ import {
    Render,
    CurrentUser,
    Authorized,
-   ExpressErrorMiddlewareInterface, UnauthorizedError, UseAfter
+   ExpressErrorMiddlewareInterface, UnauthorizedError, UseAfter, NotFoundError
 } from "routing-controllers";
 import { Container } from "typedi";
 import { LoggerService } from "../services/LoggerService";
@@ -97,7 +97,18 @@ export class RouteController {
    @Get("/request")
    @Render("index.ejs")
    GetRequest(): object {
-      return {page: "request"};
+      return {page: "request", group: undefined};
+   }
+
+   @Authorized()
+   @Get("/request/:groupId")
+   @Render("index.ejs")
+   async GetRequestForGroup(@CurrentUser() user: User, @Param("groupId") groupId: string): Promise<object> {
+      const group = await Container.get(GroupService).findOne(groupId, user);
+      if (group === undefined) {
+         throw new NotFoundError();
+      }
+      return {page: "request", group};
    }
 
    @Authorized()   

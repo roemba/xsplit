@@ -82,6 +82,10 @@ function onRequestPageLoad(): void {
             const groupId = $("#groupId")[0].innerHTML;
 			settleBalances(groupId);
 		});
+
+		$(document).on("click", "#addTransaction", async function() {
+			document.location.href="/request/" + $("#groupId")[0].innerHTML;
+		});
 	});
 }
 

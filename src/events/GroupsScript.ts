@@ -12,6 +12,9 @@ function onGroupsPageLoad(): void {
 			const name = $("#groupName").val();
 			const description = $("#groupDescription").val();
 			if (name === "") {
+				$("#group-success").hide().empty();
+				$("#group-error").fadeIn();
+				$("#group-error").html("Name can not be empty.");
 				return;
 			}
 			const response = await fetch(`/api/groups`, {
