@@ -10,7 +10,6 @@ import { RippleLibService } from "./RippleLibService";
 import { XRPUtil } from "../util/XRPUtil";
 import { BadRequestError, UnauthorizedError } from "routing-controllers";
 import rippleKey from "ripple-keypairs";
-import { UserService } from "./UserService";
 
 @Service()
 export class TransactionRequestService {
@@ -58,11 +57,9 @@ export class TransactionRequestService {
             }
         }
 
-        const debtor = await Container.get(UserService).findOne(tr.debtor.username);
-
         return payment.outcome.result === "tesSUCCESS"
             && payment.type === "payment"
-            && payment.address === rippleKey.deriveAddress(debtor.publickey)
+            && payment.address === rippleKey.deriveAddress(tr.debtor.publickey)
             && foundPayment;
     }
 
