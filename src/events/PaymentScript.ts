@@ -9,14 +9,10 @@ function setError(text: string, id: string): void {
 
 let api: RippleAPI;
 
-async function sendPaymentRequest(requestId: string, rippleServer: string): Promise<void> {
-    let transactionRequest, signedTransaction;
-    const fetchTransactionRequest = await fetch(`/api/transactions/${requestId}`, {
-		method: "GET"
-    });
+async function sendPaymentRequest(requestId: string, totalXrp: string, pubKey: string, rippleServer: string): Promise<void> {
+    let signedTransaction;
     if (api === undefined || !api.isConnected) {
         try {
-            transactionRequest = await fetchTransactionRequest.json();
             api = new RippleAPI({server: rippleServer});
             await api.connect();
         } catch {
@@ -28,8 +24,8 @@ async function sendPaymentRequest(requestId: string, rippleServer: string): Prom
     const transaction = {
         Account: rippleKey.deriveAddress(rippleKey.deriveKeypair(secret).publicKey),
         TransactionType: "Payment",
-        Amount: transactionRequest.totalXrpDrops + "",
-        Destination: rippleKey.deriveAddress(transactionRequest.bill.creditor.publickey)
+        Amount: totalXrp,
+        Destination: rippleKey.deriveAddress(pubKey)
     };
     try {
         const preparedTransaction = await api.prepareTransaction(transaction);
@@ -55,9 +51,9 @@ async function sendPaymentRequest(requestId: string, rippleServer: string): Prom
 		return;
     }
 
-    document.getElementById(`${requestId}`).style.background = "green";
-    document.getElementById(`${requestId}`).classList.add("border-0");
-    document.getElementById(`${requestId}`).innerHTML = "Success!";
+    document.getElementById(`${requestId}_${totalXrp}_${pubKey}`).style.background = "green";
+    document.getElementById(`${requestId}_${totalXrp}_${pubKey}`).classList.add("border-0");
+    document.getElementById(`${requestId}_${totalXrp}_${pubKey}`).innerHTML = "Success!";
     
     await new Promise(r => setTimeout(r, 1000));
     
@@ -69,7 +65,10 @@ function onRequestPageLoad(): void {
         $("button").click(function() {
             $(this).val("Performing payment, please wait...");
             const rippleServer = $("#rippleServer").html();
-            sendPaymentRequest(this.id, rippleServer);
+            const id = this.id.split("_")[0];
+            const xrp = this.id.split("_")[1];
+            const pubKey = this.id.split("_")[2];
+            sendPaymentRequest(id, xrp, pubKey, rippleServer);
         });
     });
 }

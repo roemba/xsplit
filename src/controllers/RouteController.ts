@@ -79,10 +79,12 @@ export class RouteController {
             payments.push({
                id: transaction.id, 
                owner: transaction.bill.creditor.username, 
+               ownerKey: transaction.bill.creditor.publickey,
                dateCreated: dateFormatted,
                totalXrp: XRPUtil.dropsToXRP(transaction.bill.totalXrpDrops), 
                description: transaction.bill.description.toString(),
-               debtorXrp: XRPUtil.dropsToXRP(transaction.totalXrpDrops)
+               debtorXrp: XRPUtil.dropsToXRP(transaction.totalXrpDrops),
+               debtorDrops: transaction.totalXrpDrops
             });
          }
       }
