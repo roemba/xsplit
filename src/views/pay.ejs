@@ -18,7 +18,7 @@
 								<span class='text-center'>Bill total: <%= payment.totalXrp %> XRP</span>
 							</div>
 
-							<button type="submit" class="btn btn-secondary submit-request" id="<%= payment.id %>">Submit Payment</button>
+							<button type="submit" class="btn btn-secondary submit-request" id="<%= payment.id %>_<%= payment.debtorDrops %>_<%= payment.ownerKey %>">Submit Payment</button>
 						</div>
 					</div>
 				<% }) %>
