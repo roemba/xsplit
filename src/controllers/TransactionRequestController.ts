@@ -34,8 +34,8 @@ export class TransactionRequestController {
     @Authorized()
     @Get("/:id")
     async getTransactionRequest(@CurrentUser() user: User, @Param("id") id: string): Promise<TransactionRequest> {
-        const tr = await Container.get(TransactionRequestService).findOne(id, {relations: ["bill"]});
-        if (tr.bill.creditor.username === user.username || tr.debtor.username === user.username) {
+        const tr = await Container.get(TransactionRequestService).findOne(id);
+        if (tr.creditor.username === user.username || tr.debtor.username === user.username) {
             return tr;
         } else {
             throw new UnauthorizedError("You are not a creditor or debtor of this transaction request");

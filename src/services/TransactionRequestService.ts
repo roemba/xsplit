@@ -66,8 +66,8 @@ export class TransactionRequestService {
     }
 
     public async setPaid(requester: User, id: string): Promise<TransactionRequest> {
-        const tr = await this.transactionRepository.findOne(id, {relations: ["bill"]});
-        if (tr.bill.creditor.username === requester.username) {
+        const tr = await this.transactionRepository.findOne(id);
+        if (tr.creditor.username === requester.username) {
             await this.transactionRepository.update(tr.id, {paid: true});
             return this.transactionRepository.findOne(id);
         } else {
