@@ -22,11 +22,27 @@
 
 		<br />
 
-		<div class='row'>
-			<div class="col-12 text-center">
-				<a href="#" class="text-muted">Create new group...</a>
+		<h1 class='col-12 text-center mt-3 mb-3'>Create new group</h1>
+		<div class='row mb-3'>
+			<div class='col-4'></div>
+			<div class='col-4'>
+				<input type="text" class="form-control" id="groupName" placeholder="Group name">
 			</div>
 		</div>
+		<div class='row mb-3'>
+			<div class='col-4'></div>
+			<div class='col-4'>
+				<input type="text" class="form-control" id="groupDescription" placeholder="Group description">
+			</div>
+		</div>
+		<div class='row mb-3'>
+			<div class='col-4'></div>
+			<div class='col-4'>
+				<button type="submit" class="btn btn-secondary col-12 mt-0 submit-request" id="newGroup">Create group</button>
+			</div>
+		</div>
+		<div class='col-12 text-center mt-3 mb-3 text-success' id="group-success" style="display: none;"></div>
+		<div class='col-12 text-center mt-3 mb-3 text-error' id="group-error" style="display: none;"></div>
 	</div>
 </div>
 

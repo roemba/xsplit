@@ -15,7 +15,7 @@ async function addUser(userId: string, groupId: string): Promise<void> {
 	$("#user-error").hide().empty();
     $("#user-success").fadeIn().html('User added to group!');
     
-    await new Promise(r => setTimeout(r, 500));
+    await new Promise(r => setTimeout(r, 1000));
     
     document.location.href="/groups/" + groupId;
 }
