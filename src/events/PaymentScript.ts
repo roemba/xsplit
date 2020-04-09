@@ -7,18 +7,22 @@ function setError(text: string, id: string): void {
     document.getElementById(`${id}`).style.background = "red";
 }
 
+let api: RippleAPI;
+
 async function sendPaymentRequest(requestId: string, rippleServer: string): Promise<void> {
-    let transactionRequest, api, signedTransaction;
+    let transactionRequest, signedTransaction;
     const fetchTransactionRequest = await fetch(`/api/transactions/${requestId}`, {
 		method: "GET"
     });
-    try {
-        transactionRequest = await fetchTransactionRequest.json();
-        api = new RippleAPI({server: rippleServer});
-        await api.connect();
-    } catch {
-        setError("Connecting to ripple failed", requestId);
-        return;
+    if (api === undefined || !api.isConnected) {
+        try {
+            transactionRequest = await fetchTransactionRequest.json();
+            api = new RippleAPI({server: rippleServer});
+            await api.connect();
+        } catch {
+            setError("Connecting to ripple failed", requestId);
+            return;
+        }
     }
     const secret = sessionStorage.getItem('secret');
     const transaction = {
