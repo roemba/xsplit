@@ -64,12 +64,13 @@ export class TransactionRequestController {
         let tr = new TransactionRequest();
         tr.transactionHash = body.transactionHash;
         await trService.update(body.id, tr);
-        tr = await trService.findOne(tr.id, {relations: ["bill", "group"]});
+        tr = await trService.findOne(body.id, {relations: ["bill", "group"]});
         if (await trService.validatePayment(tr)) {
+            this.log.info("Payment validated at " + new Date().getTime());
             tr.paid = true;
             Container.get(NotificationService).sendPaymentReceivedNotification(tr.creditor);
             const result = await Container.get(TransactionRequestService).update(body.id, tr);
-            if (tr.group !== undefined) {
+            if (tr.group !== null) {
                 await Container.get(GroupService).settlementPaid(tr);
             }
             return result;

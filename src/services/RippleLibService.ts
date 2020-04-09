@@ -28,13 +28,11 @@ export class RippleLibService {
         try {
             return await this.rippleAPI.getTransaction(hash);
         } catch {
-            this.log.error(`Payment not found on try: ${retries === undefined ? 1 : retries + 1}`);
-            if (retries === undefined || retries < 5) {
-                this.log.error("Checking again in 2 seconds...");
-                await sleep(2000);
+            if (retries === undefined || retries < 20) {
+                await sleep(500);
                 return this.getPayment(hash, retries === undefined ? 1 : retries + 1);
             } else {
-                this.log.error("Payment could not be found after 5 tries");
+                this.log.error("Payment could not be found after 10 seconds");
                 throw new BadRequestError("Payment could not be found");
             }
         }
