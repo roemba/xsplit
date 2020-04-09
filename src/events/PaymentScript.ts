@@ -14,6 +14,7 @@ async function sendPaymentRequest(requestId: string, rippleServer: string): Prom
     const fetchTransactionRequest = await fetch(`/api/transactions/${requestId}`, {
 		method: "GET"
     });
+    console.log("Fetched transaction request at " + new Date().getTime());
     if (api === undefined || !api.isConnected) {
         try {
             transactionRequest = await fetchTransactionRequest.json();
@@ -24,6 +25,7 @@ async function sendPaymentRequest(requestId: string, rippleServer: string): Prom
             return;
         }
     }
+    console.log("Successfully connected to ripple at " + new Date().getTime());
     const secret = sessionStorage.getItem('secret');
     const transaction = {
         Account: rippleKey.deriveAddress(rippleKey.deriveKeypair(secret).publicKey),
@@ -39,6 +41,7 @@ async function sendPaymentRequest(requestId: string, rippleServer: string): Prom
         setError("Submitting transaction failed", requestId);
         return;
     }
+    console.log("Submitted transaction to ripple at " + new Date().getTime());
 
     const response = await fetch("/api/transactions/pay", {
 		method: "PUT",
@@ -49,7 +52,8 @@ async function sendPaymentRequest(requestId: string, rippleServer: string): Prom
             id: requestId,
             transactionHash: signedTransaction.id
 		})
-	});
+    });
+    console.log("Received response from backend at " + new Date().getTime());
 	if (response.status !== 200) {
         setError(response.statusText.toString(), requestId);
 		return;
@@ -61,7 +65,7 @@ async function sendPaymentRequest(requestId: string, rippleServer: string): Prom
     
     await new Promise(r => setTimeout(r, 1000));
     
-    document.location.href="/pay";
+    // document.location.href="/pay";
 }
 
 function onRequestPageLoad(): void {

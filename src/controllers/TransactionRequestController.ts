@@ -57,6 +57,7 @@ export class TransactionRequestController {
     @Put("/pay")
     async payTransactionRequest(@Body() body: PayTransactionRequestRequest): Promise<TransactionRequest> {
         this.log.info("Pay request =>", body);
+        this.log.info("Pay request received at " + new Date().getTime());
         const trService = Container.get(TransactionRequestService);
         if (body.transactionHash === undefined || !trService.isPaymentUnique(body.transactionHash)) {
             throw new BadRequestError("Transaction hash undefined or already used");
@@ -73,8 +74,10 @@ export class TransactionRequestController {
             if (tr.group !== null) {
                 await Container.get(GroupService).settlementPaid(tr);
             }
+            this.log.info("Returning result of payment at " + new Date().getTime());
             return result;
         } else {
+            this.log.info("Payment validation failed at " + new Date().getTime());
             throw new BadRequestError("Payment validation failed");
         }
     }
