@@ -4,7 +4,7 @@ import { TransactionRequestRepository } from '../repositories/TransactionRequest
 import { OrmRepository } from 'typeorm-typedi-extensions';
 import { TransactionRequest } from '../models/TransactionRequest';
 import { User } from '../models/User';
-import { FindOneOptions } from 'typeorm';
+import { FindOneOptions, FindManyOptions } from 'typeorm';
 import { LoggerService } from "../services/LoggerService";
 import { RippleLibService } from "./RippleLibService";
 import { XRPUtil } from "../util/XRPUtil";
@@ -24,8 +24,8 @@ export class TransactionRequestService {
         return this.transactionRepository.find();
     }
 
-    public findRequestsToUser(user: User): Promise<TransactionRequest[]> {
-        return this.transactionRepository.find({where: { debtor: { username: user.username }}});
+    public findRequestsToUser(user: User, options?: FindManyOptions<TransactionRequest>): Promise<TransactionRequest[]> {
+        return this.transactionRepository.find({where: { debtor: { username: user.username }}, ...options});
     }
 
     public async validatePayment(tr: TransactionRequest): Promise<boolean> {
