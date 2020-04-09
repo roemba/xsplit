@@ -10,6 +10,7 @@ function setError(text: string, id: string): void {
 let api: RippleAPI;
 
 async function sendPaymentRequest(requestId: string, totalXrp: string, pubKey: string, rippleServer: string): Promise<void> {
+    console.log("Clicked button at " + new Date().getTime());
     let signedTransaction;
     if (api === undefined || !api.isConnected) {
         try {
