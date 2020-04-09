@@ -32,10 +32,11 @@ export class TransactionRequestService {
             return false;
         }
 
+        this.log.info("Retrieving payment from ripple " + new Date().getTime());
         let payment;
         try {
             payment = await Container.get(RippleLibService).getPayment(tr.transactionHash);
-            this.log.info("Payment retreived from ripple at " + new Date().getTime());
+            this.log.info("Payment retrieved from ripple at " + new Date().getTime());
         } catch (e) {
             throw new BadRequestError("Payment could not be retreived");
         }
