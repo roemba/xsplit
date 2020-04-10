@@ -19,6 +19,25 @@ function newUserRow(username: string): string {
 	return element;
 }
 
+async function updateSummary(): Promise<void> {
+	const currentUsername = await CookieUtil.getUsername();
+
+	if((participants.length === 1 && participants[0] === currentUsername) || participants.length === 0) {
+		$(".summary").addClass("d-none");
+		$(".submit-request").attr("disabled","disabled");
+	}else{
+		const nAmount = $("#amount").val();
+
+		$(".submit-request").removeAttr("disabled");
+
+		$(".summary").removeClass("d-none");
+		$(".nFriends").html(String(participants.length));
+		$(".nAmount").html(String(Number(nAmount)));
+	}
+
+	$("#subject").trigger("change");
+}
+
 async function sendBill(subject: string, amount: number, weights: number[]): Promise<void> {
 
 	const response = await fetch("/api/bills", {
@@ -48,8 +67,10 @@ async function sendBill(subject: string, amount: number, weights: number[]): Pro
 
 	$("#request-form").trigger('reset');
 	$(".added-users").empty();
-	$("#subject").trigger("change");
+	
 	participants = [];
+	
+	await updateSummary();
 }
 
 function onRequestPageLoad(): void {
@@ -72,9 +93,11 @@ function onRequestPageLoad(): void {
 			}
 
 			userRow.remove();
-			$("#subject").trigger("change");
 
 			participants = participants.filter(u => u !== username);
+
+			await updateSummary();
+
 		});
 
 		$(document).on("change", "#includeCheck", async function() {
@@ -92,32 +115,25 @@ function onRequestPageLoad(): void {
 
 				participants = participants.filter(u => u !== username);
 			}
-			$("#subject").trigger("change");
+			
+			await updateSummary();
 		});
 
 		$(document).on("change",".selectpicker, #includeCheck, #amount, #subject", function() {
 
-			const selected = [];
-
-			$(".user-row").each(function() {
-				const username = $(this).attr('data-user');
-				selected.push(username);
-			});
-
-			const nFriends = selected.length;
+			const nFriends = participants.length;
 			const nAmount = $("#amount").val();
+			const includeCheck = $("#includeCheck");
 
 			if(Number(nAmount) > 0 && Number(nFriends) > 0) {
-				$(".summary").removeClass("d-none");
-				const amountFriend = Number(nAmount)/Number(nFriends);
-				$(".nFriends").html(String(nFriends));
-				$(".nAmount").html(String(Number(nAmount).toFixed(2)));
-				$(".amountFriend").html(String(Number(amountFriend).toFixed(2)));
 				
-				if(String($("#subject").val()).length === 0) {
+				if(String($("#subject").val()).length === 0 || (Number(nFriends) === 1 && includeCheck.is(":checked"))) {
 					$(".submit-request").attr("disabled","disabled");
 				}else{
 					$(".submit-request").removeAttr("disabled");
+					$(".summary").removeClass("d-none");
+					$(".nFriends").html(String(nFriends));
+					$(".nAmount").html(String(Number(nAmount)));
 				}
 			}else{
 				$(".summary").addClass("d-none");
@@ -155,7 +171,8 @@ function onRequestPageLoad(): void {
 
 					$("#user-search").val("");
 					$('select').selectpicker();
-					$("#amount").trigger("change");
+
+					await updateSummary();
 				}
 				return false;
 			}
