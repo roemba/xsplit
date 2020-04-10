@@ -63,7 +63,7 @@ async function sendPaymentRequest(requestId: string, totalXrp: string, pubKey: s
 function onRequestPageLoad(): void {
     jQuery(($) => {
         $("button").click(function() {
-            $(this).val("Performing payment, please wait...");
+            $(this).html("Performing payment, please wait...");
             const rippleServer = $("#rippleServer").html();
             const id = this.id.split("_")[0];
             const xrp = this.id.split("_")[1];
