@@ -73,16 +73,22 @@ function onBillsPageLoad(): void {
 	
 						if(debtor !== currentUserName) {
 							if(tr.paid) {
-								parts += debtor+" ("+weight+"x) <img src='/assets/img/check.svg' class='mb-1' style='width: 20px; height: 20px;' />";
+								parts += "<div class='m-1'>";
+								parts += debtor+" ("+weight+"x) <img src='/assets/img/check.svg' style='width: 20px; height: 20px;' />";
+								parts += "</div>";
 							}else{
-								parts += debtor+" ("+weight+"x) <img src='/assets/img/cross.svg' class='mb-1' style='width: 20px; height: 20px;' /> <button class='btn btn-secondary submit-request set-paid-button' id='setPaid_"+tr.id+"'>Set paid</button>";
+								parts += "<button class='btn btn-sm bg-dark btn-secondary submit-request set-paid-button' id='setPaid_"+tr.id+"' title='Click to set "+debtor+" to paid'>";
+								parts += debtor+" ("+weight+"x) <img src='/assets/img/cross.svg' style='width: 20px; height: 20px;' />";
+								parts += "</button>";
 							}
 						}else{
+							parts += "<div class='m-1'>";
 							if(tr.paid) {
-								parts += "Me ("+weight+"x) <img src='/assets/img/check.svg' class='mb-1' style='width: 20px; height: 20px;' />";	
+								parts += "Me ("+weight+"x) <img src='/assets/img/check.svg' style='width: 20px; height: 20px;' />";	
 							}else{
-								parts += "Me ("+weight+"x) <img src='/assets/img/cross.svg' class='mb-1' style='width: 20px; height: 20px;' />";
+								parts += "Me ("+weight+"x) <img src='/assets/img/cross.svg' style='width: 20px; height: 20px;' />";
 							}
+							parts += "</div>";
 							
 						}
 	
@@ -108,6 +114,7 @@ function onBillsPageLoad(): void {
 					method: "PUT",
 				});
 				if (response.status === 200) {
+					await new Promise(r => setTimeout(r, 1000));
 					document.location.href="/bills";
 				} else {
 					console.log(response.statusText);
