@@ -44,10 +44,9 @@ function onBillsPageLoad(): void {
 						element += "<div class='card bg-dark text-light text-center bill-item mb-3 p-3 rounded-0 border-light' bill-id='"+bill.id+"'>";
 						element += "<div>";
 						element += "<span class='float-left bill-date' data-timestamp='"+bill.dateCreated+"'><small>"+dateFormatted+"</small></span>";
-						element += "<span class='float-right'><small>From: "+bill.creditor.username+"</small></span>";
+						element += "<span class='float-right'>"+XRPUtil.dropsToXRP(bill.totalXrpDrops)+" XRP</span>";
 						element += "</div>";
-						element += "<h5 class='text-center'>"+XRPUtil.dropsToXRP(bill.totalXrpDrops)+" XRP</h6>";
-						element += "<span class='text-center d-block mt-2'>"+bill.description+"</span>";
+						element += "<h5 class='text-center'>"+bill.description+"</h5>";
 						element += "<hr class='border-light horizontal-divider'>";
 	
 					let parts = "<div class='row'>";
