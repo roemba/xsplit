@@ -57,7 +57,7 @@ async function sendPaymentRequest(requestId: string, totalXrp: string, pubKey: s
     
     await new Promise(r => setTimeout(r, 1000));
     
-    document.location.href="/pay";
+    document.getElementById(`payment_${requestId}`).remove();
 }
 
 function onRequestPageLoad(): void {
