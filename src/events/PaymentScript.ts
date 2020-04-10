@@ -58,6 +58,8 @@ async function sendPaymentRequest(requestId: string, totalXrp: string, pubKey: s
     await new Promise(r => setTimeout(r, 1000));
     
     document.getElementById(`payment_${requestId}`).remove();
+    const navBalance: HTMLElement = document.getElementsByClassName(`nav-balance`)[0] as HTMLElement;
+    navBalance.click();
 }
 
 function onRequestPageLoad(): void {
