@@ -155,6 +155,7 @@ test('settle bill', async () => {
 
 // This test depends on the XRP account of bob having enough balance and on the ledger
 test('pay settlement request', async () => {
+    jest.setTimeout(20000);
     const bobDerivation = deriveKeypair(process.env.BOB_SECRET);
 
     const resp = await fetch("http://localhost:8080/api/login/challenge?username=bob");

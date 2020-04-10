@@ -67,11 +67,10 @@ export class RouteController {
    @Get("/pay")
    @Render("index.ejs")
    async GetPay(@CurrentUser() user: User): Promise<unknown> {
-      const transactions = await Container.get(TransactionRequestService).findRequestsToUser(user);
+      const transactions = await Container.get(TransactionRequestService).findRequestsToUser(user, {relations: ["bill"]});
       const payments = Array<object>();
       
-      for(let transaction of transactions) {
-         transaction = await Container.get(TransactionRequestService).findOne(transaction.id, {relations: ["bill"]});
+      for(const transaction of transactions) {
          if(!transaction.paid) {
             const date: Date = new Date(Number(transaction.dateCreated));
             const dateFormatted: string = date.getDate()+"/"+(date.getMonth()+1)+"/"+date.getFullYear();
@@ -79,10 +78,12 @@ export class RouteController {
             payments.push({
                id: transaction.id, 
                owner: transaction.bill.creditor.username, 
+               ownerKey: transaction.bill.creditor.publickey,
                dateCreated: dateFormatted,
                totalXrp: XRPUtil.dropsToXRP(transaction.bill.totalXrpDrops), 
                description: transaction.bill.description.toString(),
-               debtorXrp: XRPUtil.dropsToXRP(transaction.totalXrpDrops)
+               debtorXrp: XRPUtil.dropsToXRP(transaction.totalXrpDrops),
+               debtorDrops: transaction.totalXrpDrops
             });
          }
       }
