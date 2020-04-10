@@ -69,7 +69,7 @@ function onBillsPageLoad(): void {
 							}
 						});
 	
-						parts += "<div class='col-6 col-lg-3'><div class='d-inline-block'>";
+						parts += "<div class='col-12 col-lg-6'><div class='d-inline-block'>";
 	
 						if(debtor !== currentUserName) {
 							if(tr.paid) {
