@@ -1,10 +1,10 @@
 <div class='row'>
 	<div class="col-12 col-lg-6 offset-lg-3 text-center text-light">
 
-		<h1>Request Payment</h1>
+		<h1>Request Payment <% if (group !== undefined) { %> for group: <i><%= group.name %></i><% } %></h1>
 			Please select friends and amount to split.
 		<br /><br />
-
+		<div id="groupId" hidden><% if (group !== undefined) { %><%= group.id %><% } %></div>
 		<form id="request-form" class='text-left' style="padding: 0px;">
 			
 			<div class="form-group">

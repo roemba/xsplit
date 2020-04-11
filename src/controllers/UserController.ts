@@ -25,6 +25,7 @@ import { ChallengeRepository } from "../repositories/ChallengeRepository";
 import { TransactionRequestService } from "../services/TransactionRequestService";
 import { BillService } from "../services/BillService";
 
+import { GroupService } from "../services/GroupService";
 
 class CreateUserRequest {
     @IsString()
@@ -106,6 +107,15 @@ export class UserController {
     @Authorized()
     getSearchMatch(@Param("searchString") usernameSearch: string): Promise<string[]> {
       return Container.get(UserService).findUsers(usernameSearch);
+    }
+
+    @Get("/search/:searchString/:groupId")
+    @Authorized()
+    async getSearchMatchGroup(@Param("searchString") usernameSearch: string, @Param("groupId") groupId: string): Promise<string[]> {
+      const users = await Container.get(UserService).findUsers(usernameSearch);
+      const group = await Container.get(GroupService).findOne(groupId);
+
+      return users.filter(u => group.participants.findIndex(user => user.username === u) !== -1);
     }
 
     @Post("")
