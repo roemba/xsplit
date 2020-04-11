@@ -6,7 +6,7 @@ import {
    Render,
    CurrentUser,
    Authorized,
-   ExpressErrorMiddlewareInterface, UnauthorizedError, UseAfter
+   ExpressErrorMiddlewareInterface, UnauthorizedError, UseAfter, NotFoundError
 } from "routing-controllers";
 import { Container } from "typedi";
 import { LoggerService } from "../services/LoggerService";
@@ -14,6 +14,7 @@ import { TransactionRequestService } from "../services/TransactionRequestService
 import { User } from "../models/User";
 import { XRPUtil } from "../util/XRPUtil";
 import * as express from 'express';
+import { GroupService } from "../services/GroupService";
 
 
 class UnauthorizedHandler implements ExpressErrorMiddlewareInterface {
@@ -74,14 +75,16 @@ export class RouteController {
          if(!transaction.paid) {
             const date: Date = new Date(Number(transaction.dateCreated));
             const dateFormatted: string = date.getDate()+"/"+(date.getMonth()+1)+"/"+date.getFullYear();
+            const totalXrp = XRPUtil.dropsToXRP(transaction.bill === null ? transaction.totalXrpDrops : transaction.bill.totalXrpDrops);
+            const description = transaction.bill === null ? "Group settlement" : transaction.bill.description;
             
             payments.push({
                id: transaction.id, 
-               owner: transaction.bill.creditor.username, 
-               ownerKey: transaction.bill.creditor.publickey,
+               owner: transaction.creditor.username, 
+               ownerKey: transaction.creditor.publickey,
                dateCreated: dateFormatted,
-               totalXrp: XRPUtil.dropsToXRP(transaction.bill.totalXrpDrops), 
-               description: transaction.bill.description.toString(),
+               totalXrp, 
+               description,
                debtorXrp: XRPUtil.dropsToXRP(transaction.totalXrpDrops),
                debtorDrops: transaction.totalXrpDrops
             });
@@ -94,7 +97,18 @@ export class RouteController {
    @Get("/request")
    @Render("index.ejs")
    GetRequest(): object {
-      return {page: "request"};
+      return {page: "request", group: undefined};
+   }
+
+   @Authorized()
+   @Get("/request/:groupId")
+   @Render("index.ejs")
+   async GetRequestForGroup(@CurrentUser() user: User, @Param("groupId") groupId: string): Promise<object> {
+      const group = await Container.get(GroupService).findOne(groupId, user);
+      if (group === undefined) {
+         throw new NotFoundError();
+      }
+      return {page: "request", group};
    }
 
    @Authorized()   
@@ -109,16 +123,16 @@ export class RouteController {
    @Authorized()
    @Get("/groups/:id")
    @Render("index.ejs")
-   GetList(@Param("id") id: number): unknown {
-      const users = [{name: "alice",balance: 10.12, polarity: '+'},{name: "bob",balance: 11.97, polarity: '+'},{name: "joost",balance: 33.74, polarity: '-'},{name: "piet",balance: 8.43, polarity: '+'},{name: "henk",balance: 3.47, polarity: '+'},{name: "marie",balance: 0.25, polarity: '+'}];
-      return {page: "group", id: id, users: users};
+   async GetList(@CurrentUser() user: User, @Param("id") id: string): Promise<object> {
+      const group = await Container.get(GroupService).findOne(id, user);
+      return {page: "group", group};
    }
 
    @Authorized()
    @Get("/groups")
    @Render("index.ejs")
-   GetLists(): object {
-      const groups = [{name: "XSPLIT Development Team", id: 1, balance: 10.99, balancePolarity: '+'},{name: "Sport Team", id: 2, balance: 23.78, balancePolarity: '-'},{name: "Friends", id: 3, balance: 0.00, balancePolarity: ''}];
+   async GetLists(@CurrentUser() user: User): Promise<object> {
+      const groups = await Container.get(GroupService).findUserGroups(user);
       return {page: "groups", groups: groups};
    }
 

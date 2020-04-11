@@ -2,6 +2,7 @@ import { XRPUtil } from "../util/XRPUtil";
 import {CookieUtil} from "../util/CookieUtil";
 
 let participants: string[] = [];
+let groupId: string = undefined;
 
 function newUserRow(username: string): string {
 	let element = "<div class='form-row user-row mb-2' data-user='"+username+"'>";
@@ -20,9 +21,14 @@ function newUserRow(username: string): string {
 }
 
 async function sendBill(subject: string, amount: number, weights: number[]): Promise<void> {
-
-	const response = await fetch("/api/bills", {
-		method: "POST",
+	let url = "/api/bills";
+	let method = "POST";
+	if (groupId !== undefined) {
+		url = `/api/groups/${groupId}/bill`;
+		method = "PUT";
+	}
+	const response = await fetch(url, {
+		method: method,
 		headers: {
 			"Content-Type": "application/json"
 		},
@@ -55,6 +61,8 @@ async function sendBill(subject: string, amount: number, weights: number[]): Pro
 function onRequestPageLoad(): void {
 
 	jQuery(($) => {
+		const group = $("#groupId")[0].innerHTML;
+		groupId = group === "" ? undefined : group as string;
 
 		$(document).on("focus click", "input", function() {
 			$("#bill-success").hide().empty();
@@ -131,7 +139,7 @@ function onRequestPageLoad(): void {
 			source: function(request: any, response: Function) {
 				$.ajax({
 					type: "GET",
-					url: "/api/users/search/"+request.term,
+					url: "/api/users/search/"+request.term + (groupId !== undefined ? "/" + groupId : ""),
 					success: function(data) {
 						response(data);
 					}

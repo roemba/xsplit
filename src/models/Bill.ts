@@ -52,5 +52,6 @@ export class Bill {
     @AfterLoad()
     convertBalanceToNumber(): void {
         this.totalXrpDrops = bigIntToNumber(this.totalXrpDrops);
+        this.dateCreated = bigIntToNumber(this.dateCreated);
     }
 }

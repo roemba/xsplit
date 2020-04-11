@@ -1,5 +1,6 @@
-import {Column, Entity, ManyToOne, PrimaryColumn} from "typeorm";
+import {Column, Entity, ManyToOne, PrimaryColumn, AfterLoad} from "typeorm";
 import {User} from "./User";
+import { bigIntToNumber } from "../util/PostGresUtil";
 
 
 @Entity({name: "challenge"})
@@ -13,4 +14,9 @@ export class Challenge {
 
 	@Column({type: "bigint"})
 	public createdAt: number;
+
+	@AfterLoad()
+    convertBalanceToNumber(): void {
+        this.createdAt = bigIntToNumber(this.createdAt);
+    }
 }

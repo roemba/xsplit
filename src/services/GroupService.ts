@@ -8,7 +8,7 @@ import { GroupBalanceService } from './GroupBalanceService';
 import { GroupBalance } from '../models/GroupBalance';
 import { UserService } from './UserService';
 import { Bill } from '../models/Bill';
-import { BadRequestError } from 'routing-controllers';
+import { BadRequestError, UnauthorizedError, NotFoundError } from 'routing-controllers';
 import { BillService } from './BillService';
 import { TransactionRequest } from '../models/TransactionRequest';
 import { TransactionRequestService } from './TransactionRequestService';
@@ -31,9 +31,16 @@ export class GroupService {
         return balances.map(e => e.group);
     }
 
-    public findOne(id: string): Promise<Group | undefined> {
+    public async findOne(id: string, user?: User): Promise<Group | undefined> {
         this.log.info('Find one group');
-        return this.groupRepository.findOne({id});
+        const group = await this.groupRepository.findOne({id});
+        if (group === undefined) {
+            throw new NotFoundError("Group not found");
+        }
+        if (user !== undefined && group.participants.findIndex(u => u.username === user.username) === -1) {
+            throw new UnauthorizedError("User is not a participant of this group");
+        }
+        return group;
     }
 
     public async create(grp: Group): Promise<Group> {
@@ -168,7 +175,7 @@ export class GroupService {
     }
 
     public async settlementPaid(transaction: TransactionRequest): Promise<void> {
-        this.log.info("Received payment for group settlement", transaction);
+        this.log.info("Received payment for group settlement");
         const group = await this.findOne(transaction.group.id);
         const creditorBalance = group.groupBalances.find(b => b.user.username === transaction.creditor.username);
         const debtorBalance = group.groupBalances.find(b => b.user.username === transaction.debtor.username);

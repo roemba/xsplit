@@ -52,5 +52,6 @@ export class TransactionRequest {
     @AfterLoad()
     convertXrpToNumber(): void {
         this.totalXrpDrops = bigIntToNumber(this.totalXrpDrops);
+        this.dateCreated = bigIntToNumber(this.dateCreated);
     }
 }
