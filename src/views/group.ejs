@@ -1,48 +1,67 @@
 <div class='row'>
 	<div class="col-12 col-lg-12 text-light">
 		<h1 class='text-center'>
-			Group name with id: (<%= id %>)
+			Group: <%= group.name %>
 		</h1>
+		<h2 class='text-center'>
+			<%= group.description %>
+		</h3>
+		<div id='groupId' hidden>
+			<%= group.id %>
+		</div>
 		<br /><br />
 
 		<div class='row'>
 			<div class='col-12 col-lg-3 subscribers-list mb-3'>
 				<h3>Users in group</h3>
-				<% users.forEach(function(user) { %>
-					<div class='subscriber-item d-block p-2' data-user='<%= user.name %>'>
-						<%= user.name %><span class='float-right badge badge-light mt-1 <% if(user.polarity === "+") { %>text-success<%} else if (user.polarity === "-") { %>text-danger<% } %>'>&euro;<%= user.balance %></span>
+				<% group.groupBalances.forEach(function(balance) { %>
+					<div class='subscriber-item d-block p-2' data-user='<%= balance.user.username %>'>
+						<%= balance.user.username %><span class='float-right badge badge-light mt-1 <% if(balance.balance >= 0) { %>text-success<%} else { %>text-danger<% } %>'><%= balance.balance / 1000000 %> XRP</span>
 					</div>
 				<% }); %>
 				
 				<br />
-				<a href="#" class="text-muted">Add users to group...</a>
+				<div class="row mb-3">
+					<div class='col-12'>
+						<input type="text" class="form-control" id="user-search" placeholder="Search for user...">
+					</div>
+				</div>
+				<div class='row mb-3'>
+					<div class='col-12'>
+						<button type="submit" class="btn btn-secondary col-12 mt-0 submit-request" id="addUser" disabled>Add user to group</button>
+					</div>
+				</div>
+				<div class='col-12 text-center mt-3 mb-3 text-success' id="user-success" style="display: none;"></div>
+				<div class='col-12 text-center mt-3 mb-3 text-error' id="user-error" style="display: none;"></div>
+
+				<div class='row mb-3'>
+					<div class='col-12'>
+						<button type="submit" class="btn btn-secondary col-12 mt-0 submit-request" id="settleBalances">Settle balances</button>
+					</div>
+				</div>
+				<div class='col-12 text-center mt-3 mb-3 text-success' id="settle-success" style="display: none;"></div>
+				<div class='col-12 text-center mt-3 mb-3 text-error' id="settle-error" style="display: none;"></div>
 			</div>
 
 			<div class='col-12 col-lg-9 transactions column-divider'>
-				<h3>Transactions</h3>
+				<h3>Bills</h3>
+				<button type="submit" class="btn btn-secondary col-4submit-request" id="addTransaction">Add new bill</button>
 
 				<div class='row p-3'>
-					<div class='card bg-dark text-light text-center col-12 transaction-item mb-3 p-3 rounded-0 border-light' tx-id='1'>
-						<div>
-							<span class='float-left'>17-03-2020</span>
-							<span class='float-right'>&euro;20.00</span>
+					<% group.bills.forEach(function(bill) { %>
+						<div class='card bg-dark text-light text-center col-12 transaction-item mb-3 p-3 rounded-0 border-light' tx-id='1'>
+							<div>
+								<span class='float-left'><%= new Date(bill.dateCreated).toLocaleString() %></span>
+								<span class='float-right'><%= bill.totalXrpDrops / 1000000 %> XRP</span>
+							</div>
+							<h3 class='card-title text-center'><i><%= bill.description %></i> from <u><%= bill.creditor.username %></u></h3>
+							<strong>Participants:</strong> <% bill.weights.forEach(function(weight) { %> <%= weight.user.username %> (<%= weight.weight %>x) <% }); %>
 						</div>
-						<h3 class='card-title text-center'><i>Test transaction</i> from <u>alice</u></h3>
-						<strong>Participants:</strong> alice (1x), bob (2x), joost (0x), piet (0x), henk (3x), marie (1x)
-					</div>
-
-					<div class='card bg-dark text-light text-center col-12 transaction-item mb-3 p-3 rounded-0 border-light' tx-id='2'>
-						<div>
-							<span class='float-left'>15-03-2020</span>
-							<span class='float-right'>&euro;37.00</span>
-						</div>
-						<h3 class='card-title text-center'><i>Drinks</i> from <u>bob</u></h3>
-						<strong>Participants:</strong> alice (1x), bob (1x), joost (1x)
-					</div>
+					<% }); %>
 				</div>
 			</div>
 		</div>
 	</div>
 </div>
 
-<script src="/events/GroupsScriptBundled.js"></script>
+<script src="/events/GroupScriptBundled.js"></script>
