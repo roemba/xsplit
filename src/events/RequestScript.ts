@@ -185,10 +185,10 @@ function onRequestPageLoad(): void {
 
 			const weights: number[] = [];
 
-			$(".user-row").each(function() {
-				const weight = $(this).find("select").val();
+			for(const p of participants) {
+				const weight = $("#select-"+p).val();
 				weights.push(Number(weight));
-			});
+			}
 
 			const nAmount = Number($("#amount").val());
 			const subject = String($("#subject").val());
