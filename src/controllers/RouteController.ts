@@ -15,6 +15,7 @@ import { User } from "../models/User";
 import { XRPUtil } from "../util/XRPUtil";
 import * as express from 'express';
 import { deriveAddress } from 'ripple-keypairs';
+import { BillService } from "../services/BillService";
 
 class UnauthorizedHandler implements ExpressErrorMiddlewareInterface {
    error(error: Error, req: express.Request, res: express.Response): void {
@@ -101,10 +102,12 @@ export class RouteController {
    @Authorized()   
    @Get("/bills")
    @Render("index.ejs")
-   GetBillOverview(): unknown {
-      // const bills = [{id: "2130b428-32fa-4909-872b-8d0b010bf174", description: "ASDASDASD", dateCreated: "1584534675889", totalXrp: "124", participants: [{username: "jb", publickey: "02E3EFBF87E8E47CAE93286C600463A051D9DE664204A299D34FFDDA8107904B0A", email: "j.w.bambacht@student.tudelft.nl", fullName: ""},{username: "alice", publickey: "02C90CDEDE88AFD56FF51A41DDF8B12EB0380D3F4D21D2BB6CD15E64FEB25358F6", email: "alice@xsplit.com", fullName: "Alice"},{username: "bob", publickey: "02247DCA3727D848340F1520968A2191D3AC8F1299AFC7291969E6845AC7CFB579", email: "bob@xsplit.com", fullName: "Bob"}]}];
-      // return {page: "bills", unsettledbills: bills, settledbills: bills};
-      return {page: "bills"};
+   async GetBillOverview(@CurrentUser() user: User): Promise<unknown> {
+
+      const bills = await Container.get(BillService).findUserBills(user);
+
+      // return {page: "bills", bills: await bills};
+      return {page: "bills", bills: bills};
    }
 
    @Authorized()
