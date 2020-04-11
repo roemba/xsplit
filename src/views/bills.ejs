@@ -4,33 +4,98 @@
 		<h1 class='text-center'>Bills</h1>
 		<br /><br />
 
-		<% bills.forEach(bill => { %>
-			<%= bill.id %> <br />
-		<% }) %>
-
 		<div class='row'>
-			<div class='col-12'>
-				<h2 id="loading">Loading bills...</h2>
-			</div>
-			<div class='col-12 col-lg-6' id="unsettled" style="visibility: hidden">
-				<h5> Unsettled bills</h5>
+			<div class='col-12 col-lg-6' id='unsettled'>
+				<h5>Unsettled Bills</h5>
+				<% if(unsettledBills.length > 0) { %>
+					<% unsettledBills.forEach(bill => { %>
+					<div class='col-12'>
+						<div class='card bg-dark text-light text-center bill-item mb-3 p-3 rounded-0 border-light' bill-id='<%= bill.id %>'>
+							<div>
+								<span class='float-left bill-date' data-timestamp='<%= bill.dateCreated %>'><small><%= bill.dateFormatted %></small></span>
+								<span class='float-right'><%= bill.totalXrp %> XRP</span>
+							</div>
+							<h5 class='text-center'><%= bill.description %></h5>
+							<hr class='border-light horizontal-divider'>
 
-				
+							<div class='row'>
+								<% bill.transactions.forEach(tr => { %>
+								<div class='col-12 col-lg-6'>
+									<div class='d-inline-block'>
+									<% if(tr.debtor !== bill.creditor) { %>
+										<% if(tr.paid) { %>
+											<div class='m-1'>
+												<%= tr.debtor %> (<%= tr.weight %>x) <img src='/assets/img/check.svg' style='width: 20px; height: 20px;' />
+											</div>
+										<% } else { %>
+											<button class='btn btn-sm bg-dark btn-secondary submit-request set-paid-button' id='setPaid_<%= tr.id %>' title='Click to set <%= tr.debtor %> to paid'>
+												<%= tr.debtor %> (<%= tr.weight %>x) <img src='/assets/img/cross.svg' style='width: 20px; height: 20px;' />
+											</button>
+										<% } %>
+									<% } else { %>
+											<div class='m-1'>
+												<% if(tr.paid) { %>
+													Me (<%= tr.weight %>x) <img src='/assets/img/check.svg' style='width: 20px; height: 20px;' />
+												<% } else{ %>
+													Me (<%= tr.weight %>x) <img src='/assets/img/cross.svg' style='width: 20px; height: 20px;' />
+												<% } %>
+											</div>
+									<% } %>
+									</div>
+								</div>
+								<% }) %>
+							</div>
+						</div>
+					</div>
+					<% }) %>
+				<% } else{ %>
 					<div class='unsettled-bills'>
 						<div id="unsettled-bills-info">There are no unsettled bills</div>
 					</div>
-				
+				<% } %>
 			</div>
 
-			<div class='col-12 col-lg-6' id="settled" style="visibility: hidden">
-				<h5>Settled bills</h5>
+			<div class='col-12 col-lg-6' id='settled'>
+				<h5>Settled Bills</h5>
+				<% if(settledBills.length > 0) { %>
+					<% settledBills.forEach(bill => { %>
+					<div class='col-12'>
+						<div class='card bg-dark text-light text-center bill-item mb-3 p-3 rounded-0 border-light' bill-id='<%= bill.id %>'>
+							<div>
+								<span class='float-left bill-date' data-timestamp='<%= bill.dateCreated %>'><small><%= bill.dateFormatted %></small></span>
+								<span class='float-right'><%= bill.totalXrp %> XRP</span>
+							</div>
+							<h5 class='text-center'><%= bill.description %></h5>
+							<hr class='border-light horizontal-divider'>
 
-				<div class='settled-bills'>
-					<div id="settled-bills-info">There are no settled bills.</div>
-				</div>
+							<div class='row'>
+								<% bill.transactions.forEach(tr => { %>
+								<div class='col-12 col-lg-6'>
+									<div class='d-inline-block'>
+									<% if(tr.debtor !== bill.creditor) { %>
+										<div class='m-1'>
+											<%= tr.debtor %> (<%= tr.weight %>x) <img src='/assets/img/check.svg' style='width: 20px; height: 20px;' />
+										</div>
+									<% } else { %>
+										<div class='m-1'>
+											Me (<%= tr.weight %>x) <img src='/assets/img/check.svg' style='width: 20px; height: 20px;' />
+										</div>
+									<% } %>
+									</div>
+								</div>
+								<% }) %>
+							</div>
+						</div>
+					</div>
+					<% }) %>
+				<% } else{ %>
+					<div class='settled-bills'>
+						<div id="settled-bills-info">There are no settled bills</div>
+					</div>
+				<% } %>
 			</div>
-		</div>
+
 	</div>
 
-	<!-- <script src="/events/BillsScriptBundled.js"></script> -->
+	<script src="/events/BillsScriptBundled.js"></script>
 </div>

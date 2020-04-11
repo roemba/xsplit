@@ -104,10 +104,69 @@ export class RouteController {
    @Render("index.ejs")
    async GetBillOverview(@CurrentUser() user: User): Promise<unknown> {
 
-      const bills = await Container.get(BillService).findUserBills(user);
+      const unsettledBills = await Container.get(BillService).findUserUnsettledBills(user);
+      const settledBills = await Container.get(BillService).findUserSettledBills(user);
 
-      // return {page: "bills", bills: await bills};
-      return {page: "bills", bills: bills};
+      const unsettledBillsArray = Array<object>();
+      const settledBillsArray = Array<object>();
+
+      for(const bill of unsettledBills) {
+
+         const date: Date = new Date(Number(bill.dateCreated));
+         const dateFormatted: string = date.getDate()+"/"+(date.getMonth()+1)+"/"+date.getFullYear();
+
+         const transactions = Array<object>();
+         for(const tr of bill.transactionRequests) {
+            const weight = bill.weights.filter(w => w.user.username === tr.debtor.username)[0];
+
+            transactions.push({
+               id: tr.id,
+               paid: tr.paid,
+               debtor: tr.debtor.username,
+               weight: weight.weight
+            });
+         }
+
+         unsettledBillsArray.push({
+            id: bill.id,
+            description: bill.description,
+            dateCreated: bill.dateCreated,
+            dateFormatted: dateFormatted,
+            totalXrp: XRPUtil.dropsToXRP(bill.totalXrpDrops),
+            creditor: bill.creditor.username,
+            transactions: transactions
+         });
+      }
+
+      for(const bill of settledBills) {
+
+         const date: Date = new Date(Number(bill.dateCreated));
+         const dateFormatted: string = date.getDate()+"/"+(date.getMonth()+1)+"/"+date.getFullYear();
+
+         const transactions = Array<object>();
+         for(const tr of bill.transactionRequests) {
+            const weight = bill.weights.filter(w => w.user.username === tr.debtor.username)[0];
+
+            transactions.push({
+               id: tr.id,
+               paid: tr.paid,
+               debtor: tr.debtor.username,
+               weight: weight.weight
+            });
+         }
+
+         settledBillsArray.push({
+            id: bill.id,
+            description: bill.description,
+            dateCreated: bill.dateCreated,
+            dateFormatted: dateFormatted,
+            totalXrp: XRPUtil.dropsToXRP(bill.totalXrpDrops),
+            creditor: bill.creditor.username,
+            transactions: transactions
+         });
+      }
+
+      return {page: "bills", settledBills: settledBillsArray, unsettledBills: unsettledBillsArray};
    }
 
    @Authorized()

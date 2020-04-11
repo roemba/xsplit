@@ -26,6 +26,28 @@ export class BillService {
         return this.billRepository.find({where: {creditor: {username: user.username }}});
     }
 
+    public async findUserSettledBills(user: User): Promise<Bill[]> {
+        const bills = await this.billRepository.find({where: {creditor: {username: user.username }}});
+        bills.sort((a, b) => a.dateCreated > b.dateCreated ? - 1 : Number(a.dateCreated < b.dateCreated));
+        return bills.filter(b => {
+            for(const tr of b.transactionRequests) {
+                if (!tr.paid) return false;
+            }
+            return true;
+        });
+    }
+
+    public async findUserUnsettledBills(user: User): Promise<Bill[]> {
+        const bills = await this.billRepository.find({where: {creditor: {username: user.username }}});
+        bills.sort((a, b) => a.dateCreated > b.dateCreated ? - 1 : Number(a.dateCreated < b.dateCreated));
+        return bills.filter(b => {
+            for(const tr of b.transactionRequests) {
+                if (!tr.paid) return true;
+            }
+            return false;
+        });
+    }
+
     public async findUserBill(user: User, id: string): Promise<Bill> {
         const bill = await this.billRepository.findOne(id);
         if (bill.creditor.username === user.username) {
