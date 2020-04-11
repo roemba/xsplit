@@ -126,9 +126,6 @@ export class RouteController {
 
       for(const bill of unsettledBills) {
 
-         const date: Date = new Date(Number(bill.dateCreated));
-         const dateFormatted: string = date.getDate()+"/"+(date.getMonth()+1)+"/"+date.getFullYear();
-
          const transactions = Array<object>();
          for(const tr of bill.transactionRequests) {
             const weight = bill.weights.filter(w => w.user.username === tr.debtor.username)[0];
@@ -145,7 +142,6 @@ export class RouteController {
             id: bill.id,
             description: bill.description,
             dateCreated: bill.dateCreated,
-            dateFormatted: dateFormatted,
             totalXrp: XRPUtil.dropsToXRP(bill.totalXrpDrops),
             creditor: bill.creditor.username,
             transactions: transactions
@@ -153,9 +149,6 @@ export class RouteController {
       }
 
       for(const bill of settledBills) {
-
-         const date: Date = new Date(Number(bill.dateCreated));
-         const dateFormatted: string = date.getDate()+"/"+(date.getMonth()+1)+"/"+date.getFullYear();
 
          const transactions = Array<object>();
          for(const tr of bill.transactionRequests) {
@@ -173,7 +166,6 @@ export class RouteController {
             id: bill.id,
             description: bill.description,
             dateCreated: bill.dateCreated,
-            dateFormatted: dateFormatted,
             totalXrp: XRPUtil.dropsToXRP(bill.totalXrpDrops),
             creditor: bill.creditor.username,
             transactions: transactions

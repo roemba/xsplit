@@ -12,7 +12,7 @@
 					<div class='col-12'>
 						<div class='card bg-dark text-light text-center bill-item mb-3 p-3 rounded-0 border-light' bill-id='<%= bill.id %>'>
 							<div>
-								<span class='float-left bill-date' data-timestamp='<%= bill.dateCreated %>'><small><%= bill.dateFormatted %></small></span>
+								<span class='float-left bill-date' data-timestamp='<%= bill.dateCreated %>'><small><%= new Date(bill.dateCreated).toLocaleString() %></small></span>
 								<span class='float-right'><%= bill.totalXrp %> XRP</span>
 							</div>
 							<h5 class='text-center'><%= bill.description %></h5>
@@ -62,7 +62,7 @@
 					<div class='col-12'>
 						<div class='card bg-dark text-light text-center bill-item mb-3 p-3 rounded-0 border-light' bill-id='<%= bill.id %>'>
 							<div>
-								<span class='float-left bill-date' data-timestamp='<%= bill.dateCreated %>'><small><%= bill.dateFormatted %></small></span>
+								<span class='float-left bill-date' data-timestamp='<%= bill.dateCreated %>'><small><%= new Date(bill.dateCreated).toLocaleString() %></small></span>
 								<span class='float-right'><%= bill.totalXrp %> XRP</span>
 							</div>
 							<h5 class='text-center'><%= bill.description %></h5>
