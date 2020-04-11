@@ -10,35 +10,35 @@
 				<span class='text-muted'>Username</span>
 			</div>
 			<div class='col-12 col-lg-8 mb-3 text-right'>
-				<span id='userName'></span>
+				<span id='userName'><%= user.username %></span>
 			</div>
 
 			<div class='col-12 col-lg-4 mb-2'>
 				<span class='text-muted'>Public Key</span>
 			</div>
 			<div class='col-12 col-lg-8 mb-3 text-right no-text-overflow'>
-				<span id='publicKey'></span>
+				<span id='publicKey'><%= user.publickey %></span>
 			</div>
 
 			<div class='col-12 col-lg-4 mb-2'>
 				<span class='text-muted line-height'>Full Name</span>
 			</div>
 			<div class='col-12 col-lg-8 mb-3 text-right'>
-				<input type='text' class='form-control border-0 text-right' id='fullName' value='' required />
+				<input type='text' class='form-control border-0 text-right' id='fullName' value='<%= user.private.fullName %>' required />
 			</div>
 
 			<div class='col-12 col-lg-4 mb-2'>
 				<span class='text-muted line-height'>Email Address</span>
 			</div>
 			<div class='col-12 col-lg-8 mb-3 text-right'>
-				<input type='text' class='form-control border-0 text-right' id='emailAddress' value='' required />
+				<input type='text' class='form-control border-0 text-right' id='emailAddress' value='<%= user.private.email %>' required />
 			</div>
 
 			<div class='col-10 col-lg-4 mb-2'>
 				<span class='text-muted'>Email Notifications</span>
 			</div>
 			<div class='col-2 col-lg-8 mb-3'>
-				<input type="checkbox" class="form-check-input" id="notificationsCheck">
+				<input type="checkbox" class="form-check-input" id="notificationsCheck" <%- user.private.notifications ? 'checked' : ''  %> />
 			</div>
 
 			<div class='col-12 text-success text-center' id='success-save' style='display: none;'></div>

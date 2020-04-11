@@ -14,7 +14,7 @@ import { TransactionRequestService } from "../services/TransactionRequestService
 import { User } from "../models/User";
 import { XRPUtil } from "../util/XRPUtil";
 import * as express from 'express';
-
+import { deriveAddress } from 'ripple-keypairs';
 
 class UnauthorizedHandler implements ExpressErrorMiddlewareInterface {
    error(error: Error, req: express.Request, res: express.Response): void {
@@ -58,8 +58,9 @@ export class RouteController {
    @Authorized()
    @Get("/account")
    @Render("index.ejs")
-   GetAccount(): unknown {
-      return {page: "account"};
+   async getAccount(@CurrentUser() user: User): Promise<unknown> {
+      user.publickey = deriveAddress(user.publickey);
+      return {page: "account", user: user};
    }
 
 
