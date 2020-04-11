@@ -1,4 +1,4 @@
-import { Entity, PrimaryColumn, OneToMany, ManyToMany, OneToOne, Column } from 'typeorm';
+import { Entity, PrimaryColumn, OneToMany, ManyToMany, OneToOne, Column, JoinColumn } from 'typeorm';
 import { Bill } from './Bill';
 import { TransactionRequest } from './TransactionRequest';
 import { GroupBalance } from './GroupBalance';
@@ -12,6 +12,7 @@ export class User {
     public username: string;
 
     @OneToOne(() => PrivateInformation, pi => pi.user, {
+        onDelete: "CASCADE",
         eager: false
     })
     public private: PrivateInformation;

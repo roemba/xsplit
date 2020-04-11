@@ -53,4 +53,19 @@ export class ChallengeRepository extends Repository<Challenge>  {
         }
     }
 
+    public async deleteUserChallenges(user: User): Promise<void> {
+        try {
+            const repo = await getRepository(Challenge);
+            const challenges = await Container.get(ChallengeRepository).getChallenges(user);
+            if (challenges.length > 0) {
+                this.log.info(`Deleting ${challenges.length} stale challenges...`);
+                for (const challenge of challenges) {
+                    repo.delete(challenge);
+                }
+            }
+        } catch (e) {
+            this.log.error(e);
+        }
+    }
+
 }

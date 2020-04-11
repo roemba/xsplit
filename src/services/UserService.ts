@@ -17,8 +17,8 @@ export class UserService {
     constructor(@OrmRepository() private userRepository: UserRepository,
                 @OrmRepository() private privateRepository: PrivateInformationRepository) {}
 
-    public findMe(user: User): Promise<User> {
-        return this.userRepository.findOne({where: {username: user.username }, relations: ["private"]});
+    public findMe(username: string): Promise<User> {
+        return this.userRepository.findOne({where: {username: username }, relations: ["private"]});
     }
 
     public async findUsers(search: string): Promise<string[]> {
@@ -63,9 +63,10 @@ export class UserService {
         return this.userRepository.save(user);
     }
 
-    public async delete(id: string): Promise<void> {
-        this.log.info('Delete a user');
-        await this.userRepository.delete(id);
+    public async delete(user: User): Promise<void> {
+        this.log.info('Delete a user ' + user.private.id);
+        await Container.get(PrivateInformationRepository).removePrivateInfo(user.private.id);
+        await this.userRepository.delete(user);
         return;
     }
 

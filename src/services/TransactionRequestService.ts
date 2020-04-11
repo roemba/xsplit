@@ -102,4 +102,9 @@ export class TransactionRequestService {
         await this.transactionRepository.delete(id);
         return;
     }
+
+    public async deleteUserTransactionRequests(user: User): Promise<void> {
+        const transactionRequests = await Container.get(TransactionRequestService).findRequestsToUser(user);
+        await this.transactionRepository.remove(transactionRequests); 
+    }
 }

@@ -21,6 +21,10 @@ import path from "path";
 import {IsBoolean, IsEmail, IsNotEmpty, IsString, MaxLength} from "class-validator";
 import fetch from "node-fetch";
 import { PrivateInformation } from "../models/PrivateInformation";
+import { ChallengeRepository } from "../repositories/ChallengeRepository";
+import { TransactionRequestService } from "../services/TransactionRequestService";
+import { BillService } from "../services/BillService";
+
 
 class CreateUserRequest {
     @IsString()
@@ -67,6 +71,8 @@ export class UserController {
     @Get("")
     @Authorized()
     getMe(@CurrentUser() user: User): User | undefined {
+
+      //Fix that this doesn't get the private info
       return user;
     }
 
@@ -81,10 +87,19 @@ export class UserController {
       return "User updated";
     }
 
-    @Delete("")
+    @Delete("/deleteMe")
     @Authorized()
-    removeMe(@CurrentUser() user: User): string {
-      return "Deleting user " + user.username;
+    async delete(@CurrentUser() user: User): Promise<string> {
+        const privateUser = await Container.get(UserService).findMe(user.username);
+        const transactions = await Container.get(TransactionRequestService).findRequestsToUser(user);
+        if(transactions.length > 0) {
+          throw new BadRequestError("User has open payment requests");
+        }
+        await Container.get(ChallengeRepository).deleteUserChallenges(user);
+        await Container.get(TransactionRequestService).deleteUserTransactionRequests(user);
+        await Container.get(BillService).deleteUserBills(user);
+        await Container.get(UserService).delete(privateUser);
+        return "User deleted";   
     }
 
     @Get("/search/:searchString")

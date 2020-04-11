@@ -5,6 +5,8 @@ import { UserService } from "../src/services/UserService";
 import { LoggerService } from "../src/services/LoggerService";
 import { getConnectionOptions, createConnection, useContainer } from "typeorm";
 import { PrivateInformation } from "../src/models/PrivateInformation";
+import fs = require('fs');
+import { generateSeed, deriveKeypair } from "ripple-keypairs";
 
 
 const logger = Container.get(LoggerService);
@@ -32,7 +34,25 @@ async function addUser(username: string, publickey: string, email: string, fullN
     }
 }
 
+async function seedMoreUser(): Promise<void> {
+    const numberOfUsers = 98;
+    let genUsername: string;
+    let secret: string;
+    const email = "testnet@test.com";
+    let publickey: string;
+
+    for(let i = 0; i  < numberOfUsers; i++) {
+        genUsername = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5);
+        secret = generateSeed();
+        publickey = deriveKeypair(secret).publicKey;
+
+        await addUser(genUsername, publickey, email, genUsername);
+    }
+
+}
+
 async function seedDB(): Promise<void> {
+    const increaseUsersInDatabase = false;
     // tests users
     const users = {
         "alice": {
@@ -52,6 +72,10 @@ async function seedDB(): Promise<void> {
     // add test users to db
     await addUser(users.alice.username, users.alice.publickey, users.alice.email, users.alice.name);
     await addUser(users.bob.username, users.bob.publickey, users.bob.email, users.bob.name);
+
+    if(increaseUsersInDatabase) {
+        seedMoreUser();
+    }
 }
 
 async function setupTypeORM(): Promise<void> {
