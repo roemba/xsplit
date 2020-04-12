@@ -16,6 +16,27 @@ function onBillsPageLoad(): void {
 					console.log(response.statusText);
 				}
 			});
+
+			$(document).on("click", ".remove-bill", async function() {
+				const billID = $(this).attr('data-id');
+
+				const response = await fetch("/api/bills/"+billID, {
+					method: "DELETE",
+					headers: {
+						"Content-Type": "application/json"
+					}
+				});
+
+				if (response.status !== 200) {
+					console.log(response.status);
+					return;
+				}
+
+				$(".bill-item[bill-id='"+billID+"']").fadeOut(500, function() {
+					$(this).remove();
+				});
+
+			});
 		});
 	});
 }
