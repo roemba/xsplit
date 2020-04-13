@@ -10,6 +10,7 @@ import { generateSeed, deriveKeypair } from "ripple-keypairs";
 
 
 const logger = Container.get(LoggerService);
+let failCount = 0;
 
 useContainer(Container);
 dotenv.config();
@@ -27,6 +28,7 @@ async function addUser(username: string, publickey: string, email: string, fullN
     } catch(e) {
         if (e.name === "QueryFailedError" && e.detail.includes("already exists")) {
             logger.info("User already exists in the db!");
+            failCount++;
         } else {
             logger.error("Error occurred!");
             logger.error(e);
@@ -35,24 +37,27 @@ async function addUser(username: string, publickey: string, email: string, fullN
 }
 
 async function seedMoreUser(): Promise<void> {
-    const numberOfUsers = 98;
+    failCount = 0;
+    const numberOfUsers = 9500000 - (9500000) + 1;
     let genUsername: string;
     let secret: string;
     const email = "testnet@test.com";
     let publickey: string;
 
-    for(let i = 0; i  < numberOfUsers; i++) {
-        genUsername = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5);
+    for(let i = 0; i < numberOfUsers; i++) {
+        genUsername = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0,7);
         secret = generateSeed();
         publickey = deriveKeypair(secret).publicKey;
 
         await addUser(genUsername, publickey, email, genUsername);
     }
 
+    logger.info("Fail count " + failCount);
+
 }
 
 async function seedDB(): Promise<void> {
-    const increaseUsersInDatabase = false;
+    const increaseUsersInDatabase = true;
     // tests users
     const users = {
         "alice": {
