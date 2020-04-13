@@ -224,7 +224,14 @@ test('view all bills, count settled and unsettled', async () => {
 
     expect(response.status).toBe(200);
 
-    const bills: Bill[] = await response.json();
+    let bills: Bill[] = await response.json();
+
+    bills = bills.filter(b => {
+        if(b.transactionRequests.length === 0) {
+            return false;
+        }
+        return true;
+    });
 
     // Total bills on page
     const billItemsOnPage = await page.$$('.bill-item');
@@ -240,11 +247,18 @@ test('view all bills, count settled and unsettled', async () => {
         return true;
     });
 
+    const unsettledBills = bills.filter(b => {
+        for(const tr of b.transactionRequests) {
+            if (!tr.paid) return true;
+        }
+        return false;
+    });
+
     const settledBillsOnPage = await page.$$('#settled .bill-item');
     const unsettledBillsOnPage = await page.$$('#unsettled .bill-item');
     
     expect(settledBills.length).toBe(settledBillsOnPage.length);
-    expect(bills.length-settledBills.length).toBe(unsettledBillsOnPage.length);
+    expect(unsettledBills.length).toBe(unsettledBillsOnPage.length);
 
 });
 
