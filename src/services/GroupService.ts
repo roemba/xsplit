@@ -191,4 +191,12 @@ export class GroupService {
         return;
     }
 
+    public async deleteUserGroups(user: User): Promise<void> {
+        const groups = await this.findUserGroups(user);
+        for(let group of groups) {
+            await this.groupRepository.delete(group.id);
+        }
+        return;
+    }
+
 }

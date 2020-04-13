@@ -26,6 +26,7 @@ import { TransactionRequestService } from "../services/TransactionRequestService
 import { BillService } from "../services/BillService";
 
 import { GroupService } from "../services/GroupService";
+import { GroupBalanceService } from "../services/GroupBalanceService";
 
 class CreateUserRequest {
     @IsString()
@@ -93,9 +94,18 @@ export class UserController {
     async delete(@CurrentUser() user: User): Promise<string> {
         const privateUser = await Container.get(UserService).findMe(user.username);
         const transactions = await Container.get(TransactionRequestService).findRequestsToUser(user);
-        if(transactions.length > 0) {
-          throw new BadRequestError("User has open payment requests");
+        for(let transaction of transactions) {
+          if(!transaction.paid) {
+            throw new BadRequestError("User has open payment requests");
+          }
         }
+        const groupBalances = await Container.get(GroupBalanceService).findUserBalances(user);
+        for(let groupBalance of groupBalances) {
+          if(groupBalance.balance > 0) {
+            throw new BadRequestError("User has unsettled groups");
+          }
+        }
+        await Container.get(GroupService).deleteUserGroups(user); 
         await Container.get(ChallengeRepository).deleteUserChallenges(user);
         await Container.get(TransactionRequestService).deleteUserTransactionRequests(user);
         await Container.get(BillService).deleteUserBills(user);
