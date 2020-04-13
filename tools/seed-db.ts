@@ -57,7 +57,7 @@ async function seedMoreUser(): Promise<void> {
 }
 
 async function seedDB(): Promise<void> {
-    const increaseUsersInDatabase = true;
+    const increaseUsersInDatabase = false;
     // tests users
     const users = {
         "alice": {
