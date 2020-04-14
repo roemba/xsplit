@@ -40,6 +40,9 @@ export class GroupService {
         if (user !== undefined && group.participants.findIndex(u => u.username === user.username) === -1) {
             throw new UnauthorizedError("User is not a participant of this group");
         }
+
+        group.bills = group.bills.sort((a, b) => a.dateCreated > b.dateCreated ? - 1 : Number(a.dateCreated < b.dateCreated));
+
         return group;
     }
 

@@ -171,6 +171,7 @@ select.color {
 }
 #notificationsCheck {
    margin-left: 5px;
+}
 .nav-balance {
   line-height: 1.25;
   padding: 10px;
@@ -185,4 +186,12 @@ select.color {
   margin-top: 1rem;
   margin-bottom: 1rem;
   border-top: 1px solid rgba(0,0,0,.125);
+}
+.remove-bill {
+  top: 0;
+  right: 0;
+  position: absolute;
+  color: #FFF;
+  width: 20px;
+  font-size: 15px;
 }

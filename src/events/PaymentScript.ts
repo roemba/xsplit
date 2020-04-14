@@ -58,13 +58,15 @@ async function sendPaymentRequest(requestId: string, totalXrp: string, pubKey: s
     
     await new Promise(r => setTimeout(r, 1000));
     
-    document.location.href="/pay";
+    document.getElementById(`payment_${requestId}`).remove();
+    const navBalance: HTMLElement = document.getElementsByClassName(`nav-balance`)[0] as HTMLElement;
+    navBalance.click();
 }
 
 function onRequestPageLoad(): void {
     jQuery(($) => {
         $("button").click(function() {
-            $(this).val("Performing payment, please wait...");
+            $(this).html("Performing payment, please wait...");
             const rippleServer = $("#rippleServer").html();
             const id = this.id.split("_")[0];
             const xrp = this.id.split("_")[1];

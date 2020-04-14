@@ -14,8 +14,9 @@ import { TransactionRequestService } from "../services/TransactionRequestService
 import { User } from "../models/User";
 import { XRPUtil } from "../util/XRPUtil";
 import * as express from 'express';
+import { deriveAddress } from 'ripple-keypairs';
+import { BillService } from "../services/BillService";
 import { GroupService } from "../services/GroupService";
-
 
 class UnauthorizedHandler implements ExpressErrorMiddlewareInterface {
    error(error: Error, req: express.Request, res: express.Response): void {
@@ -59,8 +60,9 @@ export class RouteController {
    @Authorized()
    @Get("/account")
    @Render("index.ejs")
-   GetAccount(): unknown {
-      return {page: "account"};
+   async getAccount(@CurrentUser() user: User): Promise<unknown> {
+      user.publickey = deriveAddress(user.publickey);
+      return {page: "account", user: user};
    }
 
 
@@ -114,10 +116,63 @@ export class RouteController {
    @Authorized()   
    @Get("/bills")
    @Render("index.ejs")
-   GetBillOverview(): unknown {
-      // const bills = [{id: "2130b428-32fa-4909-872b-8d0b010bf174", description: "ASDASDASD", dateCreated: "1584534675889", totalXrp: "124", participants: [{username: "jb", publickey: "02E3EFBF87E8E47CAE93286C600463A051D9DE664204A299D34FFDDA8107904B0A", email: "j.w.bambacht@student.tudelft.nl", fullName: ""},{username: "alice", publickey: "02C90CDEDE88AFD56FF51A41DDF8B12EB0380D3F4D21D2BB6CD15E64FEB25358F6", email: "alice@xsplit.com", fullName: "Alice"},{username: "bob", publickey: "02247DCA3727D848340F1520968A2191D3AC8F1299AFC7291969E6845AC7CFB579", email: "bob@xsplit.com", fullName: "Bob"}]}];
-      // return {page: "bills", unsettledbills: bills, settledbills: bills};
-      return {page: "bills"};
+   async GetBillOverview(@CurrentUser() user: User): Promise<unknown> {
+
+      const unsettledBills = await Container.get(BillService).findUserUnsettledBills(user);
+      const settledBills = await Container.get(BillService).findUserSettledBills(user);
+
+      const unsettledBillsArray = Array<object>();
+      const settledBillsArray = Array<object>();
+
+      for(const bill of unsettledBills) {
+
+         const transactions = Array<object>();
+         for(const tr of bill.transactionRequests) {
+            const weight = bill.weights.filter(w => w.user.username === tr.debtor.username)[0];
+
+            transactions.push({
+               id: tr.id,
+               paid: tr.paid,
+               debtor: tr.debtor.username,
+               weight: weight.weight
+            });
+         }
+
+         unsettledBillsArray.push({
+            id: bill.id,
+            description: bill.description,
+            dateCreated: bill.dateCreated,
+            totalXrp: XRPUtil.dropsToXRP(bill.totalXrpDrops),
+            creditor: bill.creditor.username,
+            transactions: transactions
+         });
+      }
+
+      for(const bill of settledBills) {
+
+         const transactions = Array<object>();
+         for(const tr of bill.transactionRequests) {
+            const weight = bill.weights.filter(w => w.user.username === tr.debtor.username)[0];
+
+            transactions.push({
+               id: tr.id,
+               paid: tr.paid,
+               debtor: tr.debtor.username,
+               weight: weight.weight
+            });
+         }
+
+         settledBillsArray.push({
+            id: bill.id,
+            description: bill.description,
+            dateCreated: bill.dateCreated,
+            totalXrp: XRPUtil.dropsToXRP(bill.totalXrpDrops),
+            creditor: bill.creditor.username,
+            transactions: transactions
+         });
+      }
+
+      return {page: "bills", settledBills: settledBillsArray, unsettledBills: unsettledBillsArray};
    }
 
    @Authorized()

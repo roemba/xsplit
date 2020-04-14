@@ -75,9 +75,9 @@ test('request two equal weight users (include me)', async () => {
     await sleep(2000);
 
     await page.type("#subject","Test case 1 subject");
-    await sleep(50);
+    await sleep(100);
     await page.type("#amount","1.00");
-    await sleep(50);
+    await sleep(100);
     await page.type("#user-search","bob");
     await sleep(2000);
     await page.keyboard.press("ArrowDown");
@@ -85,7 +85,8 @@ test('request two equal weight users (include me)', async () => {
     await page.keyboard.press("Enter");
     await sleep(1000);
     await page.click("#includeCheck");
-    await sleep(1000);
+    await sleep(3000);
+
     await page.click('#submitBill');
     await sleep(4000);
 
@@ -129,21 +130,21 @@ test('request two not equal weight users (include me)', async () => {
     await sleep(2000);
 
     await page.type("#subject","Test case 2 subject");
-    await sleep(50);
+    await sleep(100);
     await page.type("#amount","2.00");
-    await sleep(50);
+    await sleep(100);
     await page.click("#includeCheck");
-    await sleep(2000);
+    await sleep(3000);
 
     await page.type("#user-search","bob");
-    await sleep(2000);
+    await sleep(1000);
     await page.keyboard.press("ArrowDown");
-    await sleep(2000);
+    await sleep(1500);
     await page.keyboard.press("Enter");
-    await sleep(2000);
+    await sleep(1500);
 
     await page.select("select#select-bob","2");
-    await sleep(500);
+    await sleep(2000);
 
     await page.click('#submitBill');
     await sleep(4000);
@@ -223,7 +224,14 @@ test('view all bills, count settled and unsettled', async () => {
 
     expect(response.status).toBe(200);
 
-    const bills: Bill[] = await response.json();
+    let bills: Bill[] = await response.json();
+
+    bills = bills.filter(b => {
+        if(b.transactionRequests.length === 0) {
+            return false;
+        }
+        return true;
+    });
 
     // Total bills on page
     const billItemsOnPage = await page.$$('.bill-item');
@@ -231,25 +239,26 @@ test('view all bills, count settled and unsettled', async () => {
     expect(bills.length).toBe(billItemsOnPage.length);
 
     // Differentiate between settled and unsettled bills
-    let settledCount = 0;
 
-    bills.forEach(bill => {
-        let allPaid = true;
-        bill.transactionRequests.forEach(tr => {
-            if(!tr.paid && allPaid) {
-                allPaid =  false;
-            }
-        });
-        if(allPaid) {
-            settledCount += 1;
+    const settledBills = bills.filter(b => {
+        for(const tr of b.transactionRequests) {
+            if (!tr.paid) return false;
         }
+        return true;
     });
 
-    const settledBillsOnPage = await page.$$('.settled-bills .bill-item');
-    const unsettledBillsOnPage = await page.$$('.unsettled-bills .bill-item');
+    const unsettledBills = bills.filter(b => {
+        for(const tr of b.transactionRequests) {
+            if (!tr.paid) return true;
+        }
+        return false;
+    });
+
+    const settledBillsOnPage = await page.$$('#settled .bill-item');
+    const unsettledBillsOnPage = await page.$$('#unsettled .bill-item');
     
-    expect(settledCount).toBe(settledBillsOnPage.length);
-    expect(bills.length-settledCount).toBe(unsettledBillsOnPage.length);
+    expect(settledBills.length).toBe(settledBillsOnPage.length);
+    expect(unsettledBills.length).toBe(unsettledBillsOnPage.length);
 
 });
 
@@ -298,8 +307,8 @@ test('set transactionRequests for all participants to paid', async () => {
     await page.click("#bills-nav");
     await sleep(4000);
 
-    let unsettledCount = await page.$$('.unsettled-bills .bill-item[bill-id="'+billID+'"]');
-    let settledCount = await page.$$('.settled-bills .bill-item[bill-id="'+billID+'"]');
+    let unsettledCount = await page.$$('#unsettled .bill-item[bill-id="'+billID+'"]');
+    let settledCount = await page.$$('#settled .bill-item[bill-id="'+billID+'"]');
     
     expect(unsettledCount.length).toBe(1);
     expect(settledCount.length).toBe(0);
@@ -309,8 +318,8 @@ test('set transactionRequests for all participants to paid', async () => {
     await sleep(4000);
 
     // Check if bill moved from unsettled to settled
-    unsettledCount = await page.$$('.unsettled-bills .bill-item[bill-id="'+billID+'"]');
-    settledCount = await page.$$('.settled-bills .bill-item[bill-id="'+billID+'"]');
+    unsettledCount = await page.$$('#unsettled .bill-item[bill-id="'+billID+'"]');
+    settledCount = await page.$$('#settled .bill-item[bill-id="'+billID+'"]');
     
     expect(unsettledCount.length).toBe(0);
     expect(settledCount.length).toBe(1);

@@ -1,27 +1,5 @@
-import { deriveAddress } from 'ripple-keypairs';
-import { User } from "../models/User";
-
-async function getUserInfo(): Promise<User> {
-
-	const response = await fetch("/api/users");
-
-	return await response.json();
-}
-
 function onAccountPageLoad(): void {
 	jQuery(($) => {
-
-		$(document).ready(function() {
-			getUserInfo().then((data: User) => {
-				$("#userName").html(data.username);
-				$("#publicKey").html(deriveAddress(data.publickey));
-				$("#emailAddress").val(data.private.email);
-				$("#fullName").val(data.private.fullName);
-				$("#notificationsCheck").prop("checked",data.private.notifications);
-			}).catch(reason => { 
-				console.log(reason.message);
-			});
-		});
 
 		$(document).on("focus click", "input", function() {
 			$("#success-save").hide().empty();
