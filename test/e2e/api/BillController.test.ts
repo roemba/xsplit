@@ -27,7 +27,7 @@ beforeAll(async () => {
     let derivationResult = null;
     derivationResult = deriveKeypair(process.env.ALICE_SECRET);
 
-    const resp = await fetch("http://localhost:8080/api/login/challenge?username=alice");
+    const resp = await fetch("http://localhost:" + process.env.PORT + "/api/login/challenge?username=alice");
     const challenge = await resp.json();
 
     const result = sign(challenge.challenge, derivationResult.privateKey);

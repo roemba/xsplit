@@ -30,7 +30,7 @@ beforeAll(async () => {
     // Get authentication
     derivationResult = deriveKeypair(process.env.ALICE_SECRET);
 
-    const resp = await fetch("http://localhost:8080/api/login/challenge?username=alice");
+    const resp = await fetch("http://localhost:" + process.env.PORT + "/api/login/challenge?username=alice");
     const challenge = await resp.json();
 
     const result = sign(challenge.challenge, derivationResult.privateKey);
@@ -158,7 +158,7 @@ test('pay settlement request', async () => {
     jest.setTimeout(20000);
     const bobDerivation = deriveKeypair(process.env.BOB_SECRET);
 
-    const resp = await fetch("http://localhost:8080/api/login/challenge?username=bob");
+    const resp = await fetch("http://localhost:" + process.env.PORT + "/api/login/challenge?username=bob");
     const challenge = await resp.json();
 
     const result = sign(challenge.challenge, bobDerivation.privateKey);
