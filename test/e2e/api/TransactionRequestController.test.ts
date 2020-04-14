@@ -23,7 +23,7 @@ async function logIn(username: string, secret: string): Promise<void> {
     let derivationResult = null;
     derivationResult = deriveKeypair(secret);
 
-    const resp = await fetch(`http://localhost:8080/api/login/challenge?username=${username}`);
+    const resp = await fetch(`http://localhost:` + process.env.PORT + `/api/login/challenge?username=${username}`);
     const challenge = await resp.json();
 
     const result = sign(challenge.challenge, derivationResult.privateKey);
