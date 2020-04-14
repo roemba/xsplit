@@ -58,7 +58,7 @@
 						<% if(bill.transactions.length > 0) { %>
 							<div class='col-12'>
 								<div class='card bg-dark text-light text-center bill-item mb-3 p-3 rounded-0 border-light' bill-id='<%= bill.id %>'>
-									<span class='remove-bill' data-id='<%= bill.id %>' aria-hidden="true">×</span>
+									<span class='remove-bill' data-id='<%= bill.id %>' aria-hidden="true" style="cursor: pointer">×</span>
 									<div>
 										<span class='float-left pl-2 bill-date' data-timestamp='<%= bill.dateCreated %>'><small><%= new Date(bill.dateCreated).toLocaleString() %></small></span>
 										<span class='float-right pr-2'><%= bill.totalXrp %> XRP</span>
