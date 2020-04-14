@@ -21,6 +21,7 @@ import path from "path";
 import {IsBoolean, IsEmail, IsNotEmpty, IsString, MaxLength} from "class-validator";
 import fetch from "node-fetch";
 import { PrivateInformation } from "../models/PrivateInformation";
+import { GroupService } from "../services/GroupService";
 
 class CreateUserRequest {
     @IsString()
@@ -73,7 +74,6 @@ export class UserController {
     @Put("")
     @Authorized()
     async putMe(@CurrentUser() user: User, @Body() body: UpdateUserRequest): Promise<string> {
-      user.private = new PrivateInformation();
       user.private.email = body.email;
       user.private.fullName = body.fullName;
       user.private.notifications = body.notifications;
@@ -92,6 +92,15 @@ export class UserController {
     @Authorized()
     getSearchMatch(@Param("searchString") usernameSearch: string): Promise<string[]> {
       return Container.get(UserService).findUsers(usernameSearch);
+    }
+
+    @Get("/search/:searchString/:groupId")
+    @Authorized()
+    async getSearchMatchGroup(@Param("searchString") usernameSearch: string, @Param("groupId") groupId: string): Promise<string[]> {
+      const users = await Container.get(UserService).findUsers(usernameSearch);
+      const group = await Container.get(GroupService).findOne(groupId);
+
+      return users.filter(u => group.participants.findIndex(user => user.username === u) !== -1);
     }
 
     @Post("")

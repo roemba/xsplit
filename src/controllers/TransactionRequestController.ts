@@ -6,6 +6,7 @@ import { TransactionRequest } from "../models/TransactionRequest";
 import { LoggerService } from "../services/LoggerService";
 import { NotificationService } from '../services/NotificationService';
 import {IsNotEmpty, IsString, MaxLength} from "class-validator";
+import { GroupService } from "../services/GroupService";
 
 class PayTransactionRequestRequest {
     @IsString()
@@ -33,8 +34,8 @@ export class TransactionRequestController {
     @Authorized()
     @Get("/:id")
     async getTransactionRequest(@CurrentUser() user: User, @Param("id") id: string): Promise<TransactionRequest> {
-        const tr = await Container.get(TransactionRequestService).findOne(id, {relations: ["bill"]});
-        if (tr.bill.creditor.username === user.username || tr.debtor.username === user.username) {
+        const tr = await Container.get(TransactionRequestService).findOne(id);
+        if (tr.creditor.username === user.username || tr.debtor.username === user.username) {
             return tr;
         } else {
             throw new UnauthorizedError("You are not a creditor or debtor of this transaction request");
@@ -63,11 +64,16 @@ export class TransactionRequestController {
         let tr = new TransactionRequest();
         tr.transactionHash = body.transactionHash;
         await trService.update(body.id, tr);
-        tr = await trService.findOne(tr.id, {relations: ["bill"]});
+        tr = await trService.findOne(body.id, {relations: ["bill", "group"]});
         if (await trService.validatePayment(tr)) {
+            this.log.info("Payment validated at " + new Date().getTime());
             tr.paid = true;
-            Container.get(NotificationService).sendPaymentReceivedNotification(tr.bill.creditor);
-            return Container.get(TransactionRequestService).update(body.id, tr);
+            Container.get(NotificationService).sendPaymentReceivedNotification(tr.creditor);
+            const result = await Container.get(TransactionRequestService).update(body.id, tr);
+            if (tr.group !== null) {
+                await Container.get(GroupService).settlementPaid(tr);
+            }
+            return result;
         } else {
             throw new BadRequestError("Payment validation failed");
         }

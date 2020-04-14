@@ -15,7 +15,9 @@ export class PrivateInformation {
     @Column({name: "notifications", default: false})
     public notifications: boolean | undefined;
 
-    @OneToOne(() => User, user => user.private)
+    @OneToOne(() => User, user => user.private, {
+        onUpdate: 'CASCADE'
+    })
     @JoinColumn()
     public user: User;
 }

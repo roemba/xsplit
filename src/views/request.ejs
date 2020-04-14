@@ -1,10 +1,10 @@
 <div class='row'>
 	<div class="col-12 col-lg-6 offset-lg-3 text-center text-light">
 
-		<h1>Request Payment</h1>
+		<h1>Request Payment <% if (group !== undefined) { %> for group: <i><%= group.name %></i><% } %></h1>
 			Please select friends and amount to split.
 		<br /><br />
-
+		<div id="groupId" hidden><% if (group !== undefined) { %><%= group.id %><% } %></div>
 		<form id="request-form" class='text-left' style="padding: 0px;">
 			
 			<div class="form-group">
@@ -49,13 +49,9 @@
 					The amount of <span class='nAmount'></span> XRP is split by <span class='nFriends'></span> friend(s). <br />
 				</div>
 
-				<div class='col-12 text-center mt-3 mb-3 text-success d-none' id="bill-success">
-					Bill created and sent to users!
-				</div>
+				<div class='col-12 text-center mt-3 mb-3 text-success' id="bill-success" style="display: none;"></div>
 
-				<div class='col-12 text-center mt-3 mb-3 text-error d-none' id="bill-error">
-					Bill couldn't be created, try again.
-				</div>
+				<div class='col-12 text-center mt-3 mb-3 text-error' id="bill-error" style="display: none;"></div>
 
 				<div class='row mb-0'>
 					<div class='col-12'>
