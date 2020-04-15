@@ -5,7 +5,5 @@ import { LoggerService } from "../services/LoggerService";
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User>  {
-    
-    log = Container.get(LoggerService);
 
 }
